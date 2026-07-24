@@ -1,4 +1,5 @@
-const CACHE = 'kochbuch-v11';
+// Upgrade from kochbuch-v11 after adding targeted public price metadata.
+const CACHE = 'kochbuch-v12';
 const ASSETS = [
   './',
   './index.html',

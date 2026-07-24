@@ -16,3 +16,17 @@ test('recipe data can be consumed by the weekly Node.js planner', () => {
     assert.ok(data.recipes.find(recipe => recipe.id === id), `Erweitertes Rezept ${id} fehlt`);
   }
 });
+
+test('all measured broth ingredients explain that broth is prepared liquid', () => {
+  const { recipes } = require('../data');
+  const measured = recipes
+    .flatMap(recipe => recipe.ingredients || [])
+    .filter(item => /\d+\s*ml .*Brühe/i.test(item));
+
+  assert.ok(measured.length > 0);
+  assert.equal(measured.every(item => (
+    /zubereitete (?:[A-Za-zÄÖÜäöüß-]*)?Brühe/i.test(item)
+    && /Wasser/i.test(item)
+    && /Brühenpulver\/-würfel/i.test(item)
+  )), true);
+});

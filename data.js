@@ -20,7 +20,7 @@ const KOCHBUCH_DATA = {
         "500 g Brokkoli",
         "1 Zwiebel",
         "4 Knoblauchzehen",
-        "500 ml Hühnerbrühe",
+        "500 ml zubereitete Hühnerbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "2 EL Olivenöl",
         "Salz, Pfeffer, mildes Paprikapulver"
       ],
@@ -159,7 +159,7 @@ const KOCHBUCH_DATA = {
         "500 g Rigatoni",
         "400 g Brokkoli",
         "2 TL Cajun-Gewürz",
-        "400 ml Brühe",
+        "400 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "3 Knoblauchzehen",
         "1 Zwiebel"
       ],
@@ -261,7 +261,7 @@ const KOCHBUCH_DATA = {
         "650 g Rindergeschnetzeltes",
         "1,5 kg Kartoffeln",
         "3 Zwiebeln",
-        "600 ml Rinderbrühe",
+        "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 EL Senf",
         "1 TL Stärke"
       ],
@@ -332,7 +332,7 @@ const KOCHBUCH_DATA = {
         "600 g Hähnchen",
         "500 g Penne",
         "180 ml BBQ-Soße",
-        "400 ml Brühe",
+        "400 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 Zwiebel",
         "3 Knoblauchzehen"
       ],
@@ -537,7 +537,7 @@ const KOCHBUCH_DATA = {
         "500 g Fusilli",
         "1 Zwiebel",
         "3 Knoblauchzehen",
-        "500 ml Rinderbrühe",
+        "500 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 EL Senf",
         "italienische Kräuter"
       ],
@@ -573,7 +573,7 @@ const KOCHBUCH_DATA = {
         "1,3 kg Kartoffeln",
         "3 EL Senf",
         "1,5 EL Honig",
-        "450 ml Brühe",
+        "450 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 Zwiebel"
       ],
       "steps": [
@@ -609,7 +609,7 @@ const KOCHBUCH_DATA = {
         "500 g Brokkoli",
         "1 Zitrone",
         "4 Knoblauchzehen",
-        "400 ml Brühe"
+        "400 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
       ],
       "steps": [
         "Reis und Brokkoli garen.",
@@ -641,7 +641,7 @@ const KOCHBUCH_DATA = {
       "ingredients": [
         "650 g Rindergeschnetzeltes",
         "1,5 kg Kartoffeln",
-        "600 ml Rinderbrühe",
+        "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 EL Senf",
         "grüner oder schwarzer Pfeffer",
         "1 Zwiebel"
@@ -747,7 +747,7 @@ const KOCHBUCH_DATA = {
         "Paniermehl",
         "2 Eier",
         "1,5 kg Kartoffeln",
-        "500 ml Brühe",
+        "500 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "Gewürze"
       ],
       "steps": [
@@ -884,7 +884,7 @@ const KOCHBUCH_DATA = {
         "400 g Reis",
         "1 Zwiebel",
         "3 Knoblauchzehen",
-        "500 ml Brühe",
+        "500 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "Sojasoße",
         "Brokkoli"
       ],
@@ -920,7 +920,7 @@ const KOCHBUCH_DATA = {
         "500 g Hähnchen optional",
         "80 g Parmesan",
         "4 Knoblauchzehen",
-        "500 ml Brühe",
+        "500 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "Brokkoli"
       ],
       "steps": [
@@ -988,7 +988,7 @@ const KOCHBUCH_DATA = {
         "600 g Hähnchen",
         "500 g Penne",
         "3 EL Senf",
-        "450 ml Brühe",
+        "450 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "1 Zwiebel",
         "Brokkoli"
       ],
@@ -1091,7 +1091,7 @@ const KOCHBUCH_DATA = {
       "ingredients": [
         "600 g Hähnchen",
         "400 g Reis",
-        "900 ml Brühe",
+        "900 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
         "500 g Brokkoli",
         "Gewürze",
         "80 g Käse optional"
@@ -1340,7 +1340,7 @@ const KOCHBUCH_DATA = {
       "protein": 42,
       "tags": ["Hackfleisch", "Meal-Prep", "ohne Tomaten"],
       "desc": "Saftige Hackbällchen in heller Soße mit Reis oder Kartoffeln.",
-      "ingredients": ["700 g Rinderhack", "400 g Reis", "1 Ei", "1 Zwiebel", "300 ml Rinderbrühe", "200 ml Kochsahne"],
+      "ingredients": ["700 g Rinderhack", "400 g Reis", "1 Ei", "1 Zwiebel", "300 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)", "200 ml Kochsahne"],
       "steps": ["Reis kochen.", "Hack mit Ei und Zwiebel zu Bällchen formen.", "Bällchen rundum braten.", "Mit Brühe und Kochsahne ablöschen und gar ziehen lassen."],
       "freeze": "Hackbällchen und Soße ja; Reis portionsweise mit einfrieren",
       "lowcarb": "Reis durch Brokkoli ersetzen.",
@@ -1430,7 +1430,7 @@ const KOCHBUCH_DATA = {
       "protein": 45,
       "tags": ["Schwein", "Rahmsoße", "Meal-Prep"],
       "desc": "Zartes Schweinegeschnetzeltes in milder Paprika-Rahmsoße mit Reis.",
-      "ingredients": ["700 g Schweinegeschnetzeltes", "400 g Reis", "2 Paprika", "1 Zwiebel", "200 ml Kochsahne", "300 ml Brühe"],
+      "ingredients": ["700 g Schweinegeschnetzeltes", "400 g Reis", "2 Paprika", "1 Zwiebel", "200 ml Kochsahne", "300 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"],
       "steps": ["Reis kochen.", "Fleisch portionsweise scharf anbraten.", "Zwiebel und Paprika mitgaren.", "Mit Brühe und Kochsahne cremig einkochen."],
       "freeze": "Ja",
       "lowcarb": "Reis reduzieren und eine zusätzliche Paprika einplanen.",
@@ -1484,7 +1484,7 @@ const KOCHBUCH_DATA = {
       "protein": 47,
       "tags": ["Hähnchen", "Spinat", "Meal-Prep"],
       "desc": "Saftiges Hähnchen, Reis und Blattspinat als unkomplizierte Ein-Pfannen-Mahlzeit.",
-      "ingredients": ["600 g Hähnchenbrust", "400 g Reis", "500 g TK-Blattspinat", "300 ml Hühnerbrühe", "1 Zwiebel"],
+      "ingredients": ["600 g Hähnchenbrust", "400 g Reis", "500 g TK-Blattspinat", "300 ml zubereitete Hühnerbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)", "1 Zwiebel"],
       "steps": ["Reis vorgaren.", "Hähnchen würfeln und anbraten.", "Zwiebel, Spinat und Brühe zufügen.", "Reis unterheben und abschmecken."],
       "freeze": "Ja, portionsweise bis 3 Monate",
       "lowcarb": "Reis halbieren und mehr Spinat verwenden.",
@@ -1557,7 +1557,7 @@ const KOCHBUCH_DATA = {
       "protein": 28,
       "tags": ["vegetarisch", "Linsen", "Meal-Prep"],
       "desc": "Sättigende Linsensoße; Tomaten können für eine Portion separat ergänzt werden.",
-      "ingredients": ["500 g Spaghetti", "300 g rote Linsen", "700 ml Gemüsebrühe", "2 Möhren", "2 Zwiebeln", "500 g passierte Tomaten optional"],
+      "ingredients": ["500 g Spaghetti", "300 g rote Linsen", "700 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)", "2 Möhren", "2 Zwiebeln", "500 g passierte Tomaten optional"],
       "steps": ["Zwiebeln und Möhren fein schneiden und anschwitzen.", "Linsen mit Brühe weich köcheln.", "Tomaten nur in den gewünschten Teil der Soße geben.", "Spaghetti kochen und mit der Soße servieren."],
       "freeze": "Soße sehr gut; Nudeln besser frisch oder nur kurz gegart einfrieren",
       "lowcarb": "Weniger Nudeln und eine größere Portion Linsensoße.",
@@ -1665,7 +1665,7 @@ const KOCHBUCH_DATA = {
       "protein": 19,
       "tags": ["vegetarisch", "günstig", "mild"],
       "desc": "Sanfte Reispfanne mit Erbsen, Möhren und einer kleinen Parmesanmenge.",
-      "ingredients": ["400 g Reis", "600 g Erbsen-Möhren-Gemüse", "700 ml Gemüsebrühe", "60 g Parmesan", "1 Zwiebel"],
+      "ingredients": ["400 g Reis", "600 g Erbsen-Möhren-Gemüse", "700 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)", "60 g Parmesan", "1 Zwiebel"],
       "steps": ["Zwiebel anschwitzen.", "Reis kurz mitrösten.", "Brühe und Gemüse zugeben und weich garen.", "Parmesan unterrühren."],
       "freeze": "Ja",
       "lowcarb": "Reismenge halbieren und Gemüsemenge erhöhen.",
@@ -1738,7 +1738,7 @@ const KOCHBUCH_DATA = {
       "protein": 44,
       "tags": ["Schwein", "Nudeln", "Pfanne"],
       "desc": "Zarte Schweinestreifen mit herzhaften Knoblauchnudeln und Brokkoli.",
-      "ingredients": ["700 g Schweinegeschnetzeltes", "500 g Nudeln", "500 g Brokkoli", "4 Knoblauchzehen", "300 ml Brühe"],
+      "ingredients": ["700 g Schweinegeschnetzeltes", "500 g Nudeln", "500 g Brokkoli", "4 Knoblauchzehen", "300 ml zubereitete Brühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"],
       "steps": ["Nudeln kochen und Brokkoli weich garen.", "Fleisch portionsweise scharf anbraten.", "Knoblauch und Brühe zufügen.", "Nudeln und Brokkoli unterheben."],
       "freeze": "Ja",
       "lowcarb": "Nudeln reduzieren und mehr Brokkoli und Fleisch verwenden.",
@@ -1865,7 +1865,7 @@ const KOCHBUCH_DATA = {
       "protein": 18,
       "tags": ["vegan", "Ofengemüse", "Meal-Prep"],
       "desc": "Würziges Ofengemüse mit lockerem Couscous und Zitronendressing.",
-      "ingredients": ["400 g Couscous", "3 Paprika", "2 Zucchini", "2 Zwiebeln", "500 ml Gemüsebrühe", "3 EL Olivenöl"],
+      "ingredients": ["400 g Couscous", "3 Paprika", "2 Zucchini", "2 Zwiebeln", "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)", "3 EL Olivenöl"],
       "steps": ["Gemüse würfeln und im Ofen rösten.", "Couscous mit heißer Brühe quellen lassen.", "Mit Zitronensaft und Öl abschmecken.", "Gemüse unterheben."],
       "freeze": "Ja",
       "lowcarb": "Couscous halbieren und mehr Ofengemüse verwenden.",

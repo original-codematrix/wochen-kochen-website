@@ -483,6 +483,33 @@ test('generateOfferPlan keeps a cheaper offer ahead of a public regular price', 
   assert.equal(plan.recommendation.confirmedRegularTotal, 0);
 });
 
+test('generateOfferPlan lists every concrete required ingredient instead of per-recipe remainder blocks', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'simple-pasta',
+      name: 'Einfache Nudeln',
+      cat: 'Nudeln',
+      cost: 8,
+      rating: 5,
+      servings: 2,
+      ingredients: ['500 g Nudeln', '2 Knoblauchzehen', '300 ml Gemüsebrühe', 'Salz', 'Parmesan optional']
+    }],
+    offers: [{ market: 'REWE Eching', name: 'ja! Spaghetti', price: 0.79, package: '500 g', status: 'offer' }],
+    basePlan: {},
+    now: new Date('2026-07-24T12:00:00+02:00')
+  });
+  const items = plan.shopping.flatMap(group => group.items);
+  const names = items.map(item => item.name);
+  const salt = items.find(item => item.name === 'Salz');
+
+  assert.equal(names.some(name => name.startsWith('Weitere Zutaten für')), false);
+  assert.equal(names.some(name => /Knoblauchzehen/i.test(name)), true);
+  assert.equal(names.some(name => /Gemüsebrühe/i.test(name)), true);
+  assert.equal(names.includes('Salz'), true);
+  assert.equal(names.some(name => /Parmesan/i.test(name)), false);
+  assert.equal(salt.price, null);
+});
+
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {
   const recipes = Array.from({ length: 12 }, (_, index) => ({
     id: `recipe-${index}`,

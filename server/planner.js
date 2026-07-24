@@ -161,10 +161,10 @@ function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
   const portionScale = 2 / (Number(recipe.servings) || 4);
   const ingredients = (recipe.ingredients || [])
     .filter(raw => !/\boptional\b/i.test(raw))
-    .map(raw => ({ raw, category: categoryFor(raw) }))
-    .filter(item => item.category);
+    .map(raw => ({ raw, category: categoryFor(raw) }));
   const matches = [];
   for (const ingredient of ingredients) {
+    if (!ingredient.category) continue;
     const offerCandidates = marketOffers
       .filter(offer => categoryFor(offer.name) === ingredient.category)
       .filter(offer => isOfferSuitable(ingredient.raw, ingredient.category, `${offer.name} ${offer.package || ''}`))
@@ -296,19 +296,20 @@ function buildShopping(selected, market) {
     }
     const matchedCategories = new Set(evaluation.matches.map(match => match.ingredient.category));
     for (const ingredient of evaluation.ingredients.filter(item => !matchedCategories.has(item.category))) {
-      const key = `${ingredient.category}|${ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:kg|g|ml|l|stück|packungen?)?\s*/i, '')}`;
+      const cleanName = ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:kg|g|ml|l|stück|packungen?)?\s*/i, '') || ingredient.raw;
+      const key = `${ingredient.category || 'uncategorized'}|${cleanName.toLocaleLowerCase('de-DE')}`;
       const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
       const existing = estimatedItems.get(key) || {
-        name: ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:kg|g|ml|l|stück|packungen?)?\s*/i, '') || ingredient.raw,
+        name: cleanName,
         rawQuantities: [],
         count: 0,
-        price: 0,
+        price: null,
         status: 'estimated',
         note: `Normalpreise bei ${market} am Regal prüfen`
       };
       existing.count += 1;
       existing.rawQuantities.push(ingredient.raw);
-      existing.price = roundMoney(existing.price + price);
+      if (price > 0) existing.price = roundMoney((existing.price || 0) + price);
       estimatedItems.set(key, existing);
     }
   }

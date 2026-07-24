@@ -105,10 +105,23 @@ Die Händler veröffentlichen nicht alle filialgenauen Normalpreise in derselben
 - letzter lokal bekannter Preis,
 - klar markierte Schätzung.
 
-Kochrelevante Eigenmarken werden einbezogen. Der Quellenstatus in der Oberfläche zeigt, wie viele Angebote der jeweilige Lauf maschinenlesbar erfassen konnte. Ein eingeschränkter Status wird niemals als vollständiger Preisvergleich ausgegeben.
+Kochrelevante Eigenmarken werden einbezogen. Der Quellenstatus in der Oberfläche zeigt, wie viele Angebote und wie viele der benötigten Normalpreise der jeweilige Lauf maschinenlesbar erfassen konnte. Ein eingeschränkter Status wird niemals als vollständiger Preisvergleich ausgegeben.
 
-## REWE-Livepreise
-Die Website enthält Richtpreise. Für echte Marktpreise muss `api/rewe-prices.js` über die Umgebungsvariable `PRICE_FEED_URL` an eine erlaubte JSON-Preisquelle angeschlossen werden. Erwartetes Format:
+### Gezielter öffentlicher Normalpreisabruf
+
+Nach der ersten Rezeptauswahl sucht der Wochenlauf ausschließlich nach den Zutaten dieser Gerichte auf den öffentlichen Seiten von REWE, EDEKA und Kaufland. Es wird kein vollständiges Sortiment gecrawlt und kein Kundenkonto benötigt. Händler veröffentlichen jedoch nicht für jedes Produkt einen filialgenauen Regalpreis; solche Positionen bleiben deshalb sichtbar als `geschätzt`.
+
+Bestätigte Treffer werden unter `runtime-data/regular-price-cache.json` gespeichert:
+
+- bis sieben Tage: `Normalpreis · öffentlich geprüft`
+- danach bis insgesamt 35 Tage: `zuletzt gesehen am …`
+- anschließend: keine weitere Verwendung; die Position wird wieder geschätzt
+
+Ein HTTP-Fehler oder eine Händlerprüfung stoppt den Angebotsplan nicht. Der bestehende Chrome-HTML-Import bleibt für Wochenangebote unverändert verfügbar. Der manuelle Knopf `Angebote neu laden` sowie `npm run refresh` starten beide den Angebotsabruf, die gezielte Normalpreissuche und anschließend die vollständige Neuberechnung.
+
+### Optionale eigene Preisquelle
+
+Zusätzlich kann `api/rewe-prices.js` über die Umgebungsvariable `PRICE_FEED_URL` an eine eigene erlaubte JSON-Preisquelle angeschlossen werden. Erwartetes Format:
 
 ```json
 {

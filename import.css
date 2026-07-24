@@ -28,6 +28,22 @@
   color: #087f8c;
 }
 
+.price-tag .price-type {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: .66rem;
+  font-weight: 650;
+}
+
+.price-tag.regular {
+  color: var(--green2);
+}
+
+.price-tag.stale-regular {
+  color: var(--accent);
+}
+
 @media (max-width: 900px) {
   .browser-import {
     align-items: flex-start;
