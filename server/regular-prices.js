@@ -1,5 +1,11 @@
 'use strict';
 
+const fs = require('node:fs');
+const path = require('node:path');
+
+const ROOT = path.resolve(__dirname, '..');
+const FRESH_MS = 7 * 24 * 60 * 60 * 1000;
+const STALE_MS = 35 * 24 * 60 * 60 * 1000;
 const FORBIDDEN = /\b(fisch|lachs|forelle|thun|kabeljau|seelachs|hering|matjes|makrele|sardine|dorade|zander|karpfen|pangasius|garnel|shrimp|scampi|hummer|muschel|auster|tintenfisch|calamari|oktopus|seafood|meeresfr|krabbe|surimi|anchovis|sardelle)\b/i;
 const OWN_BRAND = /\b(ja!|rewe beste wahl|rewe bio|gut\s*&\s*günstig|edeka herzstücke|edeka bio|k-classic|k-bio|k-purland)\b/i;
 const QUERY_RULES = [
@@ -34,6 +40,20 @@ const QUERY_RULES = [
   ['Möhren', /\b(möhre|karotte)\b/i],
   ['Paprika', /\bpaprika\b/i],
   ['Kokosmilch', /\bkokosmilch\b/i]
+];
+const PUBLIC_MARKETS = [
+  {
+    market: 'REWE Eching',
+    searchUrl: query => `https://www.rewe.de/shop/suche?search=${encodeURIComponent(query)}`
+  },
+  {
+    market: 'EDEKA Morsestraße',
+    searchUrl: query => `https://www.edeka.de/suche.jsp?searchstring=${encodeURIComponent(query)}`
+  },
+  {
+    market: 'Kaufland Lohhof',
+    searchUrl: query => `https://filiale.kaufland.de/suche.html?q=${encodeURIComponent(query)}`
+  }
 ];
 
 function decodeText(value) {
@@ -137,10 +157,125 @@ function chooseMatchingPrice(query, records) {
   })[0] || null;
 }
 
+function readCache(file, supplied) {
+  if (supplied) return supplied;
+  if (!file || !fs.existsSync(file)) return { updatedAt: null, records: [] };
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return { updatedAt: parsed.updatedAt || null, records: Array.isArray(parsed.records) ? parsed.records : [] };
+  } catch {
+    return { updatedAt: null, records: [] };
+  }
+}
+
+function ageAt(record, now) {
+  return now.getTime() - new Date(record.capturedAt).getTime();
+}
+
+async function defaultFetchHtml(url) {
+  const response = await fetch(url, {
+    headers: {
+      accept: 'text/html,application/xhtml+xml',
+      'accept-language': 'de-DE,de;q=0.9',
+      'user-agent': 'Mozilla/5.0 (compatible; Feierabend-Kochbuch/1.0)'
+    },
+    signal: AbortSignal.timeout(20000)
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.text();
+}
+
+async function mapConcurrent(items, limit, mapper) {
+  const results = new Array(items.length);
+  let cursor = 0;
+  async function worker() {
+    while (cursor < items.length) {
+      const index = cursor++;
+      results[index] = await mapper(items[index], index);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+async function fetchTargetedRegularPrices(options = {}) {
+  const queries = [...new Set((options.queries || []).map(String).filter(Boolean))].slice(0, 24);
+  const markets = options.markets || PUBLIC_MARKETS;
+  const now = options.now instanceof Date ? options.now : new Date(options.now || Date.now());
+  const dataDir = options.dataDir || (!options.cache ? process.env.DATA_DIR || path.join(ROOT, 'runtime-data') : null);
+  const cacheFile = dataDir ? path.join(dataDir, 'regular-price-cache.json') : null;
+  const cache = readCache(cacheFile, options.cache);
+  const fetchHtml = options.fetchHtml || defaultFetchHtml;
+  const work = markets.flatMap(market => queries.map(query => ({ ...market, query })));
+  const outcomes = await mapConcurrent(work, 3, async item => {
+    const cached = (cache.records || [])
+      .filter(record => record.market === item.market && record.query === item.query)
+      .sort((a, b) => new Date(b.capturedAt) - new Date(a.capturedAt))[0];
+    const age = cached ? ageAt(cached, now) : Infinity;
+    if (age >= 0 && age <= FRESH_MS) {
+      return { item, record: { ...cached, priceType: 'regular' }, state: 'cached-current', error: null };
+    }
+    try {
+      const sourceUrl = item.searchUrl(item.query);
+      const parsed = parsePublicProducts(await fetchHtml(sourceUrl), item.market, sourceUrl)
+        .map(record => ({ ...record, query: item.query, capturedAt: now.toISOString() }));
+      const record = chooseMatchingPrice(item.query, parsed);
+      if (record) return { item, record, state: 'current', error: null };
+      if (cached && age >= 0 && age <= STALE_MS) {
+        return { item, record: { ...cached, priceType: 'stale-regular' }, state: 'cached-stale', error: null };
+      }
+      return { item, record: null, state: 'limited', error: null };
+    } catch (error) {
+      if (cached && age >= 0 && age <= STALE_MS) {
+        return { item, record: { ...cached, priceType: 'stale-regular' }, state: 'cached-stale', error: error.message };
+      }
+      return { item, record: null, state: 'error', error: error.message };
+    }
+  });
+  const records = outcomes.flatMap(outcome => outcome.record ? [outcome.record] : []);
+  const coverage = markets.map(({ market }) => {
+    const relevant = outcomes.filter(outcome => outcome.item.market === market);
+    const states = new Set(relevant.map(outcome => outcome.state));
+    const status = states.has('current')
+      ? 'current'
+      : states.has('cached-current')
+        ? 'cached-current'
+        : states.has('cached-stale')
+          ? 'cached-stale'
+          : states.has('limited')
+            ? 'limited'
+            : 'error';
+    return {
+      market,
+      requested: relevant.length,
+      confirmed: relevant.filter(outcome => outcome.record).length,
+      stale: relevant.filter(outcome => outcome.record?.priceType === 'stale-regular').length,
+      status,
+      errors: relevant.filter(outcome => outcome.error).map(outcome => outcome.error)
+    };
+  });
+  if (cacheFile) {
+    const retained = (cache.records || []).filter(record => (
+      !work.some(item => item.market === record.market && item.query === record.query)
+      && ageAt(record, now) <= STALE_MS
+    ));
+    const storedRecords = records.map(record => (
+      record.priceType === 'stale-regular' ? { ...record, priceType: 'regular' } : record
+    ));
+    const payload = { updatedAt: now.toISOString(), records: retained.concat(storedRecords) };
+    fs.mkdirSync(dataDir, { recursive: true });
+    const temporary = `${cacheFile}.tmp`;
+    fs.writeFileSync(temporary, JSON.stringify(payload, null, 2));
+    fs.renameSync(temporary, cacheFile);
+  }
+  return { records, coverage };
+}
+
 module.exports = {
   collectNeededQueries,
   parsePublicProducts,
   chooseMatchingPrice,
-  queryFor
+  queryFor,
+  fetchTargetedRegularPrices,
+  PUBLIC_MARKETS
 };
-
