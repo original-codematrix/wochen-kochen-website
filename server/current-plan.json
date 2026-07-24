@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-07-24T12:30:00+02:00",
+  "title": "Einkaufsplan für Freitag, 24. Juli 2026",
+  "notice": "Heute einkaufen: Die verwendeten Kaufland-Angebote gelten mindestens bis Mittwoch, 29.07. EDEKA-Angebote enden Samstag, REWE zeigt die Woche 20.–26.07.",
+  "sources": [
+    {
+      "market": "Kaufland Lohhof",
+      "address": "Andreas-Danzer-Weg 2, 85716 Unterschleißheim",
+      "validFrom": "2026-07-23",
+      "validUntil": "2026-07-29",
+      "status": "current",
+      "coverage": "Veröffentlichte Wochenknüller und Prospekt",
+      "url": "https://filiale.kaufland.de/service/filiale.storeName%3DDE1820.html"
+    },
+    {
+      "market": "EDEKA Morsestraße",
+      "address": "Morsestraße 1, 85716 Unterschleißheim",
+      "validFrom": "2026-07-20",
+      "validUntil": "2026-07-25",
+      "status": "current-limited",
+      "coverage": "Öffentlich sichtbare Angebotsauswahl",
+      "url": "https://www.edeka.de/maerkte/234100/"
+    },
+    {
+      "market": "REWE Eching",
+      "address": "Schlesierstraße 4, 85386 Eching",
+      "validFrom": "2026-07-20",
+      "validUntil": "2026-07-26",
+      "status": "current-limited",
+      "coverage": "Öffentlich sichtbare Angebotsauswahl",
+      "url": "https://www.rewe.de/angebote/eching/440303/rewe-markt-schlesierstr-4/"
+    }
+  ],
+  "weekend": [
+    {
+      "day": "Heute · Fr 24.07.",
+      "recipeId": "frosta-evening",
+      "reason": "Zwei FRoSTA-Fertiggerichte ohne Fisch zu je 2,49 € als schneller Einkaufstag."
+    },
+    {
+      "day": "Sa 25.07.",
+      "recipeId": "mexico-pork",
+      "reason": "K-PURLAND Mexico-Nackensteaks 750 g für 4,49 €; reicht als Vier-Portionen-Gericht."
+    },
+    {
+      "day": "So 26.07.",
+      "recipeId": "mexico-pork",
+      "reason": "Zweite Portion vom Samstag; Sonntag ist kein zusätzlicher Einkauf nötig."
+    }
+  ],
+  "nextWeek": [
+    {
+      "day": "Mo 27.07.",
+      "recipeId": "garlic-pasta",
+      "reason": "Barilla Pasta kostet bei Kaufland 0,69 € je 500 g."
+    },
+    {
+      "day": "Di 28.07.",
+      "recipeId": "garlic-pasta",
+      "reason": "Restetag aus derselben Vier-Portionen-Zubereitung."
+    },
+    {
+      "day": "Mi 29.07.",
+      "recipeId": "beef-pasta",
+      "reason": "Zweite günstige Barilla-Packung; frisches Hack an der Theke bevorzugen, sofern der Kilopreis passt."
+    },
+    {
+      "day": "Do 30.07.",
+      "recipeId": "beef-pasta",
+      "reason": "Restetag; am Mittwoch vollständig durchgaren und gekühlt lagern."
+    },
+    {
+      "day": "Fr 31.07.",
+      "recipeId": "frosta-evening",
+      "reason": "Zwei FRoSTA-Fertiggerichte zu je 2,49 € als bewusst einfacher Freitag."
+    },
+    {
+      "day": "Sa 01.08.",
+      "recipeId": "sheet-pan",
+      "reason": "Die 5-kg-Angebotskartoffeln werden sinnvoll aufgebraucht; Hähnchen möglichst frisch von der Theke."
+    },
+    {
+      "day": "So 02.08.",
+      "recipeId": "sheet-pan",
+      "reason": "Zweite Portion vom Samstag."
+    }
+  ],
+  "recommendation": {
+    "mode": "single",
+    "market": "Kaufland Lohhof",
+    "estimatedTotal": 54.92,
+    "confirmedOfferTotal": 19.82,
+    "estimatedNormalPriceTotal": 35.1,
+    "summary": "Heute überwiegend bei Kaufland einkaufen. Die bestätigten, kochrelevanten Angebote sind dort deutlich stärker gebündelt; eine Aufteilung auf drei Märkte spart nach den öffentlich sichtbaren Daten keine belastbaren 20 €.",
+    "qualityNote": "Hähnchen und Hack zuerst an der Frischetheke nach Kilopreis und Herkunft prüfen. Bei übrigen Normalpreisartikeln K-Classic mit Markenware vergleichen und die günstigere gleichwertige Variante wählen. Fisch und Meeresfrüchte sind vollständig ausgeschlossen."
+  },
+  "shopping": [
+    {
+      "department": "Fleisch",
+      "items": [
+        {
+          "name": "K-PURLAND Schweinenackensteaks Mexico Style",
+          "quantity": "1 × 750 g",
+          "price": 4.49,
+          "status": "offer",
+          "note": "Angebot statt 5,99 €"
+        },
+        {
+          "name": "Hähnchenfleisch",
+          "quantity": "ca. 1,35 kg",
+          "price": 16.19,
+          "status": "estimated",
+          "note": "Frischetheke bevorzugen; kalkuliert mit ca. 11,99 €/kg"
+        },
+        {
+          "name": "Rinderhack oder gutes gemischtes Hack",
+          "quantity": "600 g",
+          "price": 6.59,
+          "status": "estimated",
+          "note": "Frischetheke bevorzugen; kalkuliert mit ca. 10,99 €/kg"
+        }
+      ]
+    },
+    {
+      "department": "Gemüse",
+      "items": [
+        {
+          "name": "Deutsche Speisefrühkartoffeln",
+          "quantity": "1 × 5 kg",
+          "price": 3.99,
+          "status": "offer",
+          "note": "Reicht für Wochenende und nächste Woche"
+        },
+        {
+          "name": "Brokkoli",
+          "quantity": "ca. 1,5 kg",
+          "price": 6.87,
+          "status": "estimated",
+          "note": "weich garen"
+        },
+        {
+          "name": "Gurke",
+          "quantity": "1 Stück",
+          "price": 0.99,
+          "status": "estimated",
+          "note": "für den Wochenendsalat"
+        },
+        {
+          "name": "Rispentomaten, lose",
+          "quantity": "ca. 500 g",
+          "price": 0.5,
+          "status": "offer",
+          "note": "0,99 €/kg; getrennt servieren"
+        },
+        {
+          "name": "Zwiebeln",
+          "quantity": "1 Netz",
+          "price": 1.49,
+          "status": "estimated",
+          "note": "Vorrat vorher prüfen; sonst günstige K-Classic-Variante"
+        },
+        {
+          "name": "Knoblauch",
+          "quantity": "1 Knolle",
+          "price": 1.29,
+          "status": "estimated",
+          "note": "Vorrat vorher prüfen"
+        }
+      ]
+    },
+    {
+      "department": "Nudeln & schnelle Küche",
+      "items": [
+        {
+          "name": "Barilla Classic Pasta",
+          "quantity": "2 × 500 g",
+          "price": 1.38,
+          "status": "offer",
+          "note": "0,69 € je Packung statt 1,99 €"
+        },
+        {
+          "name": "FRoSTA Fertiggericht",
+          "quantity": "4 × 450–500 g",
+          "price": 9.96,
+          "status": "offer",
+          "note": "2,49 € je Beutel; nur Sorten ohne Fisch"
+        },
+        {
+          "name": "Rinder- oder Hühnerbrühe",
+          "quantity": "1 Packung",
+          "price": 1.49,
+          "status": "estimated",
+          "note": "Vorrat vorher prüfen"
+        },
+        {
+          "name": "Senf, Öl und Gewürze",
+          "quantity": "nach Vorrat",
+          "price": 0,
+          "status": "pantry",
+          "note": "nur kaufen, wenn nicht vorhanden"
+        }
+      ]
+    }
+  ]
+}

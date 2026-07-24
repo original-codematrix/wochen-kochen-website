@@ -1,0 +1,18 @@
+{
+  "name": "feierabend-kochbuch",
+  "version": "4.0.0",
+  "private": true,
+  "description": "Selbst gehosteter angebotsbasierter Essens- und Einkaufsplan",
+  "scripts": {
+    "start": "node server.js",
+    "refresh": "node server/refresh.js",
+    "browser:setup": "node server/browser-setup.js",
+    "test": "node tests/structure.test.js && node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "playwright": "1.61.0"
+  }
+}

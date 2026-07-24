@@ -1,0 +1,15 @@
+services:
+  kochbuch:
+    build: .
+    init: true
+    ipc: host
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      DATA_DIR: /app/runtime-data
+      REFRESH_TOKEN: "${REFRESH_TOKEN}"
+      TZ: Europe/Berlin
+    volumes:
+      - ./runtime-data:/app/runtime-data

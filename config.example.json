@@ -1,0 +1,10 @@
+{
+  "timezone": "Europe/Berlin",
+  "splitSavingsThreshold": 20,
+  "exclude": ["Fisch", "Meeresfrüchte", "Garnelen", "Muscheln", "Tintenfisch", "Hummer"],
+  "markets": {
+    "rewe": { "postalCode": "85386", "marketId": "440303" },
+    "edeka": { "marketId": "234100" },
+    "kaufland": { "storeName": "DE1820" }
+  }
+}

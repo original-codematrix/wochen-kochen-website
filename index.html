@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Digitales Feierabend-Kochbuch mit 4-Wochen-Plan, Rezepten, Einkaufsliste, Meal-Prep und REWE-Preisimport für Eching.">
+  <meta name="theme-color" content="#173b2c">
+  <title>Unser Feierabend-Kochbuch</title>
+  <link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="import.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt</a>
+<header class="site-header">
+  <div class="brand"><span class="brand-mark">FK</span><div><strong>Feierabend-Kochbuch</strong><small>für euch zwei · Eching</small></div></div>
+  <div class="header-actions"><button id="themeToggle" class="icon-btn" aria-label="Farbschema wechseln">◐</button><button id="installBtn" class="btn compact" hidden>App installieren</button></div>
+</header>
+<section class="hero">
+  <div class="hero-copy"><span class="eyebrow">3 MÄRKTE · WOCHENANGEBOTE · 75 REZEPTE</span><h1>Lecker essen.<br><em>Günstiger einkaufen.</em></h1><p>Eine Seite für aktuelle Angebote, Essensplan, Vorräte und Einkaufsliste – optimiert für REWE Eching, EDEKA Morsestraße und Kaufland Lohhof.</p><div class="hero-actions"><button class="btn primary" data-view-target="plan">Aktuellen Sparplan öffnen</button><button class="btn ghost" data-view-target="recipes">Kochbuch ansehen</button></div></div>
+  <div class="hero-panel"><div class="market-pill">REWE · EDEKA · KAUFLAND</div><div class="hero-stats"><div><strong>3</strong><span>Märkte</span></div><div><strong id="heroRecipeCount">35</strong><span>Rezepte</span></div><div><strong>1</strong><span>Einkaufsstopp bevorzugt</span></div></div><p>Kein Fisch und keine Meeresfrüchte. Tomaten und Champignons getrennt, Brokkoli weich. Mehrere Märkte nur, wenn die Ersparnis den Umweg rechtfertigt.</p></div>
+</section>
+<nav class="main-nav" aria-label="Hauptnavigation"><button class="active" data-view="plan">Sparplan</button><button data-view="week">Vorlagen</button><button data-view="recipes">Kochbuch</button><button data-view="shopping">Einkauf</button><button data-view="prep">Meal-Prep</button><button data-view="settings">Einstellungen</button></nav>
+<main id="main">
+<section id="planView" class="view active">
+  <div class="section-head"><div><span class="eyebrow">HEUTE EINKAUFEN</span><h2>Aktueller Angebots-Sparplan</h2><p id="planNotice">Plan und Marktpreise werden geladen …</p></div><div class="button-row"><button id="rerollPlan" class="btn ghost">Rezepte neu würfeln</button><button id="runWeeklyPlan" class="btn primary">Angebote neu laden</button></div></div>
+  <aside class="preference-bar">
+    <label for="dietaryExclusions"><strong>Was soll nicht in den Plan?</strong><span>Kommagetrennt, zum Beispiel Milch, Pilze oder Schwein. „Milch“ schließt alle Milchprodukte ein.</span></label>
+    <input id="dietaryExclusions" type="text" placeholder="z. B. Milch, Pilze">
+    <button id="applyExclusions" class="btn primary">Vorgaben anwenden</button>
+  </aside>
+  <aside class="browser-import">
+    <div><strong>Wenn der Händler den Server blockiert:</strong><span>Angebotsseite im normalen Chrome öffnen, vollständig laden und mit Strg/⌘+S als „Webseite, nur HTML“ speichern. Die Datei hier auswählen.</span></div>
+    <div class="button-row">
+      <button id="importReweHtml" class="btn ghost">REWE-HTML</button>
+      <button id="importEdekaHtml" class="btn ghost">EDEKA-HTML</button>
+      <button id="importKauflandHtml" class="btn ghost">Kaufland-HTML</button>
+      <input id="retailerHtmlFile" type="file" accept=".html,.htm,text/html" hidden>
+    </div>
+  </aside>
+  <div id="sourceStatus" class="source-grid" aria-live="polite"></div>
+  <article id="marketRecommendation" class="market-recommendation"><p>Empfehlung wird geladen …</p></article>
+  <div class="plan-columns">
+    <section><div class="mini-head"><span class="eyebrow">KURZPLAN</span><h3>Heute bis Sonntag</h3></div><div id="weekendPlan" class="compact-plan"></div></section>
+    <section><div class="mini-head"><span class="eyebrow">FOLGEWOCHE</span><h3>Nächste Woche</h3></div><div id="nextWeekPlan" class="compact-plan"></div></section>
+  </div>
+  <section class="plan-shopping"><div class="mini-head"><span class="eyebrow">EIN MARKT · EIN WEG</span><h3>Einkaufsliste für heute</h3></div><div id="planShoppingGroups" class="shopping-groups"></div><p class="fineprint">Angebot = veröffentlichter Preis. Schätzung = öffentlich nicht vollständig verfügbarer Normalpreis; bitte am Regal beziehungsweise an der Frischetheke prüfen. Vorräte vorher abziehen.</p></section>
+</section>
+<section id="weekView" class="view"><div class="section-head"><div><span class="eyebrow">MONATSPLAN</span><h2 id="weekTitle">Woche 1</h2><p id="weekSubtitle"></p></div><div id="weekTabs" class="segmented"></div></div><div class="stats-grid"><article><span>Gerichte</span><strong id="weekDishCount">–</strong></article><article><span>Geschätzte Kosten</span><strong id="weekCost">–</strong></article><article><span>Aktive Kochzeit</span><strong id="weekCookTime">–</strong></article><article><span>Einkauf erledigt</span><strong id="weekProgress">0 %</strong></article></div><div id="dayGrid" class="day-grid"></div><article class="feature-card"><div><span class="eyebrow">SAMSTAG</span><h3>Mit 75 Minuten Vorbereitung wird die Woche deutlich entspannter.</h3><p>Reis vorkochen, Brokkoli weich garen, Fleisch marinieren und Soßen vormischen.</p></div><button class="btn ghost" data-view-target="prep">Prep-Plan öffnen</button></article></section>
+<section id="recipesView" class="view"><div class="section-head"><div><span class="eyebrow">DIGITALES KOCHBUCH</span><h2>Alle Rezepte</h2><p>Mit Zutaten, Zubereitung, Kosten, Nährwerten, Einfrierhinweisen und Low-Carb-Variante.</p></div></div><div class="toolbar"><label class="search"><span>⌕</span><input id="recipeSearch" type="search" placeholder="Gericht oder Zutat suchen"></label><select id="categoryFilter"><option value="all">Alle Kategorien</option></select><label class="check-toggle"><input id="favoritesOnly" type="checkbox"> Nur Favoriten</label></div><div id="recipeGrid" class="recipe-grid"></div></section>
+<section id="shoppingView" class="view"><div class="section-head"><div><span class="eyebrow">WOCHENVORLAGEN</span><h2>Einkaufsliste</h2><p>Automatisch aus der ausgewählten Vorlagenwoche erstellt. Der aktuelle angebotsbasierte Einkauf steht im Sparplan.</p></div><div class="button-row"><button id="refreshPrices" class="btn primary">Quellenstatus prüfen</button><button id="importPrices" class="btn ghost">Preis-JSON importieren</button><input id="priceFile" type="file" accept="application/json" hidden><button id="copyShopping" class="btn subtle">Kopieren</button><button id="printShopping" class="btn subtle">Drucken</button></div></div><div id="priceStatus" class="status"></div><div class="shopping-summary"><div><span>Ausgewählte Woche</span><strong id="shoppingWeekLabel">Woche 1</strong></div><div><span>Geschätzte Summe</span><strong id="shoppingTotal">–</strong></div><div><span>Abgehakt</span><strong id="shoppingDone">0 / 0</strong></div><button id="resetShopping" class="link danger">Zurücksetzen</button></div><div id="shoppingGroups" class="shopping-groups"></div><p class="fineprint">Diese Liste gehört zu den Rezeptvorlagen. Für den aktuellen Marktvergleich und bestätigte Angebote bitte den Sparplan verwenden.</p></section>
+<section id="prepView" class="view"><div class="section-head"><div><span class="eyebrow">DYNAMISCHE SAMSTAGSROUTINE</span><h2 id="prepTitle">Meal-Prep für euren Plan</h2><p id="prepSummary">Wird passend zum aktuellen Angebotsplan berechnet.</p></div><button id="resetPrep" class="btn subtle">Zurücksetzen</button></div><div class="prep-layout"><div id="prepTimeline" class="timeline"></div><aside class="aside-stack"><article class="info-card"><h3>Eure Küchenregeln</h3><ul><li>Tomaten separat für deine Freundin.</li><li>Champignons nur in einer Extra-Pfanne.</li><li>Brokkoli bewusst weich garen.</li><li>Low Carb: weniger Beilage, mehr Protein und Gemüse.</li><li>Maximal zwei Tage dasselbe Gericht.</li></ul></article><article class="info-card"><h3>Richtig einfrieren</h3><p>Gerichte vollständig abkühlen lassen, portionsweise beschriften und möglichst innerhalb von drei Monaten verbrauchen.</p></article></aside></div></section>
+<section id="settingsView" class="view"><div class="section-head"><div><span class="eyebrow">LOKALE EINSTELLUNGEN</span><h2>Einstellungen & Datensicherung</h2><p>Favoriten, Häkchen und Preisimporte bleiben in eurem Browser.</p></div></div><div class="settings-grid"><article class="info-card"><h3>Server & REWE-Markt</h3><label>Postleitzahl<input id="postalCode" value="85386"></label><label>Markt-ID<input id="marketId" value="440303"></label><label>Preis-Endpunkt<input id="priceEndpoint" value="/api/rewe-prices"></label><label>Aktualisierungs-Token<input id="refreshToken" type="password" autocomplete="off" placeholder="wie REFRESH_TOKEN auf dem Server"></label><button id="saveSettings" class="btn primary">Speichern</button></article><article class="info-card"><h3>Daten sichern</h3><p>Favoriten, Einkaufsstände und importierte Preise als JSON sichern.</p><div class="stack"><button id="exportData" class="btn ghost">Daten exportieren</button><button id="importData" class="btn subtle">Daten importieren</button><input id="dataFile" type="file" accept="application/json" hidden><button id="clearData" class="link danger">Alle lokalen Daten löschen</button></div></article><article class="info-card"><h3>Wochenlauf</h3><p>Der private Node-Server prüft REWE Eching, EDEKA Morsestraße und Kaufland Lohhof. Freitagabend und Samstagfrüh kann derselbe geschützte Aktualisierungslauf automatisch gestartet werden.</p></article></div></section>
+</main>
+<dialog id="recipeDialog"><button id="closeDialog" class="dialog-close" aria-label="Schließen">×</button><div id="dialogContent"></div></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<footer><div><strong>Unser Feierabend-Kochbuch</strong><span>Offline nutzbar · hostbar · lokal gespeichert</span></div><small>Angebote, Chrome-Importe und Schätzpreise werden eindeutig gekennzeichnet.</small></footer>
+<script src="data.js"></script><script src="app.js"></script>
+</body></html>

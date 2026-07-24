@@ -1,0 +1,42 @@
+.browser-import {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  margin: -10px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface2);
+}
+
+.browser-import > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.browser-import span {
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.source-card.error span {
+  color: var(--danger);
+}
+
+.price-tag.app-offer {
+  color: #087f8c;
+}
+
+@media (max-width: 900px) {
+  .browser-import {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .browser-import {
+    display: none !important;
+  }
+}

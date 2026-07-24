@@ -1,0 +1,13 @@
+.DS_Store
+.env
+node_modules/
+.worktrees/
+
+# Laufzeitdaten, importierte Händlerseiten und Browserprofile werden lokal erzeugt.
+runtime-data/
+
+# Test- und Diagnoseausgaben
+coverage/
+test-results/
+playwright-report/
+*.log
