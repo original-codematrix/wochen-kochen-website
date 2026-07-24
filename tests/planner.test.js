@@ -161,8 +161,10 @@ test('generateOfferPlan rejects prepared salads, milk rice and snack chips as in
     ],
     basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] }
   });
-  const names = plan.shopping.flatMap(group => group.items).map(item => item.name);
-  assert.deepEqual(names.filter(name => !name.startsWith('Weitere Zutaten')), []);
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+  assert.deepEqual(offeredNames, []);
 });
 
 test('generateOfferPlan ignores optional ingredients when choosing offers', () => {
@@ -417,6 +419,68 @@ test('generateOfferPlan exposes published regular prices and savings for matched
   assert.equal(item.savings, 1.3);
   assert.equal(plan.recommendation.publishedSavings > 0, true);
   assert.equal(plan.recommendation.normalPriceCoverage > 0, true);
+});
+
+test('generateOfferPlan uses a matching public regular price for a needed ingredient without an offer', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'spinach-pasta',
+      name: 'Spinatnudeln',
+      cat: 'Nudeln',
+      cost: 9,
+      rating: 5,
+      servings: 2,
+      ingredients: ['500 g Nudeln', '400 g TK-Spinat']
+    }],
+    offers: [{
+      market: 'REWE Eching',
+      name: 'ja! Spaghetti',
+      price: 0.79,
+      package: '500 g',
+      status: 'offer'
+    }],
+    regularPrices: [{
+      market: 'REWE Eching',
+      query: 'Spinat',
+      name: 'REWE Bio Blattspinat',
+      price: 1.49,
+      package: '450 g',
+      priceType: 'regular',
+      sourceUrl: 'https://www.rewe.de/shop/suche?search=Spinat',
+      capturedAt: '2026-07-24T12:00:00.000Z'
+    }],
+    basePlan: {},
+    now: new Date('2026-07-24T12:00:00+02:00')
+  });
+  const spinach = plan.shopping.flatMap(group => group.items).find(item => /Blattspinat/i.test(item.name));
+
+  assert.equal(spinach.status, 'regular');
+  assert.equal(spinach.price, 1.49);
+  assert.equal(spinach.sourceUrl, 'https://www.rewe.de/shop/suche?search=Spinat');
+  assert.equal(plan.recommendation.confirmedRegularTotal, 1.49);
+});
+
+test('generateOfferPlan keeps a cheaper offer ahead of a public regular price', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'pasta', name: 'Pasta', cat: 'Nudeln', cost: 8, rating: 5, servings: 2, ingredients: ['500 g Nudeln'] }],
+    offers: [{ market: 'REWE Eching', name: 'Barilla Nudeln', price: 0.69, package: '500 g', status: 'offer' }],
+    regularPrices: [{
+      market: 'REWE Eching',
+      query: 'Nudeln',
+      name: 'ja! Spaghetti',
+      price: 0.79,
+      package: '500 g',
+      priceType: 'regular',
+      capturedAt: '2026-07-24T12:00:00.000Z'
+    }],
+    basePlan: {},
+    now: new Date('2026-07-24T12:00:00+02:00')
+  });
+  const item = plan.shopping.flatMap(group => group.items).find(entry => entry.name === 'Barilla Nudeln');
+
+  assert.equal(item.status, 'offer');
+  assert.equal(plan.recommendation.confirmedOfferTotal, 0.69);
+  assert.equal(plan.recommendation.confirmedRegularTotal, 0);
 });
 
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {

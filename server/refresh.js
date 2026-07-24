@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { recipes } = require('../data');
 const { generateOfferPlan } = require('./planner');
+const { collectNeededQueries, fetchTargetedRegularPrices } = require('./regular-prices');
 
 const ROOT = path.resolve(__dirname, '..');
 const DEFAULT_PLAN = path.join(__dirname, 'current-plan.json');
@@ -379,10 +380,46 @@ async function refreshPlan(options = {}) {
     }),
     offerSnapshot: offers
   };
-  const plan = generateOfferPlan({
+  const draft = generateOfferPlan({
     recipes,
     offers,
     basePlan: refreshedBase,
+    now: options.now || new Date(),
+    variation: options.variation ?? 0,
+    excludedIngredients: options.excludedIngredients ?? base.preferences?.excludedIngredients
+  });
+  const queries = collectNeededQueries(draft, recipes);
+  const fetchRegularPrices = options.fetchRegularPrices || fetchTargetedRegularPrices;
+  let regularResult = { records: [], coverage: [] };
+  try {
+    regularResult = await fetchRegularPrices({
+      queries,
+      dataDir,
+      now: options.now || new Date(),
+      ...(options.fetchRegularHtml ? { fetchHtml: options.fetchRegularHtml } : {})
+    });
+  } catch {
+    // Öffentliche Normalpreise ergänzen den Angebotslauf, dürfen ihn aber nie blockieren.
+  }
+  const sourcesWithRegularCoverage = refreshedBase.sources.map(source => {
+    const coverage = regularResult.coverage.find(item => item.market === source.market);
+    if (!coverage) return { ...source, regularPriceCount: 0, regularPriceStatus: 'not-checked' };
+    return {
+      ...source,
+      regularPriceCount: coverage.confirmed,
+      regularPriceStatus: coverage.status,
+      coverage: `${source.coverage}; ${coverage.confirmed}/${coverage.requested} benötigte Normalpreise öffentlich gefunden`
+    };
+  });
+  const plan = generateOfferPlan({
+    recipes,
+    offers,
+    regularPrices: regularResult.records,
+    basePlan: {
+      ...refreshedBase,
+      sources: sourcesWithRegularCoverage,
+      regularPriceSnapshot: regularResult.records
+    },
     now: options.now || new Date(),
     variation: options.variation ?? 0,
     excludedIngredients: options.excludedIngredients ?? base.preferences?.excludedIngredients
@@ -402,6 +439,7 @@ function regeneratePlan(options = {}) {
   const plan = generateOfferPlan({
     recipes,
     offers: current.offerSnapshot || [],
+    regularPrices: current.regularPriceSnapshot || [],
     basePlan: current,
     now: options.now || new Date(),
     variation: options.variation ?? (Number(current.planRevision) || 0) + 1,

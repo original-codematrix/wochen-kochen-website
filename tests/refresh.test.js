@@ -13,7 +13,8 @@ const {
   applyBrowserCache,
   importOfferHtml,
   hydrateReweHtml,
-  looksLikeChallenge
+  looksLikeChallenge,
+  refreshPlan
 } = require('../server/refresh');
 
 test('parseKaufland reads product, package, current and previous price', () => {
@@ -214,4 +215,41 @@ test('looksLikeChallenge ignores Cloudflare script remnants after the offers are
     title: 'Just a moment...',
     bodyText: 'Verifying you are human'
   }), true);
+});
+
+test('refreshPlan requests regular prices only after selecting visible recipes', async () => {
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'kochbuch-refresh-prices-'));
+  let seenQueries = [];
+  try {
+    const plan = await refreshPlan({
+      dataDir,
+      planFile: path.join(__dirname, '..', 'server', 'current-plan.json'),
+      now: new Date('2026-07-24T12:00:00+02:00'),
+      fetchHtml: async url => url.includes('rewe.de')
+        ? '<h3>ja! Nudeln</h3><p>500 g</p><strong>0,79 €</strong>'
+        : '<main>keine maschinenlesbaren Angebote</main>',
+      fetchRegularPrices: async ({ queries }) => {
+        seenQueries = queries;
+        return {
+          records: [{
+            market: 'REWE Eching',
+            query: queries[0],
+            name: queries[0],
+            package: '500 g',
+            price: 1.49,
+            priceType: 'regular',
+            sourceUrl: 'https://example.test/public',
+            capturedAt: '2026-07-24T12:00:00.000Z'
+          }],
+          coverage: [{ market: 'REWE Eching', requested: queries.length, confirmed: 1, stale: 0, status: 'current', errors: [] }]
+        };
+      }
+    });
+
+    assert.equal(seenQueries.length > 0, true);
+    assert.equal(plan.regularPriceSnapshot.length, 1);
+    assert.equal(plan.sources.find(source => source.market === 'REWE Eching').regularPriceCount, 1);
+  } finally {
+    fs.rmSync(dataDir, { recursive: true, force: true });
+  }
 });

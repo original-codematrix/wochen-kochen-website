@@ -157,7 +157,7 @@ function isOfferSuitable(ingredient, category, offerName) {
   return true;
 }
 
-function evaluateRecipe(recipe, marketOffers) {
+function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
   const portionScale = 2 / (Number(recipe.servings) || 4);
   const ingredients = (recipe.ingredients || [])
     .filter(raw => !/\boptional\b/i.test(raw))
@@ -165,18 +165,30 @@ function evaluateRecipe(recipe, marketOffers) {
     .filter(item => item.category);
   const matches = [];
   for (const ingredient of ingredients) {
-    const candidates = marketOffers
+    const offerCandidates = marketOffers
       .filter(offer => categoryFor(offer.name) === ingredient.category)
       .filter(offer => isOfferSuitable(ingredient.raw, ingredient.category, `${offer.name} ${offer.package || ''}`))
       .map(offer => ({
         offer,
         ingredient,
+        sourceType: offer.status === 'app-offer' ? 'app-offer' : 'offer',
         cost: offerCost(offer, ingredient.raw, ingredient.category, portionScale),
         regularCost: Number(offer.previousPrice) > 0
           ? offerCost({ ...offer, price: offer.previousPrice }, ingredient.raw, ingredient.category, portionScale)
           : null
-      }))
-      .sort((a, b) => a.cost - b.cost);
+      }));
+    const regularCandidates = marketRegularPrices
+      .filter(record => categoryFor(`${record.query || ''} ${record.name || ''}`) === ingredient.category)
+      .filter(record => isOfferSuitable(ingredient.raw, ingredient.category, `${record.name} ${record.package || ''}`))
+      .map(record => ({
+        offer: record,
+        ingredient,
+        sourceType: record.priceType === 'stale-regular' ? 'stale-regular' : 'regular',
+        cost: offerCost(record, ingredient.raw, ingredient.category, portionScale),
+        regularCost: null
+      }));
+    const candidates = offerCandidates.concat(regularCandidates)
+      .sort((a, b) => a.cost - b.cost || Number(!/offer/.test(a.sourceType)) - Number(!/offer/.test(b.sourceType)));
     if (candidates[0]) matches.push(candidates[0]);
   }
   const uniqueMatches = [...new Map(matches.map(match => [match.ingredient.category, match])).values()];
@@ -187,6 +199,7 @@ function evaluateRecipe(recipe, marketOffers) {
   const estimatedCost = roundMoney(Math.max(scaledRecipeCost * 0.55, scaledRecipeCost - savings));
   return {
     recipe,
+    ingredients,
     matches: uniqueMatches,
     estimatedCost,
     rank: estimatedCost - uniqueMatches.length * 8 - (Number(recipe.rating) || 4) * 0.4
@@ -259,14 +272,14 @@ function reasonFor(evaluation, market, repeated = false) {
 }
 
 function buildShopping(selected, market) {
-  const offerItems = new Map();
+  const pricedItems = new Map();
   const estimatedItems = new Map();
   for (const evaluation of selected) {
-    let confirmed = 0;
     for (const match of evaluation.matches) {
-      const key = `${match.offer.name}|${match.offer.price}`;
-      const existing = offerItems.get(key) || {
+      const key = `${match.offer.name}|${match.offer.price}|${match.sourceType}`;
+      const existing = pricedItems.get(key) || {
         offer: match.offer,
+        sourceType: match.sourceType,
         count: 0,
         total: 0,
         regularTotal: 0,
@@ -279,21 +292,23 @@ function buildShopping(selected, market) {
         existing.regularTotal = roundMoney(existing.regularTotal + match.regularCost);
         existing.regularCount += 1;
       }
-      offerItems.set(key, existing);
-      confirmed += match.cost;
+      pricedItems.set(key, existing);
     }
-    const remainder = roundMoney(Math.max(0, evaluation.estimatedCost - confirmed));
-    if (remainder > 0) {
-      const key = evaluation.recipe.id;
+    const matchedCategories = new Set(evaluation.matches.map(match => match.ingredient.category));
+    for (const ingredient of evaluation.ingredients.filter(item => !matchedCategories.has(item.category))) {
+      const key = `${ingredient.category}|${ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:kg|g|ml|l|stück|packungen?)?\s*/i, '')}`;
+      const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
       const existing = estimatedItems.get(key) || {
-        name: `Weitere Zutaten für ${evaluation.recipe.name}`,
+        name: ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:kg|g|ml|l|stück|packungen?)?\s*/i, '') || ingredient.raw,
+        rawQuantities: [],
         count: 0,
         price: 0,
         status: 'estimated',
         note: `Normalpreise bei ${market} am Regal prüfen`
       };
       existing.count += 1;
-      existing.price = roundMoney(existing.price + remainder);
+      existing.rawQuantities.push(ingredient.raw);
+      existing.price = roundMoney(existing.price + price);
       estimatedItems.set(key, existing);
     }
   }
@@ -304,20 +319,31 @@ function buildShopping(selected, market) {
   };
   const groups = Object.entries(departments).map(([department, categories]) => ({
     department,
-    items: [...offerItems.values()].filter(item => categories.has(item.category)).map(item => {
+    items: [...pricedItems.values()].filter(item => categories.has(item.category)).map(item => {
       const regularPrice = item.regularCount === item.count ? item.regularTotal : null;
       const savings = regularPrice !== null ? roundMoney(Math.max(0, regularPrice - item.total)) : null;
+      const isPublicRegular = item.sourceType === 'regular' || item.sourceType === 'stale-regular';
+      const capturedLabel = item.offer.capturedAt
+        ? new Intl.DateTimeFormat('de-DE').format(new Date(item.offer.capturedAt))
+        : null;
       return {
         name: item.offer.name,
         quantity: `für ${item.count} Gericht${item.count === 1 ? '' : 'e'} · ${item.offer.package || 'Angebotspackung'}`,
         price: item.total,
         regularPrice,
         savings,
+        priceType: item.sourceType,
         referencePriceType: item.offer.referencePriceType || null,
-        status: item.offer.status === 'app-offer' ? 'app-offer' : 'offer',
-        note: regularPrice !== null
-          ? `${item.offer.status === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market} statt veröffentlichtem Vergleichspreis ${regularPrice.toFixed(2).replace('.', ',')} €`
-          : `${item.offer.status === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market}`
+        status: item.sourceType,
+        sourceUrl: item.offer.sourceUrl || null,
+        capturedAt: item.offer.capturedAt || null,
+        note: isPublicRegular
+          ? item.sourceType === 'stale-regular'
+            ? `Öffentlicher Preis bei ${market}, zuletzt gesehen am ${capturedLabel}`
+            : `Normalpreis bei ${market} öffentlich geprüft${capturedLabel ? ` am ${capturedLabel}` : ''}`
+          : regularPrice !== null
+            ? `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market} statt veröffentlichtem Vergleichspreis ${regularPrice.toFixed(2).replace('.', ',')} €`
+            : `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market}`
       };
     })
   })).filter(group => group.items.length);
@@ -325,7 +351,7 @@ function buildShopping(selected, market) {
     department: 'Weitere Zutaten',
     items: [...estimatedItems.values()].map(item => ({
       ...item,
-      quantity: `laut Rezept · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
+      quantity: `${[...new Set(item.rawQuantities)].join(' + ')} · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
     }))
   });
   return groups.filter(group => group.items.length);
@@ -417,7 +443,7 @@ function buildMealPrepPlan({ recipes, nextWeek }) {
   };
 }
 
-function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variation = 0, excludedIngredients }) {
+function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now = new Date(), variation = 0, excludedIngredients }) {
   const exclusions = normalizeExclusions(excludedIngredients ?? basePlan?.preferences?.excludedIngredients);
   const preferences = { ...(basePlan?.preferences || {}), excludedIngredients: exclusions };
   const allowedRecipes = recipes.filter(recipe => (
@@ -425,6 +451,7 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
     && !exclusions.some(exclusion => recipeMatchesExclusion(recipe, exclusion))
   ));
   const allowedOffers = offers.filter(offer => !FORBIDDEN.test(offer.name));
+  const allowedRegularPrices = regularPrices.filter(record => !FORBIDDEN.test(record.name));
   const markets = [...new Set(allowedOffers.map(offer => offer.market))];
   if (!allowedRecipes.length || !markets.length) return { ...basePlan, preferences, computedFromOffers: false };
   const sundayDistance = (7 - now.getDay()) % 7;
@@ -432,7 +459,12 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
   const visibleDayCount = weekendDayCount + 7;
   const marketPlans = markets.map(market => {
     const marketOffers = allowedOffers.filter(offer => offer.market === market);
-    const selected = rotatedSelection(allowedRecipes.map(recipe => evaluateRecipe(recipe, marketOffers)), variation, visibleDayCount);
+    const marketRegularPrices = allowedRegularPrices.filter(record => record.market === market);
+    const selected = rotatedSelection(
+      allowedRecipes.map(recipe => evaluateRecipe(recipe, marketOffers, marketRegularPrices)),
+      variation,
+      visibleDayCount
+    );
     const total = roundMoney(selected.reduce((sum, item) => {
       const confirmed = item.matches.reduce((matchSum, match) => matchSum + match.cost, 0);
       return sum + Math.max(item.estimatedCost, confirmed);
@@ -469,9 +501,17 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
     .map(day => best.selected.find(item => item.recipe.id === day.recipeId))
     .filter(Boolean);
   const confirmedOfferTotal = roundMoney(batches.reduce((sum, item) => (
-    sum + item.matches.reduce((matchSum, match) => matchSum + match.cost, 0)
+    sum + item.matches
+      .filter(match => match.sourceType === 'offer' || match.sourceType === 'app-offer')
+      .reduce((matchSum, match) => matchSum + match.cost, 0)
   ), 0));
-  const comparableMatches = batches.flatMap(item => item.matches).filter(match => match.regularCost !== null);
+  const confirmedRegularTotal = roundMoney(batches.reduce((sum, item) => (
+    sum + item.matches
+      .filter(match => match.sourceType === 'regular' || match.sourceType === 'stale-regular')
+      .reduce((matchSum, match) => matchSum + match.cost, 0)
+  ), 0));
+  const comparableMatches = batches.flatMap(item => item.matches)
+    .filter(match => (match.sourceType === 'offer' || match.sourceType === 'app-offer') && match.regularCost !== null);
   const publishedNormalPriceTotal = roundMoney(comparableMatches.reduce((sum, match) => sum + match.regularCost, 0));
   const comparableOfferTotal = roundMoney(comparableMatches.reduce((sum, match) => sum + match.cost, 0));
   const publishedSavings = roundMoney(Math.max(0, publishedNormalPriceTotal - comparableOfferTotal));
@@ -483,7 +523,7 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
   }, 0));
   const shopping = buildShopping(batches, best.market);
   const mealPrep = buildMealPrepPlan({ recipes: best.selected.map(item => item.recipe), nextWeek });
-  const estimatedNormalPriceTotal = roundMoney(Math.max(0, estimatedTotal - confirmedOfferTotal));
+  const estimatedNormalPriceTotal = roundMoney(Math.max(0, estimatedTotal - confirmedOfferTotal - confirmedRegularTotal));
   return {
     ...basePlan,
     preferences,
@@ -491,7 +531,7 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
     planRevision: Number(variation) || 0,
     generatedAt: new Date().toISOString(),
     title: `Neu berechneter Angebotsplan`,
-    notice: `Aus ${allowedOffers.length} erlaubten Angeboten neu berechnet; ${allowedOffers.filter(offer => Number(offer.previousPrice) > 0).length} veröffentlichte Vergleichspreise erkannt.${exclusions.length ? ` Ohne: ${exclusions.join(', ')}.` : ''} App-Preise sind gesondert gekennzeichnet.`,
+    notice: `Aus ${allowedOffers.length} erlaubten Angeboten neu berechnet; ${allowedOffers.filter(offer => Number(offer.previousPrice) > 0).length} veröffentlichte Vergleichspreise und ${allowedRegularPrices.length} gezielt geprüfte Produktpreise erkannt.${exclusions.length ? ` Ohne: ${exclusions.join(', ')}.` : ''} App-Preise sind gesondert gekennzeichnet.`,
     weekend,
     nextWeek,
     shopping,
@@ -501,6 +541,7 @@ function generateOfferPlan({ recipes, offers, basePlan, now = new Date(), variat
       market: best.market,
       estimatedTotal,
       confirmedOfferTotal,
+      confirmedRegularTotal,
       estimatedNormalPriceTotal,
       publishedNormalPriceTotal,
       publishedSavings,
