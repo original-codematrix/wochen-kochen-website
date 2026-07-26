@@ -539,6 +539,56 @@ test('generateOfferPlan lists every concrete required ingredient instead of per-
   assert.equal(salt.price, null);
 });
 
+test('generateOfferPlan keeps different ingredients from the same price category', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'two-cheeses',
+      name: 'Pasta mit zwei Käsen',
+      cat: 'Nudeln',
+      cost: 12,
+      rating: 5,
+      servings: 2,
+      ingredients: ['500 g Nudeln', '80 g Parmesan', '125 g Mozzarella']
+    }],
+    offers: [
+      { market: 'REWE Eching', name: 'ja! Spaghetti', price: 0.79, package: '500 g', status: 'offer' },
+      { market: 'REWE Eching', name: 'Parmesan', price: 2.49, package: '100 g', status: 'offer' }
+    ],
+    basePlan: {},
+    now: new Date('2026-07-26T12:00:00+02:00')
+  });
+  const names = plan.shopping.flatMap(group => group.items).map(item => item.name);
+
+  assert.equal(names.some(name => /Parmesan/i.test(name)), true);
+  assert.equal(names.some(name => /Mozzarella/i.test(name)), true);
+});
+
+test('generateOfferPlan assigns every required ingredient to exactly one shopping item', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'complete-pasta',
+      name: 'Vollständige Pasta',
+      cat: 'Nudeln',
+      cost: 12,
+      rating: 5,
+      servings: 2,
+      ingredients: ['500 g Nudeln', '80 g Parmesan', '2 Knoblauchzehen', 'Salz', 'Basilikum optional']
+    }],
+    offers: [
+      { market: 'REWE Eching', name: 'ja! Spaghetti', price: 0.79, package: '500 g', status: 'offer' },
+      { market: 'REWE Eching', name: 'Parmesan', price: 2.49, package: '100 g', status: 'offer' }
+    ],
+    basePlan: {},
+    now: new Date('2026-07-26T12:00:00+02:00')
+  });
+  const ingredientIds = plan.shopping
+    .flatMap(group => group.items)
+    .flatMap(item => item.ingredientIds || []);
+
+  assert.equal(ingredientIds.length, 4);
+  assert.equal(new Set(ingredientIds).size, 4);
+});
+
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {
   const recipes = Array.from({ length: 12 }, (_, index) => ({
     id: `recipe-${index}`,

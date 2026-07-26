@@ -175,8 +175,8 @@ function isOfferSuitable(ingredient, category, offerName) {
 function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
   const portionScale = 2 / (Number(recipe.servings) || 4);
   const ingredients = (recipe.ingredients || [])
-    .filter(raw => !/\boptional\b/i.test(raw))
-    .map(raw => ({ raw, category: categoryFor(raw) }));
+    .map((raw, index) => ({ id: `${recipe.id}:${index}`, raw, category: categoryFor(raw) }))
+    .filter(ingredient => !/\boptional\b/i.test(ingredient.raw));
   const matches = [];
   for (const ingredient of ingredients) {
     if (!ingredient.category) continue;
@@ -206,8 +206,7 @@ function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
       .sort((a, b) => a.cost - b.cost || Number(!/offer/.test(a.sourceType)) - Number(!/offer/.test(b.sourceType)));
     if (candidates[0]) matches.push(candidates[0]);
   }
-  const uniqueMatches = [...new Map(matches.map(match => [match.ingredient.category, match])).values()];
-  const savings = uniqueMatches.reduce((sum, match) => (
+  const savings = matches.reduce((sum, match) => (
     sum + Math.max(0, baselineCost(match.ingredient.raw, match.ingredient.category, portionScale) - match.cost)
   ), 0);
   const scaledRecipeCost = Number(recipe.cost) * portionScale;
@@ -215,9 +214,9 @@ function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
   return {
     recipe,
     ingredients,
-    matches: uniqueMatches,
+    matches,
     estimatedCost,
-    rank: estimatedCost - uniqueMatches.length * 8 - (Number(recipe.rating) || 4) * 0.4
+    rank: estimatedCost - matches.length * 8 - (Number(recipe.rating) || 4) * 0.4
   };
 }
 
@@ -289,18 +288,21 @@ function reasonFor(evaluation, market, repeated = false) {
 function buildShopping(selected, market) {
   const pricedItems = new Map();
   const estimatedItems = new Map();
-  for (const evaluation of selected) {
+  for (const [batchIndex, evaluation] of selected.entries()) {
+    const coverageId = ingredient => `${batchIndex}|${ingredient.id}`;
     for (const match of evaluation.matches) {
       const key = `${match.offer.name}|${match.offer.price}|${match.sourceType}`;
       const existing = pricedItems.get(key) || {
         offer: match.offer,
         sourceType: match.sourceType,
+        ingredientIds: [],
         count: 0,
         total: 0,
         regularTotal: 0,
         regularCount: 0,
         category: match.ingredient.category
       };
+      existing.ingredientIds.push(coverageId(match.ingredient));
       existing.count += 1;
       existing.total = roundMoney(existing.total + match.cost);
       if (match.regularCost !== null) {
@@ -309,19 +311,21 @@ function buildShopping(selected, market) {
       }
       pricedItems.set(key, existing);
     }
-    const matchedCategories = new Set(evaluation.matches.map(match => match.ingredient.category));
-    for (const ingredient of evaluation.ingredients.filter(item => !matchedCategories.has(item.category))) {
+    const matchedIngredientIds = new Set(evaluation.matches.map(match => coverageId(match.ingredient)));
+    for (const ingredient of evaluation.ingredients.filter(item => !matchedIngredientIds.has(coverageId(item)))) {
       const cleanName = ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:kg|g|ml|l|stück|packungen?)?\s*/i, '') || ingredient.raw;
       const key = `${ingredient.category || 'uncategorized'}|${cleanName.toLocaleLowerCase('de-DE')}`;
       const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
       const existing = estimatedItems.get(key) || {
         name: cleanName,
+        ingredientIds: [],
         rawQuantities: [],
         count: 0,
         price: null,
         status: 'estimated',
         note: `Normalpreise bei ${market} am Regal prüfen`
       };
+      existing.ingredientIds.push(coverageId(ingredient));
       existing.count += 1;
       existing.rawQuantities.push(ingredient.raw);
       if (price > 0) existing.price = roundMoney((existing.price || 0) + price);
@@ -344,6 +348,7 @@ function buildShopping(selected, market) {
         : null;
       return {
         name: item.offer.name,
+        ingredientIds: [...new Set(item.ingredientIds)],
         quantity: `für ${item.count} Gericht${item.count === 1 ? '' : 'e'} · ${item.offer.package || 'Angebotspackung'}`,
         price: item.total,
         regularPrice,
@@ -367,10 +372,25 @@ function buildShopping(selected, market) {
     department: 'Weitere Zutaten',
     items: [...estimatedItems.values()].map(item => ({
       ...item,
+      ingredientIds: [...new Set(item.ingredientIds)],
       quantity: `${[...new Set(item.rawQuantities)].join(' + ')} · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
     }))
   });
   return groups.filter(group => group.items.length);
+}
+
+function assertCompleteShopping(selected, shopping) {
+  const expected = selected.flatMap((evaluation, batchIndex) => (
+    evaluation.ingredients.map(ingredient => `${batchIndex}|${ingredient.id}`)
+  ));
+  const covered = shopping.flatMap(group => group.items).flatMap(item => item.ingredientIds || []);
+  if (
+    covered.length !== expected.length
+    || new Set(covered).size !== expected.length
+    || expected.some(id => !covered.includes(id))
+  ) {
+    throw new Error('Einkaufsliste unvollständig: Pflichtzutaten konnten nicht eindeutig zugeordnet werden');
+  }
 }
 
 function buildMealPrepPlan({ recipes, nextWeek }) {
@@ -538,6 +558,7 @@ function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now 
     return sum + Math.max(item.estimatedCost, confirmed);
   }, 0));
   const shopping = buildShopping(batches, best.market);
+  assertCompleteShopping(batches, shopping);
   const mealPrep = buildMealPrepPlan({ recipes: best.selected.map(item => item.recipe), nextWeek });
   const estimatedNormalPriceTotal = roundMoney(Math.max(0, estimatedTotal - confirmedOfferTotal - confirmedRegularTotal));
   return {
