@@ -1,5 +1,5 @@
-// Upgrade from kochbuch-v11 after adding targeted public price metadata.
-const CACHE = 'kochbuch-v12';
+// Upgrade from kochbuch-v12 after synchronizing both current shopping views.
+const CACHE = 'kochbuch-v13';
 const ASSETS = [
   './',
   './index.html',
