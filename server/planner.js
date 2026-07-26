@@ -136,14 +136,29 @@ function baselineCost(ingredient, category, portionScale = 1) {
   return roundMoney(config[2] * Math.max(1, needed.amount));
 }
 
+const MEAT_CATEGORIES = new Set(['chicken', 'beef', 'pork']);
+const MEAT_CUT_RULES = [
+  [/schnitzel/i, /schnitzel/i],
+  [/geschnetzel/i, /geschnetzel/i],
+  [/medaillon/i, /(medaillon|filet)/i],
+  [/filet/i, /filet/i],
+  [/hack/i, /hack/i],
+  [/nacken/i, /nacken/i],
+  [/steak/i, /steak/i],
+  [/braten/i, /braten/i]
+];
+
 function isOfferSuitable(ingredient, category, offerName) {
   const name = String(offerName);
+  if (MEAT_CATEGORIES.has(category)) {
+    const cutRule = MEAT_CUT_RULES.find(([ingredientPattern]) => ingredientPattern.test(String(ingredient)));
+    if (cutRule && !cutRule[1].test(name)) return false;
+  }
   if (category === 'chicken') {
     if (/(salat|aufschnitt|wurst|suppe|fertiggericht|ramen|wing|flügel|nugget|schenkel|keule)/i.test(name)) return false;
     if (/(burger|pattie)/i.test(ingredient) && !/(burger|pattie)/i.test(name)) return false;
   }
   if (category === 'rice' && /(milch\s*reis|pudding|dessert|waffel)/i.test(name)) return false;
-  if (category === 'pork' && /(nacken|steak)/i.test(ingredient) && !/(nacken|steak)/i.test(name)) return false;
   if (category === 'cheese' && /(chips|snack|soße|sauce)/i.test(name)) return false;
   if (category === 'pasta' && /(salat|fertiggericht|terrine|soße|sauce|spaghetteria|spinaci|ramen)/i.test(name)) return false;
   if (/spätzle/i.test(ingredient) && !/spätzle/i.test(name)) return false;

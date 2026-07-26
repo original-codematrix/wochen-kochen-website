@@ -84,8 +84,7 @@ test('generateOfferPlan creates an offer-backed shopping list and transparent to
       { name: 'Hähnchen-Brustfilet', package: 'je 100 g', price: 1.19, market: 'REWE Eching', status: 'offer' },
       { name: 'Barilla Pasta', package: '500 g', price: 0.69, market: 'REWE Eching', status: 'offer' }
     ],
-    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] },
-    now: new Date('2026-07-24T12:00:00+02:00')
+    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] }
   });
   assert.equal(plan.recommendation.market, 'REWE Eching');
   assert.ok(plan.recommendation.confirmedOfferTotal > 0);
@@ -101,7 +100,8 @@ test('generateOfferPlan does not substitute chicken wings for chicken breast', (
       { name: 'Hähnchen-Flügel', package: 'je 100g', price: 0.66, market: 'EDEKA Morsestraße', status: 'offer' },
       { name: 'De Cecco Pasta', package: 'je 500g Packung, (1kg=2.58)', price: 1.29, market: 'EDEKA Morsestraße', status: 'offer' }
     ],
-    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] }
+    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] },
+    now: new Date('2026-07-24T12:00:00+02:00')
   });
   const names = plan.shopping.flatMap(group => group.items).map(item => item.name);
   assert.equal(names.includes('Hähnchen-Flügel'), false);
@@ -241,7 +241,8 @@ test('generateOfferPlan favors category variety for the weekly cooking batches',
       { name: 'Basmati Reis', package: '500g', price: 1.49, market: 'REWE Eching', status: 'offer' },
       { name: 'Barilla Nudeln', package: '500g', price: 0.79, market: 'REWE Eching', status: 'offer' }
     ],
-    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] }
+    basePlan: { weekend: [], nextWeek: [], recommendation: {}, shopping: [] },
+    now: new Date('2026-07-24T12:00:00+02:00')
   });
   const selected = [...new Set(plan.nextWeek.map(day => day.recipeId))];
   assert.equal(selected.filter(id => id.startsWith('pizza-')).length, 1);
@@ -301,6 +302,34 @@ test('generateOfferPlan does not replace nacken steaks with shoulder roast', () 
   });
   const names = plan.shopping.flatMap(group => group.items).map(item => item.name);
   assert.equal(names.includes('Schweine-Schulter-Krustenbraten'), false);
+});
+
+test('generateOfferPlan does not replace pork schnitzel or strips with nacken steak', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'pork-cuts',
+      name: 'Schweinefleisch-Test',
+      cat: 'Fleischklassiker',
+      cost: 20,
+      rating: 5,
+      servings: 2,
+      ingredients: ['700 g Schweineschnitzel von der Frischetheke', '700 g Schweinegeschnetzeltes']
+    }],
+    offers: [{
+      name: 'K-PURLAND Schweinenackensteak Mexico Style',
+      package: '750 g',
+      price: 4.49,
+      market: 'Kaufland Lohhof',
+      status: 'offer'
+    }],
+    basePlan: {},
+    now: new Date('2026-07-26T12:00:00+02:00')
+  });
+  const items = plan.shopping.flatMap(group => group.items);
+
+  assert.equal(items.some(item => item.name === 'K-PURLAND Schweinenackensteak Mexico Style'), false);
+  assert.equal(items.some(item => /Schweineschnitzel/i.test(item.name)), true);
+  assert.equal(items.some(item => /Schweinegeschnetzeltes/i.test(item.name)), true);
 });
 
 test('generateOfferPlan prices every cooking batch across weekend and next week', () => {
