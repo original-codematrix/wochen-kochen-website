@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T10:43:31.853Z",
+  "generatedAt": "2026-07-26T12:02:47.402Z",
   "title": "Neu berechneter Angebotsplan",
   "notice": "Aus 499 erlaubten Angeboten neu berechnet; 49 veröffentlichte Vergleichspreise und 0 gezielt geprüfte Produktpreise erkannt. Ohne: Milch. App-Preise sind gesondert gekennzeichnet.",
   "sources": [
@@ -41,57 +41,57 @@
     {
       "day": "Heute · 26.07.",
       "recipeId": "garlic-oil-spinach-pasta",
-      "reason": "BARILLA Classic Pasta für 0,69 € sind passende Angebote bei Kaufland Lohhof."
+      "reason": "Bernbacher Die Guten Eiernudeln aus Bayern oder Bella Pasta für 0,75 € sind passende Angebote bei EDEKA Morsestraße."
     }
   ],
   "nextWeek": [
     {
       "day": "Mo 27.07.",
-      "recipeId": "potato-egg-skillet",
-      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
+      "recipeId": "spinach-rice-omelette",
+      "reason": "Ben‘s Original Express-Reis für 1,29 € und Eier aus Freilandhaltung für 3,49 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "Di 28.07.",
-      "recipeId": "spinach-rice-omelette",
-      "reason": "Geschmacklich starke Auswahl; fehlende Normalpreise werden transparent als Schätzung geführt."
+      "recipeId": "roast-vegetable-couscous",
+      "reason": "Spitzpaprika für 1,49 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "Mi 29.07.",
-      "recipeId": "roast-vegetable-couscous",
-      "reason": "Geschmacklich starke Auswahl; fehlende Normalpreise werden transparent als Schätzung geführt."
+      "recipeId": "potato-egg-skillet",
+      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € und Eier aus Freilandhaltung für 3,49 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "Do 30.07.",
       "recipeId": "schnitzel-potatoes",
-      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € und K-CLASSIC Gewürzgurken für 0,99 € sind passende Angebote bei Kaufland Lohhof."
+      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € und Eier aus Freilandhaltung für 3,49 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "Fr 31.07.",
       "recipeId": "wings",
-      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € und K-CLASSIC Gewürzgurken für 0,99 € sind passende Angebote bei Kaufland Lohhof."
+      "reason": "Hähnchen-Flügel* für 0,66 € und EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "Sa 01.08.",
-      "recipeId": "mexico-pork",
-      "reason": "K-PURLAND Schweinenackensteak Mexico Style für 4,49 € und Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
+      "recipeId": "beef-onion",
+      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € und Hackfleischspieße „Döner Art“* oder Cevapcici* für 1,19 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "So 02.08.",
-      "recipeId": "beef-onion",
-      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
+      "recipeId": "mexico-pork",
+      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € sind passende Angebote bei EDEKA Morsestraße."
     }
   ],
   "recommendation": {
     "mode": "single",
-    "market": "Kaufland Lohhof",
-    "estimatedTotal": 53.46,
-    "confirmedOfferTotal": 28.1,
+    "market": "EDEKA Morsestraße",
+    "estimatedTotal": 49.71,
+    "confirmedOfferTotal": 30.82,
     "confirmedRegularTotal": 0,
-    "estimatedNormalPriceTotal": 25.36,
-    "publishedNormalPriceTotal": 11.55,
-    "publishedSavings": 3.4,
-    "normalPriceCoverage": 50,
-    "summary": "Kaufland Lohhof bündelt die günstigste bewertete Kombination der neu ausgewählten Rezepte. Berechnet aus 499 aktuellen Angeboten; ein zusätzlicher Markt wird erst bei einer belastbaren Ersparnis um 20 € empfohlen.",
+    "estimatedNormalPriceTotal": 18.89,
+    "publishedNormalPriceTotal": 1.49,
+    "publishedSavings": 0.2,
+    "normalPriceCoverage": 8,
+    "summary": "EDEKA Morsestraße bündelt die günstigste bewertete Kombination der neu ausgewählten Rezepte. Berechnet aus 499 aktuellen Angeboten; ein zusätzlicher Markt wird erst bei einer belastbaren Ersparnis um 20 € empfohlen.",
     "qualityNote": "Geschmack und Rezeptbewertungen fließen mit ein. Frischetheke bevorzugen, App-Preise nur mit aktivierter Händler-App nutzen; Fisch und Meeresfrüchte bleiben ausgeschlossen."
   },
   "shopping": [
@@ -99,53 +99,12 @@
       "department": "Fleisch",
       "items": [
         {
-          "name": "K-PURLAND Schweinenackensteak Mexico Style",
+          "name": "Hähnchen-Flügel*",
           "ingredientIds": [
-            "6|mexico-pork:0"
+            "5|wings:0"
           ],
-          "quantity": "für 1 Gericht · je 750-g-Packg.",
-          "price": 4.49,
-          "regularPrice": 5.99,
-          "savings": 1.5,
-          "priceType": "offer",
-          "referencePriceType": null,
-          "status": "offer",
-          "sourceUrl": null,
-          "capturedAt": null,
-          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 5,99 €"
-        }
-      ]
-    },
-    {
-      "department": "Beilagen & Gemüse",
-      "items": [
-        {
-          "name": "BARILLA Classic Pasta",
-          "ingredientIds": [
-            "0|garlic-oil-spinach-pasta:0"
-          ],
-          "quantity": "für 1 Gericht · je 500-g-Packg.",
-          "price": 0.69,
-          "regularPrice": 1.99,
-          "savings": 1.3,
-          "priceType": "offer",
-          "referencePriceType": null,
-          "status": "offer",
-          "sourceUrl": null,
-          "capturedAt": null,
-          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 1,99 €"
-        },
-        {
-          "name": "Dtsch. Speisefrühkartoffeln XXL",
-          "ingredientIds": [
-            "1|potato-egg-skillet:0",
-            "4|schnitzel-potatoes:1",
-            "5|wings:1",
-            "6|mexico-pork:1",
-            "7|beef-onion:1"
-          ],
-          "quantity": "für 5 Gerichte · je 5-kg-Sack",
-          "price": 19.95,
+          "quantity": "für 1 Gericht · natur oder mariniert, proteinreich, HKL A, Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
+          "price": 3.3,
           "regularPrice": null,
           "savings": null,
           "priceType": "offer",
@@ -153,25 +112,119 @@
           "status": "offer",
           "sourceUrl": null,
           "capturedAt": null,
-          "note": "Angebot bei Kaufland Lohhof"
+          "note": "Angebot bei EDEKA Morsestraße"
         },
         {
-          "name": "K-CLASSIC Gewürzgurken",
+          "name": "Hackfleischspieße „Döner Art“* oder Cevapcici*",
           "ingredientIds": [
-            "4|schnitzel-potatoes:2",
-            "5|wings:4",
-            "6|mexico-pork:2"
+            "6|beef-onion:3"
           ],
-          "quantity": "für 3 Gerichte · je 670-g-Glas",
-          "price": 2.97,
-          "regularPrice": 3.57,
-          "savings": 0.6,
+          "quantity": "für 1 Gericht · aus Schweine- und Rindfleisch, küchenfertig gewürzt, *nicht in allen Märkten erhältlich, je 100g",
+          "price": 3.57,
+          "regularPrice": null,
+          "savings": null,
           "priceType": "offer",
           "referencePriceType": null,
           "status": "offer",
           "sourceUrl": null,
           "capturedAt": null,
-          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 3,57 €"
+          "note": "Angebot bei EDEKA Morsestraße"
+        }
+      ]
+    },
+    {
+      "department": "Beilagen & Gemüse",
+      "items": [
+        {
+          "name": "Bernbacher Die Guten Eiernudeln aus Bayern oder Bella Pasta",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:0"
+          ],
+          "quantity": "für 1 Gericht · aus 100% Hartweizengrieß, Wochenend-Knüller, gültig von Do-Sa!, je 250g Beutel, (1kg=3.00)",
+          "price": 0.75,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
+        },
+        {
+          "name": "Ben‘s Original Express-Reis",
+          "ingredientIds": [
+            "1|spinach-rice-omelette:0"
+          ],
+          "quantity": "für 1 Gericht · je 220g Beutel, (1kg=6.77)",
+          "price": 1.29,
+          "regularPrice": 1.49,
+          "savings": 0.2,
+          "priceType": "app-offer",
+          "referencePriceType": null,
+          "status": "app-offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "App-Angebot bei EDEKA Morsestraße statt veröffentlichtem Vergleichspreis 1,49 €"
+        },
+        {
+          "name": "Spitzpaprika",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:1"
+          ],
+          "quantity": "für 1 Gericht · rot, aus Marokko/Spanien, Kl. I, Wochenend-Knüller, gültig von Do-Sa!, 500g Packung, (1kg=2.98)",
+          "price": 1.49,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
+        },
+        {
+          "name": "EDEKA Bio Bio-Speisefrühkartoffeln",
+          "ingredientIds": [
+            "3|potato-egg-skillet:0",
+            "4|schnitzel-potatoes:1",
+            "5|wings:1",
+            "6|beef-onion:1",
+            "7|mexico-pork:1"
+          ],
+          "quantity": "für 5 Gerichte · vorwiegend festkochend oder festkochend, aus Deutschland, je 1,5kg Packung, (1kg=1.33)",
+          "price": 9.95,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
+        }
+      ]
+    },
+    {
+      "department": "Kühlung & schnelle Küche",
+      "items": [
+        {
+          "name": "Eier aus Freilandhaltung",
+          "ingredientIds": [
+            "1|spinach-rice-omelette:2",
+            "3|potato-egg-skillet:1",
+            "4|schnitzel-potatoes:3"
+          ],
+          "quantity": "für 3 Gerichte · Größe M/L, aus Bayern, 2 Stück mehr Inhalt!, 12er Packung, (Stück=0.29)",
+          "price": 10.47,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
         }
       ]
     },
@@ -182,18 +235,18 @@
           "name": "TK-Blattspinat",
           "ingredientIds": [
             "0|garlic-oil-spinach-pasta:1",
-            "1|potato-egg-skillet:2",
-            "2|spinach-rice-omelette:1"
+            "1|spinach-rice-omelette:1",
+            "3|potato-egg-skillet:2"
           ],
           "rawQuantities": [
             "600 g TK-Blattspinat",
-            "500 g TK-Blattspinat",
-            "600 g TK-Blattspinat"
+            "600 g TK-Blattspinat",
+            "500 g TK-Blattspinat"
           ],
           "count": 3,
           "price": 2.98,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "600 g TK-Blattspinat + 500 g TK-Blattspinat · 3 Kochblocke"
         },
         {
@@ -207,14 +260,14 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "5 Knoblauchzehen · 1 Kochblock"
         },
         {
           "name": "EL Olivenöl",
           "ingredientIds": [
             "0|garlic-oil-spinach-pasta:3",
-            "3|roast-vegetable-couscous:5"
+            "2|roast-vegetable-couscous:5"
           ],
           "rawQuantities": [
             "4 EL Olivenöl",
@@ -223,7 +276,7 @@
           "count": 2,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "4 EL Olivenöl + 3 EL Olivenöl · 2 Kochblocke"
         },
         {
@@ -237,32 +290,14 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "1 Zitrone · 1 Kochblock"
-        },
-        {
-          "name": "Eier",
-          "ingredientIds": [
-            "1|potato-egg-skillet:1",
-            "2|spinach-rice-omelette:2",
-            "4|schnitzel-potatoes:3"
-          ],
-          "rawQuantities": [
-            "8 Eier",
-            "8 Eier",
-            "2 Eier"
-          ],
-          "count": 3,
-          "price": 9,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "8 Eier + 2 Eier · 3 Kochblocke"
         },
         {
           "name": "Zwiebel",
           "ingredientIds": [
-            "1|potato-egg-skillet:3",
-            "2|spinach-rice-omelette:3"
+            "1|spinach-rice-omelette:3",
+            "3|potato-egg-skillet:3"
           ],
           "rawQuantities": [
             "1 Zwiebel",
@@ -271,15 +306,87 @@
           "count": 2,
           "price": 4,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "1 Zwiebel · 2 Kochblocke"
+        },
+        {
+          "name": "Sojasoße",
+          "ingredientIds": [
+            "1|spinach-rice-omelette:4"
+          ],
+          "rawQuantities": [
+            "50 ml Sojasoße"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "50 ml Sojasoße · 1 Kochblock"
+        },
+        {
+          "name": "Couscous",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:0"
+          ],
+          "rawQuantities": [
+            "400 g Couscous"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "400 g Couscous · 1 Kochblock"
+        },
+        {
+          "name": "Zucchini",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:2"
+          ],
+          "rawQuantities": [
+            "2 Zucchini"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "2 Zucchini · 1 Kochblock"
+        },
+        {
+          "name": "Zwiebeln",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:3",
+            "6|beef-onion:2"
+          ],
+          "rawQuantities": [
+            "2 Zwiebeln",
+            "3 Zwiebeln"
+          ],
+          "count": 2,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "2 Zwiebeln + 3 Zwiebeln · 2 Kochblocke"
+        },
+        {
+          "name": "zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:4"
+          ],
+          "rawQuantities": [
+            "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
         },
         {
           "name": "EL Öl",
           "ingredientIds": [
-            "1|potato-egg-skillet:4",
+            "3|potato-egg-skillet:4",
             "4|schnitzel-potatoes:5",
-            "6|mexico-pork:4"
+            "7|mexico-pork:4"
           ],
           "rawQuantities": [
             "2 EL Öl",
@@ -289,108 +396,8 @@
           "count": 3,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "2 EL Öl · 3 Kochblocke"
-        },
-        {
-          "name": "Reis",
-          "ingredientIds": [
-            "2|spinach-rice-omelette:0"
-          ],
-          "rawQuantities": [
-            "400 g Reis"
-          ],
-          "count": 1,
-          "price": 0.6,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "400 g Reis · 1 Kochblock"
-        },
-        {
-          "name": "Sojasoße",
-          "ingredientIds": [
-            "2|spinach-rice-omelette:4"
-          ],
-          "rawQuantities": [
-            "50 ml Sojasoße"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "50 ml Sojasoße · 1 Kochblock"
-        },
-        {
-          "name": "Couscous",
-          "ingredientIds": [
-            "3|roast-vegetable-couscous:0"
-          ],
-          "rawQuantities": [
-            "400 g Couscous"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "400 g Couscous · 1 Kochblock"
-        },
-        {
-          "name": "Paprika",
-          "ingredientIds": [
-            "3|roast-vegetable-couscous:1"
-          ],
-          "rawQuantities": [
-            "3 Paprika"
-          ],
-          "count": 1,
-          "price": 4,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "3 Paprika · 1 Kochblock"
-        },
-        {
-          "name": "Zucchini",
-          "ingredientIds": [
-            "3|roast-vegetable-couscous:2"
-          ],
-          "rawQuantities": [
-            "2 Zucchini"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "2 Zucchini · 1 Kochblock"
-        },
-        {
-          "name": "Zwiebeln",
-          "ingredientIds": [
-            "3|roast-vegetable-couscous:3",
-            "7|beef-onion:2"
-          ],
-          "rawQuantities": [
-            "2 Zwiebeln",
-            "3 Zwiebeln"
-          ],
-          "count": 2,
-          "price": 4,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "2 Zwiebeln + 3 Zwiebeln · 2 Kochblocke"
-        },
-        {
-          "name": "zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
-          "ingredientIds": [
-            "3|roast-vegetable-couscous:4"
-          ],
-          "rawQuantities": [
-            "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
         },
         {
           "name": "Schweineschnitzel von der Frischetheke",
@@ -403,8 +410,26 @@
           "count": 1,
           "price": 3.15,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "700 g Schweineschnitzel von der Frischetheke · 1 Kochblock"
+        },
+        {
+          "name": "Gurke",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:2",
+            "5|wings:4",
+            "7|mexico-pork:2"
+          ],
+          "rawQuantities": [
+            "1 Gurke",
+            "Gurke",
+            "1 Gurke"
+          ],
+          "count": 3,
+          "price": 1,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "1 Gurke + Gurke · 3 Kochblocke"
         },
         {
           "name": "Paniermehl",
@@ -417,22 +442,8 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "150 g Paniermehl · 1 Kochblock"
-        },
-        {
-          "name": "Chicken Wings",
-          "ingredientIds": [
-            "5|wings:0"
-          ],
-          "rawQuantities": [
-            "1 kg Chicken Wings"
-          ],
-          "count": 1,
-          "price": 4,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "1 kg Chicken Wings · 1 Kochblock"
         },
         {
           "name": "BBQ-Soße",
@@ -445,7 +456,7 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "BBQ-Soße · 1 Kochblock"
         },
         {
@@ -459,13 +470,13 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "Knoblauchdip · 1 Kochblock"
         },
         {
           "name": "Rindergeschnetzeltes",
           "ingredientIds": [
-            "7|beef-onion:0"
+            "6|beef-onion:0"
           ],
           "rawQuantities": [
             "650 g Rindergeschnetzeltes"
@@ -473,27 +484,13 @@
           "count": 1,
           "price": 4.22,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "650 g Rindergeschnetzeltes · 1 Kochblock"
-        },
-        {
-          "name": "zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
-          "ingredientIds": [
-            "7|beef-onion:3"
-          ],
-          "rawQuantities": [
-            "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
-          ],
-          "count": 1,
-          "price": 3.9,
-          "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
-          "quantity": "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
         },
         {
           "name": "EL Senf",
           "ingredientIds": [
-            "7|beef-onion:4"
+            "6|beef-onion:4"
           ],
           "rawQuantities": [
             "1 EL Senf"
@@ -501,13 +498,13 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "1 EL Senf · 1 Kochblock"
         },
         {
           "name": "TL Stärke",
           "ingredientIds": [
-            "7|beef-onion:5"
+            "6|beef-onion:5"
           ],
           "rawQuantities": [
             "1 TL Stärke"
@@ -515,8 +512,22 @@
           "count": 1,
           "price": null,
           "status": "estimated",
-          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "1 TL Stärke · 1 Kochblock"
+        },
+        {
+          "name": "Schweinenackensteaks Mexico Style",
+          "ingredientIds": [
+            "7|mexico-pork:0"
+          ],
+          "rawQuantities": [
+            "750 g Schweinenackensteaks Mexico Style"
+          ],
+          "count": 1,
+          "price": 3.37,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "750 g Schweinenackensteaks Mexico Style · 1 Kochblock"
         }
       ]
     }
@@ -4533,23 +4544,11 @@
     "freshCount": 5,
     "batches": [
       {
-        "recipeId": "potato-egg-skillet",
-        "name": "Kartoffel-Ei-Pfanne mit Spinat",
-        "day": "Mo 27.07.",
-        "storage": "Kühlschrank",
-        "instruction": "Kartoffeln würfeln und vorgaren. Mit Zwiebeln goldbraun braten. Spinat unterheben. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
-        "cookTime": 30,
-        "firstSteps": [
-          "Kartoffeln würfeln und vorgaren.",
-          "Mit Zwiebeln goldbraun braten."
-        ]
-      },
-      {
         "recipeId": "spinach-rice-omelette",
         "name": "Spinat-Reis mit Omelettstreifen",
-        "day": "Di 28.07.",
-        "storage": "Teilweise einfrieren",
-        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Di 28.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "day": "Mo 27.07.",
+        "storage": "Kühlschrank",
+        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Eier zu dünnen Omeletts braten. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
         "cookTime": 25,
         "firstSteps": [
           "Reis kochen.",
@@ -4559,13 +4558,25 @@
       {
         "recipeId": "roast-vegetable-couscous",
         "name": "Ofengemüse mit Couscous",
-        "day": "Mi 29.07.",
+        "day": "Di 28.07.",
         "storage": "Gefrierschrank",
-        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Mi 29.07. im Kühlschrank auftauen.",
+        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
         "cookTime": 35,
         "firstSteps": [
           "Gemüse würfeln und im Ofen rösten.",
           "Couscous mit heißer Brühe quellen lassen."
+        ]
+      },
+      {
+        "recipeId": "potato-egg-skillet",
+        "name": "Kartoffel-Ei-Pfanne mit Spinat",
+        "day": "Mi 29.07.",
+        "storage": "Teilweise einfrieren",
+        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Mi 29.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
+        "cookTime": 30,
+        "firstSteps": [
+          "Kartoffeln würfeln und vorgaren.",
+          "Mit Zwiebeln goldbraun braten."
         ]
       },
       {
@@ -4593,51 +4604,51 @@
         ]
       },
       {
-        "recipeId": "mexico-pork",
-        "name": "Mexico-Steaks mit Ofenkartoffeln",
-        "day": "Sa 01.08.",
-        "storage": "Teilweise einfrieren",
-        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
-        "cookTime": 12,
-        "firstSteps": [
-          "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen.",
-          "Steaks in Pfanne oder Grill kräftig braten und kurz ruhen lassen."
-        ]
-      },
-      {
         "recipeId": "beef-onion",
         "name": "Rindergeschnetzeltes in Zwiebelsoße",
-        "day": "So 02.08.",
+        "day": "Sa 01.08.",
         "storage": "Gefrierschrank",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Sa 01.08. im Kühlschrank auftauen.",
         "cookTime": 35,
         "firstSteps": [
           "Kartoffeln kochen.",
           "Rind portionsweise scharf anbraten und herausnehmen."
         ]
+      },
+      {
+        "recipeId": "mexico-pork",
+        "name": "Mexico-Steaks mit Ofenkartoffeln",
+        "day": "So 02.08.",
+        "storage": "Teilweise einfrieren",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von So 02.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "cookTime": 12,
+        "firstSteps": [
+          "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen.",
+          "Steaks in Pfanne oder Grill kräftig braten und kurz ruhen lassen."
+        ]
       }
     ],
     "steps": [
       {
-        "time": "0–20 Min.",
-        "title": "Kartoffel-Ei-Pfanne mit Spinat",
-        "instruction": "Kartoffeln würfeln und vorgaren. Mit Zwiebeln goldbraun braten. Spinat unterheben. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
-        "storage": "Kühlschrank",
-        "recipeId": "potato-egg-skillet"
-      },
-      {
-        "time": "20–36 Min.",
+        "time": "0–16 Min.",
         "title": "Spinat-Reis mit Omelettstreifen",
-        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Di 28.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
-        "storage": "Teilweise einfrieren",
+        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Eier zu dünnen Omeletts braten. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "storage": "Kühlschrank",
         "recipeId": "spinach-rice-omelette"
       },
       {
-        "time": "36–59 Min.",
+        "time": "16–39 Min.",
         "title": "Ofengemüse mit Couscous",
-        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Mi 29.07. im Kühlschrank auftauen.",
+        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
         "storage": "Gefrierschrank",
         "recipeId": "roast-vegetable-couscous"
+      },
+      {
+        "time": "39–59 Min.",
+        "title": "Kartoffel-Ei-Pfanne mit Spinat",
+        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Mi 29.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
+        "storage": "Teilweise einfrieren",
+        "recipeId": "potato-egg-skillet"
       },
       {
         "time": "59–69 Min.",
@@ -4654,18 +4665,18 @@
         "recipeId": "wings"
       },
       {
-        "time": "79–89 Min.",
-        "title": "Mexico-Steaks mit Ofenkartoffeln",
-        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
-        "storage": "Teilweise einfrieren",
-        "recipeId": "mexico-pork"
-      },
-      {
-        "time": "89–112 Min.",
+        "time": "79–102 Min.",
         "title": "Rindergeschnetzeltes in Zwiebelsoße",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Sa 01.08. im Kühlschrank auftauen.",
         "storage": "Gefrierschrank",
         "recipeId": "beef-onion"
+      },
+      {
+        "time": "102–112 Min.",
+        "title": "Mexico-Steaks mit Ofenkartoffeln",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von So 02.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "storage": "Teilweise einfrieren",
+        "recipeId": "mexico-pork"
       },
       {
         "time": "112–122 Min.",

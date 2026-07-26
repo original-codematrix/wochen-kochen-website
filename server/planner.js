@@ -164,6 +164,11 @@ function isOfferSuitable(ingredient, category, offerName) {
     if (!cutRule && /(wing|flügel|nugget|schenkel|keule)/i.test(name)) return false;
     if (/(burger|pattie)/i.test(ingredient) && !/(burger|pattie)/i.test(name)) return false;
   }
+  if (category === 'cucumber') {
+    const pickled = /(gewürz|essig|cornichon|eingelegt)/i;
+    if (pickled.test(ingredient)) return pickled.test(name);
+    if (pickled.test(name)) return false;
+  }
   if (category === 'rice' && /(milch\s*reis|pudding|dessert|waffel)/i.test(name)) return false;
   if (category === 'cheese' && /(chips|snack|soße|sauce)/i.test(name)) return false;
   if (category === 'pasta' && /(salat|fertiggericht|terrine|soße|sauce|spaghetteria|spinaci|ramen)/i.test(name)) return false;
@@ -319,7 +324,7 @@ function buildShopping(selected, market) {
     }
     const matchedIngredientIds = new Set(evaluation.matches.map(match => coverageId(match.ingredient)));
     for (const ingredient of evaluation.ingredients.filter(item => !matchedIngredientIds.has(coverageId(item)))) {
-      const cleanName = ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:kg|g|ml|l|stück|packungen?)?\s*/i, '') || ingredient.raw;
+      const cleanName = ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:(?:kg|g|ml|l|stück|packungen?)\b)?\s*/i, '') || ingredient.raw;
       const key = `${ingredient.category || 'uncategorized'}|${cleanName.toLocaleLowerCase('de-DE')}`;
       const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
       const existing = estimatedItems.get(key) || {

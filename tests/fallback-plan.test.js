@@ -18,9 +18,28 @@ test('checked-in fallback plan has a complete itemized shopping list', () => {
     ));
   });
   const actualIngredientIds = items.flatMap(item => item.ingredientIds || []);
+  const freshCucumberIds = batches.flatMap((day, batchIndex) => {
+    const recipe = recipesById.get(day.recipeId);
+    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
+      /^(?:\d+\s+)?Gurke$/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
+    ));
+  });
+  const pickledCucumberItems = items.filter(item => /(gewürz|essig|cornichon|eingelegt).*gurke|gurke.*(gewürz|essig|cornichon|eingelegt)/i.test(item.name));
+  const freshCucumberItems = items.filter(item => (
+    /gurke/i.test(item.name) && !pickledCucumberItems.includes(item)
+  ));
 
   assert.deepEqual(actualIngredientIds.slice().sort(), expectedIngredientIds.slice().sort());
   assert.equal(new Set(actualIngredientIds).size, actualIngredientIds.length);
   assert.equal(items.some(item => /^Weitere Zutaten für |^Senf, Öl und Gewürze$/i.test(item.name)), false);
   assert.equal(items.some(item => /schnitzel/i.test(item.name)), true);
+  assert.deepEqual(
+    pickledCucumberItems.flatMap(item => item.ingredientIds || []).filter(id => freshCucumberIds.includes(id)),
+    []
+  );
+  assert.ok(freshCucumberItems.length > 0, 'Konkrete frische Gurkenposition fehlt');
+  assert.deepEqual(
+    freshCucumberItems.flatMap(item => item.ingredientIds || []).filter(id => freshCucumberIds.includes(id)).sort(),
+    freshCucumberIds.slice().sort()
+  );
 });

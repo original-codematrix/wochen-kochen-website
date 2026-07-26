@@ -291,6 +291,49 @@ test('generateOfferPlan does not treat chicken ramen as fresh chicken or plain p
   assert.equal(names.includes('Knorr Spaghetteria Pasta Spinaci Käse'), false);
 });
 
+test('generateOfferPlan accepts fresh cucumber but rejects pickled cucumber products for fresh cucumber', () => {
+  for (const pickledName of ['K-CLASSIC Gewürzgurken', 'Essig-Gurken', 'Cornichon-Gurken']) {
+    const plan = generateOfferPlan({
+      recipes: [{ id: 'cucumber', name: 'Gurkensalat', cat: 'Beilagen', cost: 5, rating: 5, ingredients: ['1 Gurke'] }],
+      offers: [
+        { name: 'Frische Salatgurke', package: '1 Stück', price: 1.29, market: 'Markt A', status: 'offer' },
+        { name: pickledName, package: '1 Glas', price: 0.49, market: 'Markt A', status: 'offer' }
+      ],
+      basePlan: {}
+    });
+    const offeredNames = plan.shopping.flatMap(group => group.items)
+      .filter(item => item.status === 'offer')
+      .map(item => item.name);
+
+    assert.deepEqual(offeredNames, ['Frische Salatgurke'], pickledName);
+  }
+});
+
+test('generateOfferPlan accepts pickled cucumbers for an explicitly pickled cucumber ingredient', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'pickles', name: 'Brotzeit', cat: 'Beilagen', cost: 5, rating: 5, ingredients: ['1 Glas Gewürzgurken'] }],
+    offers: [{ name: 'K-CLASSIC Gewürzgurken', package: '1 Glas', price: 0.99, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+
+  assert.deepEqual(offeredNames, ['K-CLASSIC Gewürzgurken']);
+});
+
+test('generateOfferPlan keeps the full cucumber name when fresh cucumber has no matching price', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'cucumber', name: 'Gurkensalat', cat: 'Beilagen', cost: 5, rating: 5, ingredients: ['1 Gurke'] }],
+    offers: [{ name: 'Speisekartoffeln', package: '1 kg', price: 0.99, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const names = plan.shopping.flatMap(group => group.items).map(item => item.name);
+
+  assert.equal(names.includes('Gurke'), true);
+  assert.equal(names.includes('urke'), false);
+});
+
 test('generateOfferPlan favors category variety for the weekly cooking batches', () => {
   const recipes = [
     { id: 'pizza-a', name: 'Pizza A', cat: 'TK & Ofen', cost: 10, rating: 5, ingredients: ['2 TK-Pizzen'] },
