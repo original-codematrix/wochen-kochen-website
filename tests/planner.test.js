@@ -8,6 +8,7 @@ const {
   buildMealPrepPlan,
   shoppingDepartment
 } = require('../server/planner');
+const { recipes: catalogRecipes } = require('../data');
 
 test('allocateDays assigns a different recipe to every day when enough recipes exist', () => {
   const days = allocateDays(['pasta', 'curry', 'pizza', 'rice', 'potato', 'eggs', 'wrap'], ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
@@ -863,7 +864,9 @@ test('shoppingDepartment assigns known catalog names to supermarket departments'
     ['Wraps', 'wraps', 'Nudeln, Reis & Beilagen'],
     ['Salat', null, 'Obst & Gemüse'],
     ['Asia-Gemüse', null, 'Obst & Gemüse'],
-    ['Champignons', null, 'Obst & Gemüse']
+    ['Champignons', null, 'Obst & Gemüse'],
+    ['Dressing nach Wahl', null, 'Soßen, Gewürze & Vorrat'],
+    ['Käsetortellini', null, 'Kühlregal & Tiefkühl']
   ];
 
   for (const [name, category, department] of cases) {
@@ -894,6 +897,50 @@ test('generateOfferPlan groups known catalog ingredients outside Weitere Zutaten
   assert.deepEqual(namesByDepartment['Kühlregal & Tiefkühl'], ['Milch']);
   assert.deepEqual(namesByDepartment['Obst & Gemüse'], ['Salat']);
   assert.equal(namesByDepartment['Weitere Zutaten'], undefined);
+});
+
+test('generateOfferPlan catalog audit leaves no required ingredient in Weitere Zutaten', () => {
+  const audit = {
+    unplannedRecipes: [],
+    incompleteRecipes: [],
+    furtherIngredients: []
+  };
+  const offers = [{
+    name: 'Tafelsalz',
+    package: '500 g',
+    price: 0.49,
+    market: 'Audit-Markt',
+    status: 'offer'
+  }];
+
+  for (const recipe of catalogRecipes) {
+    const requiredCount = (recipe.ingredients || []).filter(ingredient => !/\boptional\b/i.test(ingredient)).length;
+    const plan = generateOfferPlan({
+      recipes: [recipe],
+      offers,
+      basePlan: {},
+      now: new Date('2026-07-26T12:00:00+02:00')
+    });
+    if (!plan.computedFromOffers) {
+      audit.unplannedRecipes.push(recipe.id);
+      continue;
+    }
+    const shoppingItems = plan.shopping.flatMap(group => group.items);
+    const coveredCount = shoppingItems.flatMap(item => item.ingredientIds || []).length;
+    if (coveredCount !== requiredCount) {
+      audit.incompleteRecipes.push(`${recipe.id}: ${coveredCount}/${requiredCount}`);
+    }
+    const furtherGroup = plan.shopping.find(group => group.department === 'Weitere Zutaten');
+    for (const item of furtherGroup?.items || []) {
+      audit.furtherIngredients.push(`${recipe.id}: ${item.name}`);
+    }
+  }
+
+  assert.deepEqual(audit, {
+    unplannedRecipes: [],
+    incompleteRecipes: [],
+    furtherIngredients: []
+  });
 });
 
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {

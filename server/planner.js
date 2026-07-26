@@ -311,7 +311,7 @@ function shoppingDepartment(item) {
   const name = String(item.name || '').toLocaleLowerCase('de-DE');
   const category = item.category || '';
   if (
-    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam)(?!\p{L})/iu.test(name)
+    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam)(?!\p{L})/iu.test(name)
   ) {
     return 'Soßen, Gewürze & Vorrat';
   }
@@ -321,7 +321,7 @@ function shoppingDepartment(item) {
   if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
   if (
     ['pizza', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)
-    || /\b(?:milch|butter|quark|ei(?:er)?)\b/i.test(name)
+    || /\b(?:milch|butter|quark|ei(?:er)?|käsetortellini|frosta|fertiggericht)\b/i.test(name)
   ) {
     return 'Kühlregal & Tiefkühl';
   }
@@ -530,7 +530,7 @@ function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now 
   const exclusions = normalizeExclusions(excludedIngredients ?? basePlan?.preferences?.excludedIngredients);
   const preferences = { ...(basePlan?.preferences || {}), excludedIngredients: exclusions };
   const allowedRecipes = recipes.filter(recipe => (
-    !FORBIDDEN.test(`${recipe.name} ${(recipe.ingredients || []).join(' ')}`)
+    !FORBIDDEN.test(`${recipe.name} ${(recipe.ingredients || []).join(' ')}`.replace(/\bohne\s+fisch\b/gi, ''))
     && !exclusions.some(exclusion => recipeMatchesExclusion(recipe, exclusion))
   ));
   const allowedOffers = offers.filter(offer => !FORBIDDEN.test(offer.name));
