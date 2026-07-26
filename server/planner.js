@@ -155,6 +155,8 @@ const MEAT_CUT_RULES = [
 
 function isOfferSuitable(ingredient, category, offerName) {
   const name = String(offerName);
+  const broth = /(brühe|fond)/i;
+  if (broth.test(String(ingredient)) !== broth.test(name)) return false;
   const cutRule = MEAT_CUT_RULES.find(([ingredientPattern]) => ingredientPattern.test(String(ingredient)));
   if ((MEAT_CATEGORIES.has(category) || category === 'nuggets') && cutRule) {
     if (!cutRule[1].every(offerPattern => offerPattern.test(name))) return false;

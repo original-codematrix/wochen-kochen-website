@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-26T12:02:47.402Z",
+  "generatedAt": "2026-07-26T12:14:09.025Z",
   "title": "Neu berechneter Angebotsplan",
   "notice": "Aus 499 erlaubten Angeboten neu berechnet; 49 veröffentlichte Vergleichspreise und 0 gezielt geprüfte Produktpreise erkannt. Ohne: Milch. App-Preise sind gesondert gekennzeichnet.",
   "sources": [
@@ -72,22 +72,22 @@
     },
     {
       "day": "Sa 01.08.",
-      "recipeId": "beef-onion",
-      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € und Hackfleischspieße „Döner Art“* oder Cevapcici* für 1,19 € sind passende Angebote bei EDEKA Morsestraße."
+      "recipeId": "mexico-pork",
+      "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € sind passende Angebote bei EDEKA Morsestraße."
     },
     {
       "day": "So 02.08.",
-      "recipeId": "mexico-pork",
+      "recipeId": "beef-onion",
       "reason": "EDEKA Bio Bio-Speisefrühkartoffeln für 1,99 € sind passende Angebote bei EDEKA Morsestraße."
     }
   ],
   "recommendation": {
     "mode": "single",
     "market": "EDEKA Morsestraße",
-    "estimatedTotal": 49.71,
-    "confirmedOfferTotal": 30.82,
+    "estimatedTotal": 50.04,
+    "confirmedOfferTotal": 27.25,
     "confirmedRegularTotal": 0,
-    "estimatedNormalPriceTotal": 18.89,
+    "estimatedNormalPriceTotal": 22.79,
     "publishedNormalPriceTotal": 1.49,
     "publishedSavings": 0.2,
     "normalPriceCoverage": 8,
@@ -105,22 +105,6 @@
           ],
           "quantity": "für 1 Gericht · natur oder mariniert, proteinreich, HKL A, Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
           "price": 3.3,
-          "regularPrice": null,
-          "savings": null,
-          "priceType": "offer",
-          "referencePriceType": null,
-          "status": "offer",
-          "sourceUrl": null,
-          "capturedAt": null,
-          "note": "Angebot bei EDEKA Morsestraße"
-        },
-        {
-          "name": "Hackfleischspieße „Döner Art“* oder Cevapcici*",
-          "ingredientIds": [
-            "6|beef-onion:3"
-          ],
-          "quantity": "für 1 Gericht · aus Schweine- und Rindfleisch, küchenfertig gewürzt, *nicht in allen Märkten erhältlich, je 100g",
-          "price": 3.57,
           "regularPrice": null,
           "savings": null,
           "priceType": "offer",
@@ -189,8 +173,8 @@
             "3|potato-egg-skillet:0",
             "4|schnitzel-potatoes:1",
             "5|wings:1",
-            "6|beef-onion:1",
-            "7|mexico-pork:1"
+            "6|mexico-pork:1",
+            "7|beef-onion:1"
           ],
           "quantity": "für 5 Gerichte · vorwiegend festkochend oder festkochend, aus Deutschland, je 1,5kg Packung, (1kg=1.33)",
           "price": 9.95,
@@ -355,7 +339,7 @@
           "name": "Zwiebeln",
           "ingredientIds": [
             "2|roast-vegetable-couscous:3",
-            "6|beef-onion:2"
+            "7|beef-onion:2"
           ],
           "rawQuantities": [
             "2 Zwiebeln",
@@ -386,7 +370,7 @@
           "ingredientIds": [
             "3|potato-egg-skillet:4",
             "4|schnitzel-potatoes:5",
-            "7|mexico-pork:4"
+            "6|mexico-pork:4"
           ],
           "rawQuantities": [
             "2 EL Öl",
@@ -418,7 +402,7 @@
           "ingredientIds": [
             "4|schnitzel-potatoes:2",
             "5|wings:4",
-            "7|mexico-pork:2"
+            "6|mexico-pork:2"
           ],
           "rawQuantities": [
             "1 Gurke",
@@ -474,9 +458,23 @@
           "quantity": "Knoblauchdip · 1 Kochblock"
         },
         {
+          "name": "Schweinenackensteaks Mexico Style",
+          "ingredientIds": [
+            "6|mexico-pork:0"
+          ],
+          "rawQuantities": [
+            "750 g Schweinenackensteaks Mexico Style"
+          ],
+          "count": 1,
+          "price": 3.37,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "750 g Schweinenackensteaks Mexico Style · 1 Kochblock"
+        },
+        {
           "name": "Rindergeschnetzeltes",
           "ingredientIds": [
-            "6|beef-onion:0"
+            "7|beef-onion:0"
           ],
           "rawQuantities": [
             "650 g Rindergeschnetzeltes"
@@ -488,9 +486,23 @@
           "quantity": "650 g Rindergeschnetzeltes · 1 Kochblock"
         },
         {
+          "name": "zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "ingredientIds": [
+            "7|beef-onion:3"
+          ],
+          "rawQuantities": [
+            "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
+          ],
+          "count": 1,
+          "price": 3.9,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
+        },
+        {
           "name": "EL Senf",
           "ingredientIds": [
-            "6|beef-onion:4"
+            "7|beef-onion:4"
           ],
           "rawQuantities": [
             "1 EL Senf"
@@ -504,7 +516,7 @@
         {
           "name": "TL Stärke",
           "ingredientIds": [
-            "6|beef-onion:5"
+            "7|beef-onion:5"
           ],
           "rawQuantities": [
             "1 TL Stärke"
@@ -514,20 +526,6 @@
           "status": "estimated",
           "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
           "quantity": "1 TL Stärke · 1 Kochblock"
-        },
-        {
-          "name": "Schweinenackensteaks Mexico Style",
-          "ingredientIds": [
-            "7|mexico-pork:0"
-          ],
-          "rawQuantities": [
-            "750 g Schweinenackensteaks Mexico Style"
-          ],
-          "count": 1,
-          "price": 3.37,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "750 g Schweinenackensteaks Mexico Style · 1 Kochblock"
         }
       ]
     }
@@ -4604,27 +4602,27 @@
         ]
       },
       {
-        "recipeId": "beef-onion",
-        "name": "Rindergeschnetzeltes in Zwiebelsoße",
-        "day": "Sa 01.08.",
-        "storage": "Gefrierschrank",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Sa 01.08. im Kühlschrank auftauen.",
-        "cookTime": 35,
-        "firstSteps": [
-          "Kartoffeln kochen.",
-          "Rind portionsweise scharf anbraten und herausnehmen."
-        ]
-      },
-      {
         "recipeId": "mexico-pork",
         "name": "Mexico-Steaks mit Ofenkartoffeln",
-        "day": "So 02.08.",
+        "day": "Sa 01.08.",
         "storage": "Teilweise einfrieren",
-        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von So 02.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
         "cookTime": 12,
         "firstSteps": [
           "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen.",
           "Steaks in Pfanne oder Grill kräftig braten und kurz ruhen lassen."
+        ]
+      },
+      {
+        "recipeId": "beef-onion",
+        "name": "Rindergeschnetzeltes in Zwiebelsoße",
+        "day": "So 02.08.",
+        "storage": "Gefrierschrank",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "cookTime": 35,
+        "firstSteps": [
+          "Kartoffeln kochen.",
+          "Rind portionsweise scharf anbraten und herausnehmen."
         ]
       }
     ],
@@ -4665,18 +4663,18 @@
         "recipeId": "wings"
       },
       {
-        "time": "79–102 Min.",
-        "title": "Rindergeschnetzeltes in Zwiebelsoße",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Sa 01.08. im Kühlschrank auftauen.",
-        "storage": "Gefrierschrank",
-        "recipeId": "beef-onion"
-      },
-      {
-        "time": "102–112 Min.",
+        "time": "79–89 Min.",
         "title": "Mexico-Steaks mit Ofenkartoffeln",
-        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von So 02.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
         "storage": "Teilweise einfrieren",
         "recipeId": "mexico-pork"
+      },
+      {
+        "time": "89–112 Min.",
+        "title": "Rindergeschnetzeltes in Zwiebelsoße",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "storage": "Gefrierschrank",
+        "recipeId": "beef-onion"
       },
       {
         "time": "112–122 Min.",

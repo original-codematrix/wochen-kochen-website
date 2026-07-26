@@ -24,10 +24,26 @@ test('checked-in fallback plan has a complete itemized shopping list', () => {
       /^(?:\d+\s+)?Gurke$/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
     ));
   });
+  const brothIngredientIds = batches.flatMap((day, batchIndex) => {
+    const recipe = recipesById.get(day.recipeId);
+    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
+      /(brühe|fond)/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
+    ));
+  });
+  const beefBrothIngredientIds = batches.flatMap((day, batchIndex) => {
+    const recipe = recipesById.get(day.recipeId);
+    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
+      /rinder(brühe|fond)/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
+    ));
+  });
   const pickledCucumberItems = items.filter(item => /(gewürz|essig|cornichon|eingelegt).*gurke|gurke.*(gewürz|essig|cornichon|eingelegt)/i.test(item.name));
   const freshCucumberItems = items.filter(item => (
     /gurke/i.test(item.name) && !pickledCucumberItems.includes(item)
   ));
+  const brothCoverageItems = items.filter(item => (
+    (item.ingredientIds || []).some(id => brothIngredientIds.includes(id))
+  ));
+  const beefBrothItems = items.filter(item => /rinder(brühe|fond)/i.test(item.name));
 
   assert.deepEqual(actualIngredientIds.slice().sort(), expectedIngredientIds.slice().sort());
   assert.equal(new Set(actualIngredientIds).size, actualIngredientIds.length);
@@ -41,5 +57,11 @@ test('checked-in fallback plan has a complete itemized shopping list', () => {
   assert.deepEqual(
     freshCucumberItems.flatMap(item => item.ingredientIds || []).filter(id => freshCucumberIds.includes(id)).sort(),
     freshCucumberIds.slice().sort()
+  );
+  assert.equal(brothCoverageItems.every(item => /(brühe|fond)/i.test(item.name)), true);
+  assert.ok(beefBrothItems.length > 0, 'Konkrete Rinderbrühe- oder Rinderfondposition fehlt');
+  assert.deepEqual(
+    beefBrothItems.flatMap(item => item.ingredientIds || []).filter(id => beefBrothIngredientIds.includes(id)).sort(),
+    beefBrothIngredientIds.slice().sort()
   );
 });

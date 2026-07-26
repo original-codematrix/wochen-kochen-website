@@ -334,6 +334,68 @@ test('generateOfferPlan keeps the full cucumber name when fresh cucumber has no 
   assert.equal(names.includes('urke'), false);
 });
 
+test('generateOfferPlan accepts beef broth or stock but rejects minced-meat products for beef broth', () => {
+  for (const brothName of ['Rinderbrühe', 'Rinderfond']) {
+    const plan = generateOfferPlan({
+      recipes: [{
+        id: 'broth',
+        name: 'Rinderbrühen-Suppe',
+        cat: 'Suppen',
+        cost: 6,
+        rating: 5,
+        ingredients: ['600 ml zubereitete Rinderbrühe']
+      }],
+      offers: [
+        { name: brothName, package: '600 ml', price: 1.99, market: 'Markt A', status: 'offer' },
+        { name: 'Hackfleischspieße', package: '600 g', price: 0.99, market: 'Markt A', status: 'offer' }
+      ],
+      basePlan: {}
+    });
+    const offeredNames = plan.shopping.flatMap(group => group.items)
+      .filter(item => item.status === 'offer')
+      .map(item => item.name);
+
+    assert.deepEqual(offeredNames, [brothName], brothName);
+  }
+});
+
+test('generateOfferPlan rejects broth and stock products for generic beef or chicken meat', () => {
+  const cases = [
+    {
+      ingredient: '600 g Rindfleisch',
+      meatName: 'Rindergeschnetzeltes',
+      brothName: 'Rinderfond'
+    },
+    {
+      ingredient: '600 g Hähnchen',
+      meatName: 'Hähnchenbrustfilet',
+      brothName: 'Hähnchenfond'
+    }
+  ];
+  for (const scenario of cases) {
+    const plan = generateOfferPlan({
+      recipes: [{
+        id: 'meat',
+        name: 'Fleischgericht',
+        cat: 'Pfanne',
+        cost: 12,
+        rating: 5,
+        ingredients: [scenario.ingredient]
+      }],
+      offers: [
+        { name: scenario.meatName, package: '600 g', price: 4.99, market: 'Markt A', status: 'offer' },
+        { name: scenario.brothName, package: '600 ml', price: 0.99, market: 'Markt A', status: 'offer' }
+      ],
+      basePlan: {}
+    });
+    const offeredNames = plan.shopping.flatMap(group => group.items)
+      .filter(item => item.status === 'offer')
+      .map(item => item.name);
+
+    assert.deepEqual(offeredNames, [scenario.meatName], scenario.ingredient);
+  }
+});
+
 test('generateOfferPlan favors category variety for the weekly cooking batches', () => {
   const recipes = [
     { id: 'pizza-a', name: 'Pizza A', cat: 'TK & Ofen', cost: 10, rating: 5, ingredients: ['2 TK-Pizzen'] },
