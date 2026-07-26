@@ -25,15 +25,17 @@ function parseIngredient(raw){const m=raw.match(/^([\d.,]+)\s*(kg|g|ml|l|EL|TL|S
 function department(name){const n=name.toLowerCase();if(/hähnchen|rind|hack|wings|nuggets|patties/.test(n))return 'Fleisch & Tiefkühl';if(/brokkoli|kartoff|zwiebel|knoblauch|gurke|salat|frühlings/.test(n))return 'Obst & Gemüse';if(/reis|nudel|penne|fusilli|rigatoni|brötchen/.test(n))return 'Nudeln, Reis & Beilagen';if(/soße|soja|hoisin|teriyaki|senf|honig|kokos|brühe|öl|gewürz/.test(n))return 'Soßen & Vorrat';return 'Sonstiges'}
 function aggregateShopping(){const map=new Map();uniqueWeekRecipes().forEach(r=>r.ingredients.forEach(raw=>{const p=parseIngredient(raw);const key=p.name.toLowerCase();if(!map.has(key))map.set(key,{...p,count:0});map.get(key).count++}));return [...map.values()].sort((a,b)=>department(a.name).localeCompare(department(b.name))||a.name.localeCompare(b.name))}
 function estimateItem(item){const prices={...DATA.priceCatalog,...state.prices};const key=Object.keys(prices).find(k=>item.name.toLowerCase().includes(k.toLowerCase())||k.toLowerCase().includes(item.name.toLowerCase()));return key?Number(prices[key]):null}
-function renderShopping(){const items=aggregateShopping(),wk='week'+state.week;state.checked[wk]=state.checked[wk]||{};const groups=Object.groupBy?Object.groupBy(items,i=>department(i.name)):items.reduce((a,i)=>((a[department(i.name)]??=[]).push(i),a),{});$('#shoppingGroups').innerHTML=Object.entries(groups).map(([g,arr])=>`<section class="shopping-group"><h3>${g}</h3>${arr.map((x,i)=>{const id=g+'-'+x.name;const checked=!!state.checked[wk][id],price=estimateItem(x);return `<label class="shopping-item ${checked?'done':''}"><input type="checkbox" data-shop="${encodeURIComponent(id)}" ${checked?'checked':''}><span>${x.raw}${x.count>1?` <small>(${x.count} Gerichte)</small>`:''}</span><small>${price?euro(price):'Richtwert'}</small></label>`}).join('')}</section>`).join('');$$('[data-shop]').forEach(el=>el.onchange=()=>{state.checked[wk][decodeURIComponent(el.dataset.shop)]=el.checked;saveState();renderShopping()});const cost=uniqueWeekRecipes().reduce((s,r)=>s+r.cost,0);$('#shoppingWeekLabel').textContent=WEEKS[state.week].name;$('#shoppingTotal').textContent=euro(cost);updateProgress();const meta=state.priceMeta;$('#priceStatus').className='status '+(meta.source.includes('Richt')?'':'success');$('#priceStatus').textContent=`Preisquelle: ${meta.source}${meta.updated?' · aktualisiert '+new Date(meta.updated).toLocaleString('de-DE'):''}`}
-function updateProgress(){const items=aggregateShopping(),wk='week'+state.week,c=state.checked[wk]||{},done=items.filter(x=>c[department(x.name)+'-'+x.name]).length,p=items.length?Math.round(done/items.length*100):0;$('#weekProgress').textContent=p+' %';$('#shoppingDone').textContent=`${done} / ${items.length}`}
+function updateProgress(){const items=aggregateShopping(),wk='week'+state.week,c=state.checked[wk]||{},done=items.filter(x=>c[department(x.name)+'-'+x.name]).length,p=items.length?Math.round(done/items.length*100):0;$('#weekProgress').textContent=p+' %'}
 const fallbackPrep={title:'Meal-Prep-Vorlage',summary:'Sobald ein Angebotsplan geladen ist, wird diese Liste automatisch ersetzt.',steps:[{time:'0–15 Min.',title:'Grundlagen vorbereiten',instruction:'Reis oder Kartoffeln aufsetzen und den Backofen bei Bedarf vorheizen.'},{time:'15–35 Min.',title:'Gemüse & Protein',instruction:'Gemüse schneiden und Fleisch getrennt portionieren.'},{time:'35–50 Min.',title:'Portionieren & beschriften',instruction:'Behälter mit Gericht und Esstag beschriften.'}]};
 function renderPrep(plan=activePlan){const prep=plan?.mealPrep||fallbackPrep;const revision=plan?.planRevision??'template';$('#prepTitle').textContent=prep.title||'Meal-Prep für euren Plan';$('#prepSummary').textContent=prep.summary||'';$('#prepTimeline').innerHTML=prep.steps.map((step,i)=>{const key=`${revision}-${i}`;return `<label class="prep-step"><span class="prep-time">${step.time}</span><span><strong>${step.title}</strong><small>${step.instruction}</small>${step.storage?`<span class="chip">${step.storage}</span>`:''}</span><input type="checkbox" data-prep="${key}" ${state.prep[key]?'checked':''}></label>`}).join('');$$('[data-prep]').forEach(x=>x.onchange=()=>{state.prep[x.dataset.prep]=x.checked;saveState()})}
 function sourceStatusLabel(sources){return 'Wochenlauf: '+sources.map(source=>{const offers=source.offerCount?`${source.offerCount} Angebote${source.status==='browser-cached'?' (Chrome-Import)':''}`:source.status==='error'?'blockiert':'eingeschränkt';const regular=Number.isFinite(source.regularPriceCount)?` · ${source.regularPriceCount} Normalpreise`:'';return `${source.market} ${offers}${regular}`}).join(' · ')}
 async function refreshPrices(){const status=$('#priceStatus');status.textContent='Quellenstatus wird geprüft …';try{const res=await fetch('/api/status');if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=await res.json();state.priceMeta={source:sourceStatusLabel(data.sources||[]),updated:data.generatedAt||new Date().toISOString()};saveState();renderShopping();toast('Quellenstatus aktualisiert')}catch(e){state.priceMeta={source:'Wochenlauf nicht erreichbar – Vorlagenpreise bleiben aktiv',updated:new Date().toISOString()};saveState();renderShopping();toast('Wochenlauf nicht erreichbar')}}
 function importJson(file,handler){const reader=new FileReader();reader.onload=()=>{try{handler(JSON.parse(reader.result));toast('Datei importiert')}catch{toast('Ungültige JSON-Datei')}};reader.readAsText(file)}
-$('#refreshPrices').onclick=refreshPrices;$('#importPrices').onclick=()=>$('#priceFile').click();$('#priceFile').onchange=e=>importJson(e.target.files[0],d=>{state.prices=d.prices||d;state.priceMeta={source:d.source||'Importierte Preise',updated:d.updated||new Date().toISOString()};saveState();renderShopping()});
-$('#copyShopping').onclick=async()=>{const text=aggregateShopping().map(i=>'☐ '+i.raw).join('\n');try{await navigator.clipboard.writeText(text);toast('Einkaufsliste kopiert')}catch{toast('Kopieren im lokalen Dateimodus blockiert')}};$('#printShopping').onclick=()=>window.print();$('#resetShopping').onclick=()=>{state.checked['week'+state.week]={};saveState();renderShopping()};$('#resetPrep').onclick=()=>{state.prep={};saveState();renderPrep()};
+$('#refreshPrices').onclick=refreshPrices;
+$('#copyShopping').onclick=async()=>{if(!activePlan){toast('Kein aktueller Sparplan geladen');return}try{await navigator.clipboard.writeText(shoppingClipboardText(activePlan));toast('Einkaufsliste kopiert')}catch{toast('Kopieren im lokalen Dateimodus blockiert')}};
+$('#printShopping').onclick=()=>window.print();
+$('#resetShopping').onclick=()=>{state.checked.plan={};saveState();renderPlanShoppingViews()};
+$('#resetPrep').onclick=()=>{state.prep={};saveState();renderPrep()};
 $('#themeToggle').onclick=()=>{state.dark=!state.dark;document.body.classList.toggle('dark',state.dark);saveState()};
 function excludedIngredients(){return $('#dietaryExclusions').value.split(/[,;\n]/).map(value=>value.trim()).filter(Boolean)}
 function planningBody(extra={}){return JSON.stringify({...extra,excludedIngredients:excludedIngredients()})}
@@ -44,6 +46,52 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredIns
 function planDayCard(item){const r=byId(item.recipeId),name=r?.name||item.name||'Gericht';return `<article class="plan-day"><span class="day-label">${item.day}</span><div><h4>${name}</h4><p>${item.reason}</p></div>${r?`<button class="text-btn" data-open="${r.id}">Rezept →</button>`:''}</article>`}
 function sourceVisual(source){if(source.status==='current')return {className:'ok',label:'● aktuell'};if(source.status==='browser-cached')return {className:'ok',label:'● Chrome-Import'};if(source.status==='error')return {className:'error',label:'× blockiert'};return {className:'limited',label:'◐ eingeschränkt'}}
 function priceTypeLabel(item){if(item.status==='regular')return 'Normalpreis · öffentlich geprüft';if(item.status==='stale-regular')return `Normalpreis · zuletzt gesehen${item.capturedAt?' '+new Date(item.capturedAt).toLocaleDateString('de-DE'):''}`;if(item.status==='app-offer')return 'App-Angebot';if(item.status==='offer')return 'Angebot';if(item.status==='estimated')return 'geschätzt';return item.status==='pantry'?'Vorrat':'Preis offen'}
+function shoppingItemId(group,item){return group.department+'-'+item.name}
+function planShoppingItems(plan){return (plan?.shopping||[]).flatMap(group=>group.items.map(item=>({group,item,id:shoppingItemId(group,item)})))}
+function shoppingItemMarkup(group,item){
+  const id=shoppingItemId(group,item),checked=!!state.checked.plan[id];
+  const priceLabel=item.status==='pantry'?'Vorrat':item.price!=null?euro(item.price):'Preis offen';
+  const reference=item.regularPrice!=null?`<small class="reference-price">statt ${euro(item.regularPrice)} · spart ${euro(item.savings)}</small>`:'';
+  return `<label class="shopping-item ${checked?'done':''}"><input type="checkbox" data-current-shop="${encodeURIComponent(id)}" ${checked?'checked':''}><span>${item.name}<small>${item.quantity} · ${item.note}</small></span><span class="price-tag ${item.status}">${priceLabel}<small class="price-type">${priceTypeLabel(item)}</small>${reference}</span></label>`;
+}
+function renderPlanShoppingInto(selector,plan){
+  $(selector).innerHTML=plan.shopping.map(group=>`<section class="shopping-group"><h3>${group.department}</h3>${group.items.map(item=>shoppingItemMarkup(group,item)).join('')}</section>`).join('');
+}
+function renderPlanShoppingViews(){
+  state.checked.plan=state.checked.plan||{};
+  if(!activePlan){
+    $('#planShoppingGroups').innerHTML='<article class="info-card">Aktueller Sparplan ist nicht verfügbar.</article>';
+    $('#shoppingGroups').innerHTML='<article class="info-card">Aktueller Sparplan ist nicht verfügbar.</article>';
+    $('#shoppingWeekLabel').textContent='–';
+    $('#shoppingTotal').textContent='–';
+    $('#shoppingDone').textContent='0 / 0';
+    return;
+  }
+  renderPlanShoppingInto('#planShoppingGroups',activePlan);
+  renderPlanShoppingInto('#shoppingGroups',activePlan);
+  const items=planShoppingItems(activePlan);
+  const done=items.filter(entry=>state.checked.plan[entry.id]).length;
+  $('#shoppingWeekLabel').textContent=activePlan.recommendation.market;
+  $('#shoppingTotal').textContent=euro(activePlan.recommendation.estimatedTotal);
+  $('#shoppingDone').textContent=`${done} / ${items.length}`;
+  $$('[data-current-shop]').forEach(el=>el.onchange=()=>{
+    state.checked.plan[decodeURIComponent(el.dataset.currentShop)]=el.checked;
+    saveState();
+    renderPlanShoppingViews();
+  });
+}
+function renderShopping(){
+  renderPlanShoppingViews();
+  const meta=state.priceMeta;
+  $('#priceStatus').className='status '+(activePlan?'success':'');
+  $('#priceStatus').textContent=activePlan?`Preisquelle: ${meta.source}${meta.updated?' · aktualisiert '+new Date(meta.updated).toLocaleString('de-DE'):''}`:'Aktueller Sparplan ist nicht verfügbar.';
+}
+function shoppingClipboardText(plan){
+  return planShoppingItems(plan).map(({item})=>{
+    const price=item.status==='pantry'?'Vorrat':item.price!=null?euro(item.price):'Preis offen';
+    return `☐ ${item.quantity} ${item.name} – ${item.note} – ${price} (${priceTypeLabel(item)})`;
+  }).join('\n');
+}
 function renderCurrentPlan(plan){
   activePlan=plan;
   const savedExclusions=(plan.preferences?.excludedIngredients||[]).join(', ');
@@ -61,14 +109,6 @@ function renderCurrentPlan(plan){
   $('#marketRecommendation').innerHTML=`<div><span class="eyebrow">HEUTIGE EMPFEHLUNG</span><h3>${rec.market}</h3><p>${rec.summary}</p><small>${rec.qualityNote}</small></div><div class="recommendation-price"><strong>${euro(rec.estimatedTotal)}</strong><span>davon ${euro(rec.confirmedOfferTotal)} bestätigte Angebote<br>${euro(checkedRegular)} öffentlich geprüfte Normalpreise<br>${euro(rec.estimatedNormalPriceTotal)} noch geschätzt${comparison}</span></div>`;
   $('#weekendPlan').innerHTML=plan.weekend.map(planDayCard).join('');
   $('#nextWeekPlan').innerHTML=plan.nextWeek.map(planDayCard).join('');
-  state.checked.plan=state.checked.plan||{};
-  $('#planShoppingGroups').innerHTML=plan.shopping.map(group=>`<section class="shopping-group"><h3>${group.department}</h3>${group.items.map(item=>{
-    const id=group.department+'-'+item.name,checked=!!state.checked.plan[id];
-    const priceLabel=item.status==='pantry'?'Vorrat':item.price!=null?euro(item.price):'Preis offen';
-    const reference=item.regularPrice!=null?`<small class="reference-price">statt ${euro(item.regularPrice)} · spart ${euro(item.savings)}</small>`:'';
-    return `<label class="shopping-item ${checked?'done':''}"><input type="checkbox" data-plan-shop="${encodeURIComponent(id)}" ${checked?'checked':''}><span>${item.name}<small>${item.quantity} · ${item.note}</small></span><span class="price-tag ${item.status}">${priceLabel}<small class="price-type">${priceTypeLabel(item)}</small>${reference}</span></label>`
-  }).join('')}</section>`).join('');
-  $$('[data-plan-shop]').forEach(el=>el.onchange=()=>{state.checked.plan[decodeURIComponent(el.dataset.planShop)]=el.checked;saveState();renderCurrentPlan(plan)});
   state.priceMeta={source:sourceStatusLabel(plan.sources||[]),updated:plan.generatedAt};
   saveState();
   renderShopping();
