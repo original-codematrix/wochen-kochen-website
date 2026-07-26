@@ -96,10 +96,11 @@
   },
   "shopping": [
     {
-      "department": "Fleisch",
+      "department": "Fleisch & Frischetheke",
       "items": [
         {
           "name": "Hähnchen-Flügel*",
+          "category": "nuggets",
           "ingredientIds": [
             "5|wings:0"
           ],
@@ -113,14 +114,223 @@
           "sourceUrl": null,
           "capturedAt": null,
           "note": "Angebot bei EDEKA Morsestraße"
+        },
+        {
+          "name": "Schweineschnitzel von der Frischetheke",
+          "category": "pork",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:0"
+          ],
+          "rawQuantities": [
+            "700 g Schweineschnitzel von der Frischetheke"
+          ],
+          "count": 1,
+          "price": 3.15,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "700 g Schweineschnitzel von der Frischetheke · 1 Kochblock"
+        },
+        {
+          "name": "Schweinenackensteaks Mexico Style",
+          "category": "pork",
+          "ingredientIds": [
+            "6|mexico-pork:0"
+          ],
+          "rawQuantities": [
+            "750 g Schweinenackensteaks Mexico Style"
+          ],
+          "count": 1,
+          "price": 3.37,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "750 g Schweinenackensteaks Mexico Style · 1 Kochblock"
+        },
+        {
+          "name": "Rindergeschnetzeltes",
+          "category": "beef",
+          "ingredientIds": [
+            "7|beef-onion:0"
+          ],
+          "rawQuantities": [
+            "650 g Rindergeschnetzeltes"
+          ],
+          "count": 1,
+          "price": 4.22,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "650 g Rindergeschnetzeltes · 1 Kochblock"
         }
       ]
     },
     {
-      "department": "Beilagen & Gemüse",
+      "department": "Obst & Gemüse",
+      "items": [
+        {
+          "name": "Spitzpaprika",
+          "category": "peppers",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:1"
+          ],
+          "quantity": "für 1 Gericht · rot, aus Marokko/Spanien, Kl. I, Wochenend-Knüller, gültig von Do-Sa!, 500g Packung, (1kg=2.98)",
+          "price": 1.49,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
+        },
+        {
+          "name": "Knoblauchzehen",
+          "category": null,
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:2"
+          ],
+          "rawQuantities": [
+            "5 Knoblauchzehen"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "5 Knoblauchzehen · 1 Kochblock"
+        },
+        {
+          "name": "Zitrone",
+          "category": null,
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:4"
+          ],
+          "rawQuantities": [
+            "1 Zitrone"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "1 Zitrone · 1 Kochblock"
+        },
+        {
+          "name": "Zwiebel",
+          "category": "onions",
+          "ingredientIds": [
+            "1|spinach-rice-omelette:3",
+            "3|potato-egg-skillet:3"
+          ],
+          "rawQuantities": [
+            "1 Zwiebel",
+            "1 Zwiebel"
+          ],
+          "count": 2,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "1 Zwiebel · 2 Kochblocke"
+        },
+        {
+          "name": "Zucchini",
+          "category": null,
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:2"
+          ],
+          "rawQuantities": [
+            "2 Zucchini"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "2 Zucchini · 1 Kochblock"
+        },
+        {
+          "name": "Zwiebeln",
+          "category": "onions",
+          "ingredientIds": [
+            "2|roast-vegetable-couscous:3",
+            "7|beef-onion:2"
+          ],
+          "rawQuantities": [
+            "2 Zwiebeln",
+            "3 Zwiebeln"
+          ],
+          "count": 2,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "2 Zwiebeln + 3 Zwiebeln · 2 Kochblocke"
+        },
+        {
+          "name": "Gurke",
+          "category": "cucumber",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:2",
+            "5|wings:4",
+            "6|mexico-pork:2"
+          ],
+          "rawQuantities": [
+            "1 Gurke",
+            "Gurke",
+            "1 Gurke"
+          ],
+          "count": 3,
+          "price": 1,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "1 Gurke + Gurke · 3 Kochblocke"
+        }
+      ]
+    },
+    {
+      "department": "Kühlregal & Tiefkühl",
+      "items": [
+        {
+          "name": "Eier aus Freilandhaltung",
+          "category": "eggs",
+          "ingredientIds": [
+            "1|spinach-rice-omelette:2",
+            "3|potato-egg-skillet:1",
+            "4|schnitzel-potatoes:3"
+          ],
+          "quantity": "für 3 Gerichte · Größe M/L, aus Bayern, 2 Stück mehr Inhalt!, 12er Packung, (Stück=0.29)",
+          "price": 10.47,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei EDEKA Morsestraße"
+        },
+        {
+          "name": "TK-Blattspinat",
+          "category": "spinach",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:1",
+            "1|spinach-rice-omelette:1",
+            "3|potato-egg-skillet:2"
+          ],
+          "rawQuantities": [
+            "600 g TK-Blattspinat",
+            "600 g TK-Blattspinat",
+            "500 g TK-Blattspinat"
+          ],
+          "count": 3,
+          "price": 2.98,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "600 g TK-Blattspinat + 500 g TK-Blattspinat · 3 Kochblocke"
+        }
+      ]
+    },
+    {
+      "department": "Nudeln, Reis & Beilagen",
       "items": [
         {
           "name": "Bernbacher Die Guten Eiernudeln aus Bayern oder Bella Pasta",
+          "category": "pasta",
           "ingredientIds": [
             "0|garlic-oil-spinach-pasta:0"
           ],
@@ -137,6 +347,7 @@
         },
         {
           "name": "Ben‘s Original Express-Reis",
+          "category": "rice",
           "ingredientIds": [
             "1|spinach-rice-omelette:0"
           ],
@@ -152,23 +363,8 @@
           "note": "App-Angebot bei EDEKA Morsestraße statt veröffentlichtem Vergleichspreis 1,49 €"
         },
         {
-          "name": "Spitzpaprika",
-          "ingredientIds": [
-            "2|roast-vegetable-couscous:1"
-          ],
-          "quantity": "für 1 Gericht · rot, aus Marokko/Spanien, Kl. I, Wochenend-Knüller, gültig von Do-Sa!, 500g Packung, (1kg=2.98)",
-          "price": 1.49,
-          "regularPrice": null,
-          "savings": null,
-          "priceType": "offer",
-          "referencePriceType": null,
-          "status": "offer",
-          "sourceUrl": null,
-          "capturedAt": null,
-          "note": "Angebot bei EDEKA Morsestraße"
-        },
-        {
           "name": "EDEKA Bio Bio-Speisefrühkartoffeln",
+          "category": "potato",
           "ingredientIds": [
             "3|potato-egg-skillet:0",
             "4|schnitzel-potatoes:1",
@@ -186,69 +382,45 @@
           "sourceUrl": null,
           "capturedAt": null,
           "note": "Angebot bei EDEKA Morsestraße"
-        }
-      ]
-    },
-    {
-      "department": "Kühlung & schnelle Küche",
-      "items": [
-        {
-          "name": "Eier aus Freilandhaltung",
-          "ingredientIds": [
-            "1|spinach-rice-omelette:2",
-            "3|potato-egg-skillet:1",
-            "4|schnitzel-potatoes:3"
-          ],
-          "quantity": "für 3 Gerichte · Größe M/L, aus Bayern, 2 Stück mehr Inhalt!, 12er Packung, (Stück=0.29)",
-          "price": 10.47,
-          "regularPrice": null,
-          "savings": null,
-          "priceType": "offer",
-          "referencePriceType": null,
-          "status": "offer",
-          "sourceUrl": null,
-          "capturedAt": null,
-          "note": "Angebot bei EDEKA Morsestraße"
-        }
-      ]
-    },
-    {
-      "department": "Weitere Zutaten",
-      "items": [
-        {
-          "name": "TK-Blattspinat",
-          "ingredientIds": [
-            "0|garlic-oil-spinach-pasta:1",
-            "1|spinach-rice-omelette:1",
-            "3|potato-egg-skillet:2"
-          ],
-          "rawQuantities": [
-            "600 g TK-Blattspinat",
-            "600 g TK-Blattspinat",
-            "500 g TK-Blattspinat"
-          ],
-          "count": 3,
-          "price": 2.98,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "600 g TK-Blattspinat + 500 g TK-Blattspinat · 3 Kochblocke"
         },
         {
-          "name": "Knoblauchzehen",
+          "name": "Couscous",
+          "category": null,
           "ingredientIds": [
-            "0|garlic-oil-spinach-pasta:2"
+            "2|roast-vegetable-couscous:0"
           ],
           "rawQuantities": [
-            "5 Knoblauchzehen"
+            "400 g Couscous"
           ],
           "count": 1,
           "price": null,
           "status": "estimated",
           "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "5 Knoblauchzehen · 1 Kochblock"
+          "quantity": "400 g Couscous · 1 Kochblock"
         },
         {
+          "name": "Paniermehl",
+          "category": null,
+          "ingredientIds": [
+            "4|schnitzel-potatoes:4"
+          ],
+          "rawQuantities": [
+            "150 g Paniermehl"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
+          "quantity": "150 g Paniermehl · 1 Kochblock"
+        }
+      ]
+    },
+    {
+      "department": "Soßen, Gewürze & Vorrat",
+      "items": [
+        {
           "name": "EL Olivenöl",
+          "category": null,
           "ingredientIds": [
             "0|garlic-oil-spinach-pasta:3",
             "2|roast-vegetable-couscous:5"
@@ -264,37 +436,8 @@
           "quantity": "4 EL Olivenöl + 3 EL Olivenöl · 2 Kochblocke"
         },
         {
-          "name": "Zitrone",
-          "ingredientIds": [
-            "0|garlic-oil-spinach-pasta:4"
-          ],
-          "rawQuantities": [
-            "1 Zitrone"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "1 Zitrone · 1 Kochblock"
-        },
-        {
-          "name": "Zwiebel",
-          "ingredientIds": [
-            "1|spinach-rice-omelette:3",
-            "3|potato-egg-skillet:3"
-          ],
-          "rawQuantities": [
-            "1 Zwiebel",
-            "1 Zwiebel"
-          ],
-          "count": 2,
-          "price": 4,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "1 Zwiebel · 2 Kochblocke"
-        },
-        {
           "name": "Sojasoße",
+          "category": null,
           "ingredientIds": [
             "1|spinach-rice-omelette:4"
           ],
@@ -308,51 +451,8 @@
           "quantity": "50 ml Sojasoße · 1 Kochblock"
         },
         {
-          "name": "Couscous",
-          "ingredientIds": [
-            "2|roast-vegetable-couscous:0"
-          ],
-          "rawQuantities": [
-            "400 g Couscous"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "400 g Couscous · 1 Kochblock"
-        },
-        {
-          "name": "Zucchini",
-          "ingredientIds": [
-            "2|roast-vegetable-couscous:2"
-          ],
-          "rawQuantities": [
-            "2 Zucchini"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "2 Zucchini · 1 Kochblock"
-        },
-        {
-          "name": "Zwiebeln",
-          "ingredientIds": [
-            "2|roast-vegetable-couscous:3",
-            "7|beef-onion:2"
-          ],
-          "rawQuantities": [
-            "2 Zwiebeln",
-            "3 Zwiebeln"
-          ],
-          "count": 2,
-          "price": 4,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "2 Zwiebeln + 3 Zwiebeln · 2 Kochblocke"
-        },
-        {
           "name": "zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "category": null,
           "ingredientIds": [
             "2|roast-vegetable-couscous:4"
           ],
@@ -367,6 +467,7 @@
         },
         {
           "name": "EL Öl",
+          "category": null,
           "ingredientIds": [
             "3|potato-egg-skillet:4",
             "4|schnitzel-potatoes:5",
@@ -384,53 +485,8 @@
           "quantity": "2 EL Öl · 3 Kochblocke"
         },
         {
-          "name": "Schweineschnitzel von der Frischetheke",
-          "ingredientIds": [
-            "4|schnitzel-potatoes:0"
-          ],
-          "rawQuantities": [
-            "700 g Schweineschnitzel von der Frischetheke"
-          ],
-          "count": 1,
-          "price": 3.15,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "700 g Schweineschnitzel von der Frischetheke · 1 Kochblock"
-        },
-        {
-          "name": "Gurke",
-          "ingredientIds": [
-            "4|schnitzel-potatoes:2",
-            "5|wings:4",
-            "6|mexico-pork:2"
-          ],
-          "rawQuantities": [
-            "1 Gurke",
-            "Gurke",
-            "1 Gurke"
-          ],
-          "count": 3,
-          "price": 1,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "1 Gurke + Gurke · 3 Kochblocke"
-        },
-        {
-          "name": "Paniermehl",
-          "ingredientIds": [
-            "4|schnitzel-potatoes:4"
-          ],
-          "rawQuantities": [
-            "150 g Paniermehl"
-          ],
-          "count": 1,
-          "price": null,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "150 g Paniermehl · 1 Kochblock"
-        },
-        {
           "name": "BBQ-Soße",
+          "category": null,
           "ingredientIds": [
             "5|wings:2"
           ],
@@ -445,6 +501,7 @@
         },
         {
           "name": "Knoblauchdip",
+          "category": null,
           "ingredientIds": [
             "5|wings:3"
           ],
@@ -458,35 +515,8 @@
           "quantity": "Knoblauchdip · 1 Kochblock"
         },
         {
-          "name": "Schweinenackensteaks Mexico Style",
-          "ingredientIds": [
-            "6|mexico-pork:0"
-          ],
-          "rawQuantities": [
-            "750 g Schweinenackensteaks Mexico Style"
-          ],
-          "count": 1,
-          "price": 3.37,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "750 g Schweinenackensteaks Mexico Style · 1 Kochblock"
-        },
-        {
-          "name": "Rindergeschnetzeltes",
-          "ingredientIds": [
-            "7|beef-onion:0"
-          ],
-          "rawQuantities": [
-            "650 g Rindergeschnetzeltes"
-          ],
-          "count": 1,
-          "price": 4.22,
-          "status": "estimated",
-          "note": "Normalpreise bei EDEKA Morsestraße am Regal prüfen",
-          "quantity": "650 g Rindergeschnetzeltes · 1 Kochblock"
-        },
-        {
           "name": "zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "category": "beef",
           "ingredientIds": [
             "7|beef-onion:3"
           ],
@@ -501,6 +531,7 @@
         },
         {
           "name": "EL Senf",
+          "category": null,
           "ingredientIds": [
             "7|beef-onion:4"
           ],
@@ -515,6 +546,7 @@
         },
         {
           "name": "TL Stärke",
+          "category": null,
           "ingredientIds": [
             "7|beef-onion:5"
           ],

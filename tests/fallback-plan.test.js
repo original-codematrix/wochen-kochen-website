@@ -18,6 +18,9 @@ test('checked-in fallback plan has a complete itemized shopping list', () => {
     ));
   });
   const actualIngredientIds = items.flatMap(item => item.ingredientIds || []);
+  const departmentByName = new Map(
+    plan.shopping.flatMap(group => group.items.map(item => [item.name, group.department]))
+  );
   const freshCucumberIds = batches.flatMap((day, batchIndex) => {
     const recipe = recipesById.get(day.recipeId);
     return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
@@ -63,5 +66,14 @@ test('checked-in fallback plan has a complete itemized shopping list', () => {
   assert.deepEqual(
     beefBrothItems.flatMap(item => item.ingredientIds || []).filter(id => beefBrothIngredientIds.includes(id)).sort(),
     beefBrothIngredientIds.slice().sort()
+  );
+  assert.equal(departmentByName.get('Rindergeschnetzeltes'), 'Fleisch & Frischetheke');
+  assert.equal(departmentByName.get('Schweineschnitzel von der Frischetheke'), 'Fleisch & Frischetheke');
+  assert.equal(departmentByName.get('Schweinenackensteaks Mexico Style'), 'Fleisch & Frischetheke');
+  assert.equal(departmentByName.get('TK-Blattspinat'), 'Kühlregal & Tiefkühl');
+  assert.equal(departmentByName.get('Gurke'), 'Obst & Gemüse');
+  assert.match(
+    departmentByName.get('zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)'),
+    /Soßen, Gewürze & Vorrat/
   );
 });
