@@ -1,6 +1,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { allocateDays, subtractPantry, recommendMarket, generateOfferPlan, buildMealPrepPlan } = require('../server/planner');
+const {
+  allocateDays,
+  subtractPantry,
+  recommendMarket,
+  generateOfferPlan,
+  buildMealPrepPlan,
+  shoppingDepartment
+} = require('../server/planner');
 
 test('allocateDays assigns a different recipe to every day when enough recipes exist', () => {
   const days = allocateDays(['pasta', 'curry', 'pizza', 'rice', 'potato', 'eggs', 'wrap'], ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
@@ -832,6 +839,61 @@ test('generateOfferPlan puts priced and estimated items from the same category i
 
   assert.equal(pricedGroup.department, estimatedGroup.department);
   assert.equal(pricedGroup.department, 'Obst & Gemüse');
+});
+
+test('shoppingDepartment assigns known catalog names to supermarket departments', () => {
+  const cases = [
+    ['Paprikapulver', 'peppers', 'Soßen, Gewürze & Vorrat'],
+    ['Currypulver', null, 'Soßen, Gewürze & Vorrat'],
+    ['Curry', null, 'Soßen, Gewürze & Vorrat'],
+    ['Gewürze', null, 'Soßen, Gewürze & Vorrat'],
+    ['Pfeffer', null, 'Soßen, Gewürze & Vorrat'],
+    ['Kräuter', null, 'Soßen, Gewürze & Vorrat'],
+    ['Rosmarin', null, 'Soßen, Gewürze & Vorrat'],
+    ['Hoisin', null, 'Soßen, Gewürze & Vorrat'],
+    ['Pesto', null, 'Soßen, Gewürze & Vorrat'],
+    ['Honig', null, 'Soßen, Gewürze & Vorrat'],
+    ['Sesam', null, 'Soßen, Gewürze & Vorrat'],
+    ['Milch', null, 'Kühlregal & Tiefkühl'],
+    ['Butter', null, 'Kühlregal & Tiefkühl'],
+    ['Quark', null, 'Kühlregal & Tiefkühl'],
+    ['Ei', 'eggs', 'Kühlregal & Tiefkühl'],
+    ['Basmatireis', 'rice', 'Nudeln, Reis & Beilagen'],
+    ['Bandnudeln', 'pasta', 'Nudeln, Reis & Beilagen'],
+    ['Wraps', 'wraps', 'Nudeln, Reis & Beilagen'],
+    ['Salat', null, 'Obst & Gemüse'],
+    ['Asia-Gemüse', null, 'Obst & Gemüse'],
+    ['Champignons', null, 'Obst & Gemüse']
+  ];
+
+  for (const [name, category, department] of cases) {
+    assert.equal(shoppingDepartment({ name, category }), department, name);
+  }
+});
+
+test('generateOfferPlan groups known catalog ingredients outside Weitere Zutaten', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'catalog-departments',
+      name: 'Katalog-Abteilungs-Test',
+      cat: 'Pfanne',
+      cost: 12,
+      rating: 5,
+      servings: 2,
+      ingredients: ['250 g Bandnudeln', '2 Wraps', '1 TL Paprikapulver', '200 ml Milch', '1 Salat']
+    }],
+    offers: [{ name: 'Tafelsalz', package: '500 g', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const namesByDepartment = Object.fromEntries(
+    plan.shopping.map(group => [group.department, group.items.map(item => item.name)])
+  );
+
+  assert.deepEqual(namesByDepartment['Nudeln, Reis & Beilagen'], ['Bandnudeln', 'Wraps']);
+  assert.deepEqual(namesByDepartment['Soßen, Gewürze & Vorrat'], ['TL Paprikapulver']);
+  assert.deepEqual(namesByDepartment['Kühlregal & Tiefkühl'], ['Milch']);
+  assert.deepEqual(namesByDepartment['Obst & Gemüse'], ['Salat']);
+  assert.equal(namesByDepartment['Weitere Zutaten'], undefined);
 });
 
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {

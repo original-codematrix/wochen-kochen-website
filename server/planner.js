@@ -310,23 +310,28 @@ const SHOPPING_DEPARTMENTS = [
 function shoppingDepartment(item) {
   const name = String(item.name || '').toLocaleLowerCase('de-DE');
   const category = item.category || '';
-  if (/(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|gewürz)(?!\p{L})/iu.test(name)) {
+  if (
+    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam)(?!\p{L})/iu.test(name)
+  ) {
     return 'Soßen, Gewürze & Vorrat';
   }
   if (['chicken', 'beef', 'pork', 'nuggets', 'leberkaese', 'sausage', 'ham'].includes(category)) {
     return 'Fleisch & Frischetheke';
   }
   if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
-  if (['pizza', 'wraps', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)) {
+  if (
+    ['pizza', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)
+    || /\b(?:milch|butter|quark|ei(?:er)?)\b/i.test(name)
+  ) {
     return 'Kühlregal & Tiefkühl';
   }
   if (
     ['cucumber', 'tomatoes', 'onions', 'broccoli', 'spinach', 'carrots', 'peppers'].includes(category)
-    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|paprika|brokkoli|spinat|karotten?|möhren?)\b/i.test(name)
+    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|paprika|brokkoli|spinat|karotten?|möhren?|salat|asia-gemüse|champignons?)\b/i.test(name)
   ) return 'Obst & Gemüse';
   if (
-    ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas'].includes(category)
-    || /\b(?:couscous|paniermehl)\b/i.test(name)
+    ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas', 'wraps'].includes(category)
+    || /\b(?:couscous|paniermehl|basmatireis|bandnudeln|wraps?)\b/i.test(name)
   ) return 'Nudeln, Reis & Beilagen';
   if (category === 'coconut') return 'Soßen, Gewürze & Vorrat';
   return 'Weitere Zutaten';
