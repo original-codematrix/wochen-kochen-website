@@ -24,3 +24,8 @@ test('shopping actions use the active plan and shared checked state', () => {
 test('shopping tab has an explicit no-plan state', () => {
   assert.match(app, /Aktueller Sparplan ist nicht verfügbar/);
 });
+
+test('status failure says the current savings plan remains unchanged', () => {
+  assert.match(app, /Wochenlauf nicht erreichbar – aktueller Sparplan bleibt unverändert/);
+  assert.doesNotMatch(app, /Wochenlauf nicht erreichbar – Vorlagenpreise bleiben aktiv/);
+});

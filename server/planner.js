@@ -138,24 +138,30 @@ function baselineCost(ingredient, category, portionScale = 1) {
 
 const MEAT_CATEGORIES = new Set(['chicken', 'beef', 'pork']);
 const MEAT_CUT_RULES = [
-  [/schnitzel/i, /schnitzel/i],
-  [/geschnetzel/i, /geschnetzel/i],
-  [/medaillon/i, /(medaillon|filet)/i],
-  [/filet/i, /filet/i],
-  [/hack/i, /hack/i],
-  [/nacken/i, /nacken/i],
-  [/steak/i, /steak/i],
-  [/braten/i, /braten/i]
+  [/nacken.*steak|steak.*nacken/i, [/nacken/i, /steak/i]],
+  [/wings?|flügel/i, [/(wings?|flügel)/i]],
+  [/nuggets?/i, [/nuggets?/i]],
+  [/brust(?:filet)?/i, [/brust/i]],
+  [/keule|schenkel/i, [/(keule|schenkel)/i]],
+  [/schnitzel/i, [/schnitzel/i]],
+  [/geschnetzel/i, [/geschnetzel/i]],
+  [/medaillon/i, [/(medaillon|filet)/i]],
+  [/filet/i, [/filet/i]],
+  [/hack/i, [/hack/i]],
+  [/nacken/i, [/nacken/i]],
+  [/steak/i, [/steak/i]],
+  [/braten/i, [/braten/i]]
 ];
 
 function isOfferSuitable(ingredient, category, offerName) {
   const name = String(offerName);
-  if (MEAT_CATEGORIES.has(category)) {
-    const cutRule = MEAT_CUT_RULES.find(([ingredientPattern]) => ingredientPattern.test(String(ingredient)));
-    if (cutRule && !cutRule[1].test(name)) return false;
+  const cutRule = MEAT_CUT_RULES.find(([ingredientPattern]) => ingredientPattern.test(String(ingredient)));
+  if ((MEAT_CATEGORIES.has(category) || category === 'nuggets') && cutRule) {
+    if (!cutRule[1].every(offerPattern => offerPattern.test(name))) return false;
   }
   if (category === 'chicken') {
-    if (/(salat|aufschnitt|wurst|suppe|fertiggericht|ramen|wing|flügel|nugget|schenkel|keule)/i.test(name)) return false;
+    if (/(salat|aufschnitt|wurst|suppe|fertiggericht|ramen)/i.test(name)) return false;
+    if (!cutRule && /(wing|flügel|nugget|schenkel|keule)/i.test(name)) return false;
     if (/(burger|pattie)/i.test(ingredient) && !/(burger|pattie)/i.test(name)) return false;
   }
   if (category === 'rice' && /(milch\s*reis|pudding|dessert|waffel)/i.test(name)) return false;

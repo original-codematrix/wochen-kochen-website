@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-24T12:30:00+02:00",
-  "title": "Einkaufsplan für Freitag, 24. Juli 2026",
-  "notice": "Heute einkaufen: Die verwendeten Kaufland-Angebote gelten mindestens bis Mittwoch, 29.07. EDEKA-Angebote enden Samstag, REWE zeigt die Woche 20.–26.07.",
+  "generatedAt": "2026-07-26T10:43:31.853Z",
+  "title": "Neu berechneter Angebotsplan",
+  "notice": "Aus 499 erlaubten Angeboten neu berechnet; 49 veröffentlichte Vergleichspreise und 0 gezielt geprüfte Produktpreise erkannt. Ohne: Milch. App-Preise sind gesondert gekennzeichnet.",
   "sources": [
     {
       "market": "Kaufland Lohhof",
@@ -9,197 +9,4675 @@
       "validFrom": "2026-07-23",
       "validUntil": "2026-07-29",
       "status": "current",
-      "coverage": "Veröffentlichte Wochenknüller und Prospekt",
-      "url": "https://filiale.kaufland.de/service/filiale.storeName%3DDE1820.html"
+      "coverage": "39 maschinenlesbare Angebote; Eigenmarken und Preisverlauf werden mitberücksichtigt",
+      "url": "https://filiale.kaufland.de/service/filiale.storeName%3DDE1820.html",
+      "offerCount": 39,
+      "error": null
     },
     {
       "market": "EDEKA Morsestraße",
       "address": "Morsestraße 1, 85716 Unterschleißheim",
       "validFrom": "2026-07-20",
       "validUntil": "2026-07-25",
-      "status": "current-limited",
-      "coverage": "Öffentlich sichtbare Angebotsauswahl",
-      "url": "https://www.edeka.de/maerkte/234100/"
+      "status": "browser-cached",
+      "coverage": "212 maschinenlesbare Angebote; Eigenmarken und Preisverlauf werden mitberücksichtigt",
+      "url": "https://www.edeka.de/maerkte/234100/",
+      "offerCount": 212,
+      "error": null
     },
     {
       "market": "REWE Eching",
       "address": "Schlesierstraße 4, 85386 Eching",
       "validFrom": "2026-07-20",
       "validUntil": "2026-07-26",
-      "status": "current-limited",
-      "coverage": "Öffentlich sichtbare Angebotsauswahl",
-      "url": "https://www.rewe.de/angebote/eching/440303/rewe-markt-schlesierstr-4/"
+      "status": "browser-cached",
+      "coverage": "249 maschinenlesbare Angebote; Eigenmarken und Preisverlauf werden mitberücksichtigt",
+      "url": "https://www.rewe.de/angebote/eching/440303/rewe-markt-schlesierstr-4/",
+      "offerCount": 249,
+      "error": null
     }
   ],
   "weekend": [
     {
-      "day": "Heute · Fr 24.07.",
-      "recipeId": "frosta-evening",
-      "reason": "Zwei FRoSTA-Fertiggerichte ohne Fisch zu je 2,49 € als schneller Einkaufstag."
-    },
-    {
-      "day": "Sa 25.07.",
-      "recipeId": "mexico-pork",
-      "reason": "K-PURLAND Mexico-Nackensteaks 750 g für 4,49 €; reicht als Vier-Portionen-Gericht."
-    },
-    {
-      "day": "So 26.07.",
-      "recipeId": "mexico-pork",
-      "reason": "Zweite Portion vom Samstag; Sonntag ist kein zusätzlicher Einkauf nötig."
+      "day": "Heute · 26.07.",
+      "recipeId": "garlic-oil-spinach-pasta",
+      "reason": "BARILLA Classic Pasta für 0,69 € sind passende Angebote bei Kaufland Lohhof."
     }
   ],
   "nextWeek": [
     {
       "day": "Mo 27.07.",
-      "recipeId": "garlic-pasta",
-      "reason": "Barilla Pasta kostet bei Kaufland 0,69 € je 500 g."
+      "recipeId": "potato-egg-skillet",
+      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
     },
     {
       "day": "Di 28.07.",
-      "recipeId": "garlic-pasta",
-      "reason": "Restetag aus derselben Vier-Portionen-Zubereitung."
+      "recipeId": "spinach-rice-omelette",
+      "reason": "Geschmacklich starke Auswahl; fehlende Normalpreise werden transparent als Schätzung geführt."
     },
     {
       "day": "Mi 29.07.",
-      "recipeId": "beef-pasta",
-      "reason": "Zweite günstige Barilla-Packung; frisches Hack an der Theke bevorzugen, sofern der Kilopreis passt."
+      "recipeId": "roast-vegetable-couscous",
+      "reason": "Geschmacklich starke Auswahl; fehlende Normalpreise werden transparent als Schätzung geführt."
     },
     {
       "day": "Do 30.07.",
-      "recipeId": "beef-pasta",
-      "reason": "Restetag; am Mittwoch vollständig durchgaren und gekühlt lagern."
+      "recipeId": "schnitzel-potatoes",
+      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € und K-CLASSIC Gewürzgurken für 0,99 € sind passende Angebote bei Kaufland Lohhof."
     },
     {
       "day": "Fr 31.07.",
-      "recipeId": "frosta-evening",
-      "reason": "Zwei FRoSTA-Fertiggerichte zu je 2,49 € als bewusst einfacher Freitag."
+      "recipeId": "wings",
+      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € und K-CLASSIC Gewürzgurken für 0,99 € sind passende Angebote bei Kaufland Lohhof."
     },
     {
       "day": "Sa 01.08.",
-      "recipeId": "sheet-pan",
-      "reason": "Die 5-kg-Angebotskartoffeln werden sinnvoll aufgebraucht; Hähnchen möglichst frisch von der Theke."
+      "recipeId": "mexico-pork",
+      "reason": "K-PURLAND Schweinenackensteak Mexico Style für 4,49 € und Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
     },
     {
       "day": "So 02.08.",
-      "recipeId": "sheet-pan",
-      "reason": "Zweite Portion vom Samstag."
+      "recipeId": "beef-onion",
+      "reason": "Dtsch. Speisefrühkartoffeln XXL für 3,99 € sind passende Angebote bei Kaufland Lohhof."
     }
   ],
   "recommendation": {
     "mode": "single",
     "market": "Kaufland Lohhof",
-    "estimatedTotal": 54.92,
-    "confirmedOfferTotal": 19.82,
-    "estimatedNormalPriceTotal": 35.1,
-    "summary": "Heute überwiegend bei Kaufland einkaufen. Die bestätigten, kochrelevanten Angebote sind dort deutlich stärker gebündelt; eine Aufteilung auf drei Märkte spart nach den öffentlich sichtbaren Daten keine belastbaren 20 €.",
-    "qualityNote": "Hähnchen und Hack zuerst an der Frischetheke nach Kilopreis und Herkunft prüfen. Bei übrigen Normalpreisartikeln K-Classic mit Markenware vergleichen und die günstigere gleichwertige Variante wählen. Fisch und Meeresfrüchte sind vollständig ausgeschlossen."
+    "estimatedTotal": 53.46,
+    "confirmedOfferTotal": 28.1,
+    "confirmedRegularTotal": 0,
+    "estimatedNormalPriceTotal": 25.36,
+    "publishedNormalPriceTotal": 11.55,
+    "publishedSavings": 3.4,
+    "normalPriceCoverage": 50,
+    "summary": "Kaufland Lohhof bündelt die günstigste bewertete Kombination der neu ausgewählten Rezepte. Berechnet aus 499 aktuellen Angeboten; ein zusätzlicher Markt wird erst bei einer belastbaren Ersparnis um 20 € empfohlen.",
+    "qualityNote": "Geschmack und Rezeptbewertungen fließen mit ein. Frischetheke bevorzugen, App-Preise nur mit aktivierter Händler-App nutzen; Fisch und Meeresfrüchte bleiben ausgeschlossen."
   },
   "shopping": [
     {
       "department": "Fleisch",
       "items": [
         {
-          "name": "K-PURLAND Schweinenackensteaks Mexico Style",
-          "quantity": "1 × 750 g",
+          "name": "K-PURLAND Schweinenackensteak Mexico Style",
+          "ingredientIds": [
+            "6|mexico-pork:0"
+          ],
+          "quantity": "für 1 Gericht · je 750-g-Packg.",
           "price": 4.49,
+          "regularPrice": 5.99,
+          "savings": 1.5,
+          "priceType": "offer",
+          "referencePriceType": null,
           "status": "offer",
-          "note": "Angebot statt 5,99 €"
-        },
-        {
-          "name": "Hähnchenfleisch",
-          "quantity": "ca. 1,35 kg",
-          "price": 16.19,
-          "status": "estimated",
-          "note": "Frischetheke bevorzugen; kalkuliert mit ca. 11,99 €/kg"
-        },
-        {
-          "name": "Rinderhack oder gutes gemischtes Hack",
-          "quantity": "600 g",
-          "price": 6.59,
-          "status": "estimated",
-          "note": "Frischetheke bevorzugen; kalkuliert mit ca. 10,99 €/kg"
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 5,99 €"
         }
       ]
     },
     {
-      "department": "Gemüse",
+      "department": "Beilagen & Gemüse",
       "items": [
         {
-          "name": "Deutsche Speisefrühkartoffeln",
-          "quantity": "1 × 5 kg",
-          "price": 3.99,
+          "name": "BARILLA Classic Pasta",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:0"
+          ],
+          "quantity": "für 1 Gericht · je 500-g-Packg.",
+          "price": 0.69,
+          "regularPrice": 1.99,
+          "savings": 1.3,
+          "priceType": "offer",
+          "referencePriceType": null,
           "status": "offer",
-          "note": "Reicht für Wochenende und nächste Woche"
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 1,99 €"
         },
         {
-          "name": "Brokkoli",
-          "quantity": "ca. 1,5 kg",
-          "price": 6.87,
-          "status": "estimated",
-          "note": "weich garen"
-        },
-        {
-          "name": "Gurke",
-          "quantity": "1 Stück",
-          "price": 0.99,
-          "status": "estimated",
-          "note": "für den Wochenendsalat"
-        },
-        {
-          "name": "Rispentomaten, lose",
-          "quantity": "ca. 500 g",
-          "price": 0.5,
+          "name": "Dtsch. Speisefrühkartoffeln XXL",
+          "ingredientIds": [
+            "1|potato-egg-skillet:0",
+            "4|schnitzel-potatoes:1",
+            "5|wings:1",
+            "6|mexico-pork:1",
+            "7|beef-onion:1"
+          ],
+          "quantity": "für 5 Gerichte · je 5-kg-Sack",
+          "price": 19.95,
+          "regularPrice": null,
+          "savings": null,
+          "priceType": "offer",
+          "referencePriceType": null,
           "status": "offer",
-          "note": "0,99 €/kg; getrennt servieren"
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei Kaufland Lohhof"
+        },
+        {
+          "name": "K-CLASSIC Gewürzgurken",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:2",
+            "5|wings:4",
+            "6|mexico-pork:2"
+          ],
+          "quantity": "für 3 Gerichte · je 670-g-Glas",
+          "price": 2.97,
+          "regularPrice": 3.57,
+          "savings": 0.6,
+          "priceType": "offer",
+          "referencePriceType": null,
+          "status": "offer",
+          "sourceUrl": null,
+          "capturedAt": null,
+          "note": "Angebot bei Kaufland Lohhof statt veröffentlichtem Vergleichspreis 3,57 €"
+        }
+      ]
+    },
+    {
+      "department": "Weitere Zutaten",
+      "items": [
+        {
+          "name": "TK-Blattspinat",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:1",
+            "1|potato-egg-skillet:2",
+            "2|spinach-rice-omelette:1"
+          ],
+          "rawQuantities": [
+            "600 g TK-Blattspinat",
+            "500 g TK-Blattspinat",
+            "600 g TK-Blattspinat"
+          ],
+          "count": 3,
+          "price": 2.98,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "600 g TK-Blattspinat + 500 g TK-Blattspinat · 3 Kochblocke"
+        },
+        {
+          "name": "Knoblauchzehen",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:2"
+          ],
+          "rawQuantities": [
+            "5 Knoblauchzehen"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "5 Knoblauchzehen · 1 Kochblock"
+        },
+        {
+          "name": "EL Olivenöl",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:3",
+            "3|roast-vegetable-couscous:5"
+          ],
+          "rawQuantities": [
+            "4 EL Olivenöl",
+            "3 EL Olivenöl"
+          ],
+          "count": 2,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "4 EL Olivenöl + 3 EL Olivenöl · 2 Kochblocke"
+        },
+        {
+          "name": "Zitrone",
+          "ingredientIds": [
+            "0|garlic-oil-spinach-pasta:4"
+          ],
+          "rawQuantities": [
+            "1 Zitrone"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "1 Zitrone · 1 Kochblock"
+        },
+        {
+          "name": "Eier",
+          "ingredientIds": [
+            "1|potato-egg-skillet:1",
+            "2|spinach-rice-omelette:2",
+            "4|schnitzel-potatoes:3"
+          ],
+          "rawQuantities": [
+            "8 Eier",
+            "8 Eier",
+            "2 Eier"
+          ],
+          "count": 3,
+          "price": 9,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "8 Eier + 2 Eier · 3 Kochblocke"
+        },
+        {
+          "name": "Zwiebel",
+          "ingredientIds": [
+            "1|potato-egg-skillet:3",
+            "2|spinach-rice-omelette:3"
+          ],
+          "rawQuantities": [
+            "1 Zwiebel",
+            "1 Zwiebel"
+          ],
+          "count": 2,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "1 Zwiebel · 2 Kochblocke"
+        },
+        {
+          "name": "EL Öl",
+          "ingredientIds": [
+            "1|potato-egg-skillet:4",
+            "4|schnitzel-potatoes:5",
+            "6|mexico-pork:4"
+          ],
+          "rawQuantities": [
+            "2 EL Öl",
+            "2 EL Öl",
+            "2 EL Öl"
+          ],
+          "count": 3,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "2 EL Öl · 3 Kochblocke"
+        },
+        {
+          "name": "Reis",
+          "ingredientIds": [
+            "2|spinach-rice-omelette:0"
+          ],
+          "rawQuantities": [
+            "400 g Reis"
+          ],
+          "count": 1,
+          "price": 0.6,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "400 g Reis · 1 Kochblock"
+        },
+        {
+          "name": "Sojasoße",
+          "ingredientIds": [
+            "2|spinach-rice-omelette:4"
+          ],
+          "rawQuantities": [
+            "50 ml Sojasoße"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "50 ml Sojasoße · 1 Kochblock"
+        },
+        {
+          "name": "Couscous",
+          "ingredientIds": [
+            "3|roast-vegetable-couscous:0"
+          ],
+          "rawQuantities": [
+            "400 g Couscous"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "400 g Couscous · 1 Kochblock"
+        },
+        {
+          "name": "Paprika",
+          "ingredientIds": [
+            "3|roast-vegetable-couscous:1"
+          ],
+          "rawQuantities": [
+            "3 Paprika"
+          ],
+          "count": 1,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "3 Paprika · 1 Kochblock"
+        },
+        {
+          "name": "Zucchini",
+          "ingredientIds": [
+            "3|roast-vegetable-couscous:2"
+          ],
+          "rawQuantities": [
+            "2 Zucchini"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "2 Zucchini · 1 Kochblock"
         },
         {
           "name": "Zwiebeln",
-          "quantity": "1 Netz",
-          "price": 1.49,
+          "ingredientIds": [
+            "3|roast-vegetable-couscous:3",
+            "7|beef-onion:2"
+          ],
+          "rawQuantities": [
+            "2 Zwiebeln",
+            "3 Zwiebeln"
+          ],
+          "count": 2,
+          "price": 4,
           "status": "estimated",
-          "note": "Vorrat vorher prüfen; sonst günstige K-Classic-Variante"
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "2 Zwiebeln + 3 Zwiebeln · 2 Kochblocke"
         },
         {
-          "name": "Knoblauch",
-          "quantity": "1 Knolle",
-          "price": 1.29,
+          "name": "zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "ingredientIds": [
+            "3|roast-vegetable-couscous:4"
+          ],
+          "rawQuantities": [
+            "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
+          ],
+          "count": 1,
+          "price": null,
           "status": "estimated",
-          "note": "Vorrat vorher prüfen"
-        }
-      ]
-    },
-    {
-      "department": "Nudeln & schnelle Küche",
-      "items": [
-        {
-          "name": "Barilla Classic Pasta",
-          "quantity": "2 × 500 g",
-          "price": 1.38,
-          "status": "offer",
-          "note": "0,69 € je Packung statt 1,99 €"
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "500 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
         },
         {
-          "name": "FRoSTA Fertiggericht",
-          "quantity": "4 × 450–500 g",
-          "price": 9.96,
-          "status": "offer",
-          "note": "2,49 € je Beutel; nur Sorten ohne Fisch"
-        },
-        {
-          "name": "Rinder- oder Hühnerbrühe",
-          "quantity": "1 Packung",
-          "price": 1.49,
+          "name": "Schweineschnitzel von der Frischetheke",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:0"
+          ],
+          "rawQuantities": [
+            "700 g Schweineschnitzel von der Frischetheke"
+          ],
+          "count": 1,
+          "price": 3.15,
           "status": "estimated",
-          "note": "Vorrat vorher prüfen"
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "700 g Schweineschnitzel von der Frischetheke · 1 Kochblock"
         },
         {
-          "name": "Senf, Öl und Gewürze",
-          "quantity": "nach Vorrat",
-          "price": 0,
-          "status": "pantry",
-          "note": "nur kaufen, wenn nicht vorhanden"
+          "name": "Paniermehl",
+          "ingredientIds": [
+            "4|schnitzel-potatoes:4"
+          ],
+          "rawQuantities": [
+            "150 g Paniermehl"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "150 g Paniermehl · 1 Kochblock"
+        },
+        {
+          "name": "Chicken Wings",
+          "ingredientIds": [
+            "5|wings:0"
+          ],
+          "rawQuantities": [
+            "1 kg Chicken Wings"
+          ],
+          "count": 1,
+          "price": 4,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "1 kg Chicken Wings · 1 Kochblock"
+        },
+        {
+          "name": "BBQ-Soße",
+          "ingredientIds": [
+            "5|wings:2"
+          ],
+          "rawQuantities": [
+            "BBQ-Soße"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "BBQ-Soße · 1 Kochblock"
+        },
+        {
+          "name": "Knoblauchdip",
+          "ingredientIds": [
+            "5|wings:3"
+          ],
+          "rawQuantities": [
+            "Knoblauchdip"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "Knoblauchdip · 1 Kochblock"
+        },
+        {
+          "name": "Rindergeschnetzeltes",
+          "ingredientIds": [
+            "7|beef-onion:0"
+          ],
+          "rawQuantities": [
+            "650 g Rindergeschnetzeltes"
+          ],
+          "count": 1,
+          "price": 4.22,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "650 g Rindergeschnetzeltes · 1 Kochblock"
+        },
+        {
+          "name": "zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)",
+          "ingredientIds": [
+            "7|beef-onion:3"
+          ],
+          "rawQuantities": [
+            "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)"
+          ],
+          "count": 1,
+          "price": 3.9,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "600 ml zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe) · 1 Kochblock"
+        },
+        {
+          "name": "EL Senf",
+          "ingredientIds": [
+            "7|beef-onion:4"
+          ],
+          "rawQuantities": [
+            "1 EL Senf"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "1 EL Senf · 1 Kochblock"
+        },
+        {
+          "name": "TL Stärke",
+          "ingredientIds": [
+            "7|beef-onion:5"
+          ],
+          "rawQuantities": [
+            "1 TL Stärke"
+          ],
+          "count": 1,
+          "price": null,
+          "status": "estimated",
+          "note": "Normalpreise bei Kaufland Lohhof am Regal prüfen",
+          "quantity": "1 TL Stärke · 1 Kochblock"
         }
       ]
     }
-  ]
+  ],
+  "offerSnapshot": [
+    {
+      "name": "K-PURLAND Schweinenackensteak Mexico Style",
+      "package": "je 750-g-Packg.",
+      "price": 4.49,
+      "previousPrice": 5.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "Span./ital. Nektarinen",
+      "package": "je 1-kg-Schale",
+      "price": 1.69,
+      "previousPrice": 2.49,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "Rumän./poln. Kulturheidelbeeren XXL",
+      "package": "je 500-g-Packg.",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LANDLIEBE Butter oder Die Streichzarte",
+      "package": "je 250-g-Packg.",
+      "price": 0.99,
+      "previousPrice": 2.79,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "Span./niederl. Rispentomaten, lose",
+      "package": "je kg",
+      "price": 0.99,
+      "previousPrice": 1.49,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "FUNNY-FRISCH Knuspersnack",
+      "package": "je 75 - 100-g-Packg.",
+      "price": 0.99,
+      "previousPrice": 1.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "Dtsch. Speisefrühkartoffeln XXL",
+      "package": "je 5-kg-Sack",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "BARILLA Classic Pasta",
+      "package": "je 500-g-Packg.",
+      "price": 0.69,
+      "previousPrice": 1.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "MÖNCHSHOF Bier- und Biermisch- spezialitäten",
+      "package": "je Ka. 20 x 0,5-l-Fl.",
+      "price": 12.99,
+      "previousPrice": 17.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "ARIEL Voll- oder Colorwaschmittel",
+      "package": "je",
+      "price": 15.99,
+      "previousPrice": 18.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "WIESENHOF Bruzzzler",
+      "package": "je 400-g-Packg.",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "K-CLASSIC Schwarzwälder Schinken g. g. A.",
+      "package": "je 200-g-Packg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "AOSTE Franz. Salami",
+      "package": "je 225 - 250-g-Stück",
+      "price": 3.99,
+      "previousPrice": 5.59,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "KNACK & BACK Brötchen zum Selberbacken",
+      "package": "je 6 - 8 St. = 240 - 400-g-Dose",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "FROSTA Fertiggericht",
+      "package": "je 450 - 500-g-Beutel",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "ZOTT Monte Snack",
+      "package": "je 8 St. = 232-g-Packg.",
+      "price": 1.99,
+      "previousPrice": 2.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "QUARKI Quark",
+      "package": "je 250-g-Packg.",
+      "price": 1.59,
+      "previousPrice": 1.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LE RUSTIQUE Camembert",
+      "package": "je 250-g-Packg.",
+      "price": 2.79,
+      "previousPrice": 3.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LEERDAMMER Holl. Schnittkäse",
+      "package": "je 100 - 140-g-Packg.",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LEICHT & CROSS Knusperbrot",
+      "package": "je 125-g-Packg.",
+      "price": 0.99,
+      "previousPrice": 1.39,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "K-CLASSIC Gewürzgurken",
+      "package": "je 670-g-Glas",
+      "price": 0.99,
+      "previousPrice": 1.19,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "ERASCO Eintopf",
+      "package": "je 800-g-Dose",
+      "price": 5,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "KRÜGER Family Cappuccino",
+      "package": "je 500-g-Nachfüllbeutel",
+      "price": 2.49,
+      "previousPrice": 4.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LAY'S Chips",
+      "package": "je 110 - 150-g-Packg.",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "LINDT Pralinés",
+      "package": "je 200-g-Packg.",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "TROLLI Fruchtgummis",
+      "package": "je 150-g-Packg.",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "AMECKE Plus",
+      "package": "je 1-l-Packg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "METAXA 5-Stern",
+      "package": "je 0,7-l-Fl.",
+      "price": 10.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "JAMESON Irish Whiskey",
+      "package": "je 0,7-l-Fl.",
+      "price": 13.99,
+      "previousPrice": 21.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "DEUTSCHES WEINTOR Qualitätswein",
+      "package": "je 0,75-l-Fl.",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "PAULANER Hefe-Weißbier",
+      "package": "je Ka. 20 x 0,5-l-Fl.",
+      "price": 13.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "OBERDORFER Helles",
+      "package": "je Ka. 20 x 0,5-l-Fl.",
+      "price": 13.99,
+      "previousPrice": 18.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "WARSTEINER Premium Pilsener",
+      "package": "je Ka. 20 x 0,5-l-Fl.",
+      "price": 10.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "SPEE Voll- oder Colorwaschmittel",
+      "package": "je",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "KUSCHELWEICH Weichspüler Luxury Moments oder Oriental",
+      "package": "je 1-l-Fl.",
+      "price": 1.79,
+      "previousPrice": 2.49,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "WELLAFLEX Haarspray oder Schaumfestiger",
+      "package": "je 200 - 250-ml-Dose",
+      "price": 2.49,
+      "previousPrice": 2.95,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "PICK UP! Keksriegel",
+      "package": "je 5 x 28-g-Packg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "MANNER Mignon oder Herzen",
+      "package": "je 300 - 400-g-Beutel",
+      "price": 2.99,
+      "previousPrice": 4.99,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "K-CLASSIC Frittieröl",
+      "package": "",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "Kaufland Lohhof",
+      "status": "offer"
+    },
+    {
+      "name": "Mini Rispentomaten",
+      "package": "aus den Niederlanden oder Belgien, Klasse I, 400g",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Original Wagner Steinofen Pizza, Pizzies oder Flammkuchen",
+      "package": "tiefgefroren, versch. Sorten, z.B. Steinofen Speciale, 350g",
+      "price": 1.59,
+      "previousPrice": 1.79,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Mövenpick Eis",
+      "package": "tiefgefroren, versch. Sorten, 850ml - 900ml",
+      "price": 1.49,
+      "previousPrice": 1.69,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Coca-Cola Cola oder Limonade",
+      "package": "versch. Sorten, teilweise koffeinhaltig, 12x 1l (zzgl. € 3,30 Pfand)",
+      "price": 10.99,
+      "previousPrice": 11.69,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Kirschen",
+      "package": "aus Griechenland/der Türkei, Kl. I, 100g",
+      "price": 0.39,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Himbeeren",
+      "package": "aus Deutschland/ Portugal, Kl. I, 125g Packung, (1kg=15.92)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Herzstücke Mini-Rispentomaten",
+      "package": "aus den Niederlanden, Kl. I, 400g Packung, (1kg=2.78)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Bananen",
+      "package": "aus Costa Rica, 1kg",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Tafeltrauben",
+      "package": "hell, kernlos, aus Italien/Spanien,Kl. I, 500g Packung, (1kg=2.98)",
+      "price": 0.79,
+      "previousPrice": 1.49,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Bio-Möhren",
+      "package": "aus Deutschland/Polen, Kl. II, 1kg Packung",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Mini-Romanasalat",
+      "package": "aus Bayern, Kl. I, 2er Packung, (Stück=0.40)",
+      "price": 0.59,
+      "previousPrice": 0.79,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Rispen- oder Mini-Pflaumenrispentomaten",
+      "package": "aus Bayern, Kl. I, je 650/300g Packung, (1kg=3.06/6.63)",
+      "price": 1.49,
+      "previousPrice": 1.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "EDEKA Bio Bio-Speisefrühkartoffeln",
+      "package": "vorwiegend festkochend oder festkochend, aus Deutschland, je 1,5kg Packung, (1kg=1.33)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Rettich",
+      "package": "weiß, aus Bayern, Kl. I, Stück",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Riesenchampignons",
+      "package": "braun oder weiß, aus Polen, Kl. I, je 400g Schale, (1kg=4.98)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Zucchini",
+      "package": "grün, aus Bayern, Kl. I, 1kg",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bio-Tafeläpfel „Jonagold“ aus Italien, Kl. II oder „Royal Gala“",
+      "package": "aus Chile/der Republik, Südafrika, Kl. I, je 550/760g Packung, (1kg=3.62/2.62)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Erdbeeren, z.B. 400g Schale, Brombeeren oder Heidelbeeren",
+      "package": "aus Deutschland/den Niederlanden, Kl. I, z.B. je 250g Packung, (1kg=7.48/11.96)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Ondine Plattnektarinen",
+      "package": "aus Spanien/Italien, Kl. I, 450g Packung, (1kg=4.42)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Obstwerk Overnight Oats mit Mango oder Obstsalat „Feelgood“",
+      "package": "mit Ananas, Kiwi, Grapefruit, Orange und Trauben, täglich frisch für dich zubereitet!, je 400/220g Packung, (1kg=9.98/18.14)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Plattpfirsiche",
+      "package": "aus Spanien, KI. I, 1kg",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Ballensalat Trio-Mix",
+      "package": "aus Bayern, bleibt länger frisch dank leichter Feuchtigkeit des Wurzelballens!, Wochenend-Knüller, gültig von Do-Sa!, Stück",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Mini-Wassermelone",
+      "package": "aus Bayern, Kl. I, Wochenend-Knüller, gültig von Do-Sa!, Stück",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Spitzpaprika",
+      "package": "rot, aus Marokko/Spanien, Kl. I, Wochenend-Knüller, gültig von Do-Sa!, 500g Packung, (1kg=2.98)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Landliebe Butter rahmig-frisch oder Die Streichzarte",
+      "package": "ungesalzen, je 250g Packung/Becher, (1kg=5.16)",
+      "price": 0.99,
+      "previousPrice": 1.29,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Weihenstephan haltbare Milch",
+      "package": "1,5/3,5% Fett, je 1l Packung",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Ehrmann Almighurt",
+      "package": "je 100/150g Beutel/Becher, (1kg=3.50/2.33)",
+      "price": 0.35,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Frische Milch",
+      "package": "1,5/3,5% Fett, je 1l Packung",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bergader Käse",
+      "package": "Bavaria blu, Bonifaz, Basils oder Amarosa blu, cremig-zart, laktosefrei, Deutsche Weichkäse/halbfester Schnittkäse, 45-70% Fett i. Tr., Bedienungsartikel nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Almette Alpenfrischkäse",
+      "package": "verschiedene Fettstufen, je 150g Becher, (1kg=6.67)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Arla Finello",
+      "package": "geriebener Käse, 28-47% Fett i. Tr., je 150g Beutel, (1kg=10.60)",
+      "price": 1.29,
+      "previousPrice": 1.59,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Salakis Schafskäse",
+      "package": "25/48% Fett i. Tr., 50% gespart! Preis nur gültig mit der EDEKA-App!, je 150/180g Packung",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Bärenmarke Kaffee-Milch",
+      "package": "8/4% Fett, je 170g Flasche, (1kg=5.24)",
+      "price": 0.69,
+      "previousPrice": 0.89,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Oatly! Hafer-Drink, Barista, auch Bio, frisch oder haltbar oder Aufstrich",
+      "package": "verschiedene Sorten, pflanzlich, je 1l/150g Packung/Becher, (1l/kg=1.79/11.93)",
+      "price": 1.59,
+      "previousPrice": 1.79,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Zott Zottarella Minis",
+      "package": "45% Fett i. Tr., je 125g Becher, (1kg=14.32)",
+      "price": 1.59,
+      "previousPrice": 1.79,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Andechser Natur Bio-Jogurt",
+      "package": "mild, je 400g Becher, (1kg=3.23)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig cold latte Kaffeegetränk",
+      "package": "Cappuccino, Espresso und weitere Sorten, je 250ml Becher, (1l=2.36)",
+      "price": 0.59,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Landliebe Joghurt",
+      "package": "+0.15 Pfand, je 500g Glas, (1kg=2.38)",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Milram Buttermilch- oder Kefir-Drink",
+      "package": "je 750/500g Packung, (1kg=1.72/2.58)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Mövenpick Iced Coffee",
+      "package": "verschiedenen Sorten, 1,5/4% Fett, je 220ml Becher, (1l=5.05)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Heimatliebe Bayrischer Bergkäse",
+      "package": "am Stück, 6 Monate gereift, 45% Fett i. Tr., 200g Packung, (1kg=11.10)",
+      "price": 2.22,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Landliebe Landkäse",
+      "package": "in Scheiben, 45/48% Fett i. Tr., je 150g Packung, (1kg=9.93)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Leerdammer Knusper Minis",
+      "package": "48% Fett i. Tr., 150g Packung, (1kg=13.27)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Meggle Kräuter- Butter oder -Creme",
+      "package": "je 5x20g/80ml Packung/Tube, (1kg/l=14.90/18.63)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Milram Hotties Grilltaler",
+      "package": "Kräuter oder Mediterran, je 180g Packung, (1kg=13.83)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Rotkäppchen Minis oder Sticks & Dip",
+      "package": "Doppelrahmstufe, je 100/105g Packung, (1kg=19.90/18.95)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Rougette Mein Ofen- oder Grillkäse",
+      "package": "60/55% Fett i. Tr., je 180g Packung, (1kg=13.83)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Altenburger Ziegen-Rolle",
+      "package": "Belgischer Weichkäse aus pasteurisierter Ziegenmilch, mit weißem Edelschimmel, weiche, gut schneidbare Konsistenz, mild im Geschmack, 45% Fett i. Tr., Bedienungsartikel nicht in allen Märkten erhältlich, 100g",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Grana Padano",
+      "package": "Italienischer Hartkäse, 16 Monate gereift, schmeckt pur zu Wein, auch ideal zum Überbacken oder für Füllungen, 32% Fett i. Tr., Bedienungsartikel nicht in allen Märkten erhältlich, 100g",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Urnäscher Bergkäse, die einzigartig würzige Delikatesse aus dem Appenzellerland oder Sennenkäse",
+      "package": "köstlich, mild, mit natürlicher Rotschmiererinde, Schweizer Schnittkäse, 50/45% Fett i. Tr., Bedienungsartikel nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.89,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Apostels Zaziki",
+      "package": "200g Becher, (1kg=5.00)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Berchtesgadener Land Feinster Schlag-Rahm oder Rahm zum Kochen",
+      "package": "32/15% Fett, je 250g Packung, (1kg=4.00)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Berchtesgadener Land Joghurt",
+      "package": "1,5/4% Fett, je 500g Becher, (1kg=2.00)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Weihenstephan Camembert",
+      "package": "30/45% Fett i. Tr., je 80g Packung, (1kg=12.50)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Ergüllü Aufstrich",
+      "package": "verschiedene Sorten, je 125/200g Becher, (1kg=15.92/9.95)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "FAGE Total griechischer Joghurt",
+      "package": "0,2/5% Fett, je 450g Becher, (1kg=6.64)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Hayran Ayran",
+      "package": "Joghurt Drink, 2,6% Fett, 250ml Becher, (1l=1.32)",
+      "price": 0.33,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Olympus Weißkäse",
+      "package": "in Salzlake, 55% Fett i. Tr., 1,5kg Dose, (1kg=3.99)",
+      "price": 5.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Goldsteig Käsescheiben",
+      "package": "45% Fett i. Tr., Wochenend-Knüller, gültig von Do-Sa!, je 125/150g Packung, (1kg=10.32/8.60)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Pustertaler",
+      "package": "Italienischer Schnittkäse, vollaromatischer, lieblicher bis leicht pikanter Geschmack, unregelmäßige, erbsengroße Lochung, geschmeidiger Teig, 50% Fett i. Tr., auch als SB Stück erhältlich, Bedienungsartikel nicht in allen Märkten erhältlich, Wochenend-Knüller, gültig von Do-Sa!, je 100g",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Trentin Grana Padano",
+      "package": "16 Monate gereift, 32% Fett i. Tr., Wochenend-Knüller, gültig von Do-Sa!, 200g Packung, (1kg=18.85)",
+      "price": 3.77,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Argeta Der cremige Aufstrich",
+      "package": "verschiedene Sorten, je 95g Dose, (1kg=10.42)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "De Cecco Pasta",
+      "package": "aus Hartweizengrieß, je 500g Beutel/Packung, (1kg=2.58)",
+      "price": 1.11,
+      "previousPrice": 1.29,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Lavazza Caffè Crema",
+      "package": "ganze Bohnen, je 1kg Beutel",
+      "price": 13.99,
+      "previousPrice": 14.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Bernbacher Pesto oder Pasta-Sauce",
+      "package": "je 140/400g Glas, (1kg=14.21/4.98)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Rosenmehl Spezialmehl",
+      "package": "Wiener Griessler, Type 550, Spätzlemehl und weitere Sorten, je 1kg Beutel",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "yfood This is Food",
+      "package": "ausgewogene Trinkmahlzeit, +0.25 Pfand, je 500ml Flasche, (1l=6.58)",
+      "price": 3.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Ben‘s Original Express-Reis",
+      "package": "je 220g Beutel, (1kg=6.77)",
+      "price": 1.29,
+      "previousPrice": 1.49,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Knorr Grill-Sauce",
+      "package": "je 250ml Flasche, (1l=3.96)",
+      "price": 0.79,
+      "previousPrice": 0.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "wasa Tasty Snacks oder Sandwich",
+      "package": "je 111-235g Packung/Beutel, (1kg=17.93-8.47)",
+      "price": 1.79,
+      "previousPrice": 1.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Schwartau Brotaufstrich",
+      "package": "verschiedene Sorten, je 255-340g Glas, (1kg=8.98-6.74)",
+      "price": 1.99,
+      "previousPrice": 2.29,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Tassimo Kaffeekapseln",
+      "package": "je 8-21er Beutel",
+      "price": 3.99,
+      "previousPrice": 4.29,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Eier aus Freilandhaltung",
+      "package": "Größe M/L, aus Bayern, 2 Stück mehr Inhalt!, 12er Packung, (Stück=0.29)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dahlhoff Feinkost Kartoffel-Salat",
+      "package": "„Tegernseer Art“ oder „Oberbayerischer Art“, je 500g Becher, (1kg=4.98)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Kaba Das Original",
+      "package": "Choco, Vanille oder Frucht, je 400g NF-Beutel, (1kg=5.00)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Develey Senf",
+      "package": "je 100ml Tube, (1l=7.90)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Knorr Fix",
+      "package": "je Beutel",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Mazola Raps- oder Maiskeimöl",
+      "package": "je 0,75l Flasche, (1l=4.65)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Sonnen Bassermann Eintopf",
+      "package": "je 800g Dose, (1kg=2.11)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dallmayr Classic",
+      "package": "Spitzenkaffee, gemahlen oder ganze Bohnen, vakuumverpackt, je 500g Packung, (1kg=12.98)",
+      "price": 6.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "De Beukelaer Eis-Waffeln",
+      "package": "12 Stück, 50g Packung, (1kg=25.80)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "MAX BALANCE Clear Whey",
+      "package": "hochwertiges Molkenproteinisolat, sehr gute Löslichkeit, zucker- und laktosefrei, je 300g Dose, (1kg=49.97)",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Lino Lada Brotaufstrich",
+      "package": "Milch-Creme mit Haselnüssen oder Milch- und Haselnusscreme, je 350g Glas, (1kg=8.54)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Podravka Suppe",
+      "package": "je Beutel",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Podravka Vegeta",
+      "package": "Würzmischung mit Gemüse, 250g Beutel, (1kg=7.16)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "fine food land Ajvar",
+      "package": "mild oder scharf, hausgemacht, je 300g Glas, (1kg=13.30)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Kartoffelbrot",
+      "package": "Vegan, Nur in Märkten mit Backstube Wünsche erhältlich, 500g, (1kg=8.00)",
+      "price": 4,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dinkel Krusti",
+      "package": "Vegan, Nur in Märkten mit Backstube Wünsche erhältlich, 2 Stück",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Quark Nussschnecke",
+      "package": "Nur in Märkten mit Backstube Wünsche erhältlich, 2 Stück",
+      "price": 3.95,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bienenstich",
+      "package": "Nur in Märkten mit Backstube Wünsche erhältlich, 2 Stück",
+      "price": 5.8,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bernbacher Die Guten Eiernudeln aus Bayern oder Bella Pasta",
+      "package": "aus 100% Hartweizengrieß, Wochenend-Knüller, gültig von Do-Sa!, je 250g Beutel, (1kg=3.00)",
+      "price": 0.75,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Südzucker Gelier Rüben-Zucker",
+      "package": "2:1, Wochenend-Knüller, gültig von Do-Sa!, 500g Packung, (1kg=1.38)",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Magnum Eis 3er oder 6er Minis",
+      "package": "verschiedene Sorten, gefroren, je 255-330ml Packung, (1l=10.16-7.85)",
+      "price": 2.59,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Mövenpick Eis",
+      "package": "gefroren, je 800/850ml Becher, (1l=2.11/1.99)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Original Wagner Steinofen Pizza oder Flammkuchen",
+      "package": "gefroren, je 300-360g Packung, (1kg=5.97-4.97)",
+      "price": 1.59,
+      "previousPrice": 1.79,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "nutella oder kinder bueno Ice Cream",
+      "package": "gefroren, je 470/455ml Becher, (1l=10.62/10.97)",
+      "price": 3.49,
+      "previousPrice": 4.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Coppenrath&Wiese Lust auf Kuchen oder Torte",
+      "package": "gefroren, je 360-580g Packung, (1kg=10.53-6.53)",
+      "price": 3.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Coppenrath&Wiese Unsere Goldstücke",
+      "package": "6/9 Stück, gefroren, je 300-540g Beutel, (1kg=4.97-2.76)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker Intermezzo",
+      "package": "verschiedene Sorten, gefroren, je 165-190g Packung, (1kg=10.85-9.42)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Heimatliebe Bayrische Laugenbrezen",
+      "package": "zum Aufbacken, mit Brezelsalz, 5 Stück, gefroren, 618g Packung, (1kg=3.24)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Taschki Pelmeni",
+      "package": "mit Schweinefleischfüllung, gefroren, 500g Beutel, (1kg=5.58)",
+      "price": 2.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "WOW Grill Lepinje",
+      "package": "Grillbrot aus dem Steinofen, gefroren, 460g Beutel, (1kg=4.33)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "WOW Grill Cevapi oder Pljeskavica",
+      "package": "gefroren, je 600g Beutel, (1kg=16.65)",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Herzstücke Irish Angus Burger",
+      "package": "aus bestem Rindfleisch vom Irish Angus Rind, zartes, saftiges und aromatisches Fleisch, gefroren, Wochenend-Knüller, gültig von Do-Sa!, 300g Packung, (1kg=13.30)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "iglo Natur-Gemüse",
+      "package": "gefroren, Wochenend-Knüller, gültig von Do-Sa!, je 700g Beutel, (1kg=3.80)",
+      "price": 2.66,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Wiener Würstchen*",
+      "package": "*nicht in allen Märkten erhältlich, 100g",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Heimatliebe Bayrische Gelbwurst*",
+      "package": "Spitzenqualität, SB-Theke, *nicht in allen Märkten erhältlich, 400g Packung, (1kg=8.73)",
+      "price": 3.29,
+      "previousPrice": 3.49,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Original Ungarische Salami „Pick“*",
+      "package": "*nicht in allen Märkten erhältlich, 100g",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Wiesbauer Österreichischer Kümmelbraten*",
+      "package": "gegart, fein gewürzt, *nicht in allen Märkten erhältlich, 100g",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Recla Italienischer Rosmarinschinken",
+      "package": "gegart, *nicht in allen Märkten erhältlich, 100g",
+      "price": 1.89,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Spanischer Serrano-Schinken*",
+      "package": "mindestens 12 Monate gereift, luftgetrocknet. *nicht in allen Märkten erhältlich, 100g",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bauchscheiben*",
+      "package": "mariniert, vom Schwein, *nicht in allen Märkten erhältlich, 100g",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Block House Uruguay Rinder-Hüftsteaks*",
+      "package": "*nicht in allen Märkten erhältlich, 100g",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Hackfleischspieße „Döner Art“* oder Cevapcici*",
+      "package": "aus Schweine- und Rindfleisch, küchenfertig gewürzt, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Houdek Kabanos*",
+      "package": "Klassik, mit Paprika oder Käse, SB-Theke, *nicht in allen Märkten erhältlich, je 150g Packung, (1kg=13.27)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Hähnchen-Oberkeulen „Pollo Fino“*",
+      "package": "mit Haut, natur oder mariniert, proteinreich, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Wiesenhof Bruzzzler*",
+      "package": "Original, Berner Style oder Bacon & Cheese, SB-Theke, *nicht in allen Märkten erhältlich, je 400/350g Packung, (1kg=8.73/9.97)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Hähnchen-Flügel*",
+      "package": "natur oder mariniert, proteinreich, HKL A, Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.66,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Jungbullen-Ribeye-Diamond-Cut-Steak*",
+      "package": "Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, 100g",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Lyoner*",
+      "package": "im Ring oder in der Stange, Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Schweinerückensteak*",
+      "package": "mit Kruste, natur oder mariniert, Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Weiße Bratwurst* fein, mit Kalbfleisch, gebrüht Bratwurst* grob, roh oder Pfälzer*",
+      "package": "Wochenend-Knüller, gültig von Do-Sa!, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Bestes vom Huhn Hähnchen-Minutenschnitzel*",
+      "package": "gewürzt, SB-Theke, *nicht in allen Märkten erhältlich, 350g Packung, (1kg=19.40)",
+      "price": 6.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Heimatliebe Bayrische Käsekrainer*",
+      "package": "Spitzenqualität, SB-Theke, *nicht in allen Märkten erhältlich, 2x150g Duopack, (1kg=11.63)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Heimatliebe Regensburger Bratwurst*",
+      "package": "Spitzenqualität, SB-Theke, *nicht in allen Märkten erhältlich, 200g Packung, (1kg=12.45)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Delikatess Schinken-Bockwurst*",
+      "package": "über Buchenholz geräuchert, SB-Theke, *nicht in allen Märkten erhältlich, 2x200g Duopack, (1kg=6.98)",
+      "price": 2.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Puten-Schnitzel*",
+      "package": "frisch, 115g Eiweiß/Protein pro Packung, SB-Theke, *nicht in allen Märkten erhältlich, 500g Packung, (1kg=11.18)",
+      "price": 5.59,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Rinder-Hackfleisch*",
+      "package": "SB-Theke, *nicht in allen Märkten erhältlich, 500g Packung, (1kg=12.38)",
+      "price": 6.19,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Frischwurst-Aufschnitt*",
+      "package": "6-fach sortiert, mit Bierschinken, *nicht in allen Märkten erhältlich, 100g",
+      "price": 0.88,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Jungbullen-Filet*",
+      "package": "frisch, *nicht in allen Märkten erhältlich, 100g",
+      "price": 4.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "weißer Leberkäs* oder Peperoni-Leberkäs*",
+      "package": "*nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.88,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Edelsalami* oder Hot-Chili-Edelsalami*",
+      "package": "*nicht in allen Märkten erhältlich, je 100g",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Jungbullen-Rouladen* ohne Füllung, -Braten* oder -Gulasch*",
+      "package": "aus der Keule, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Pfälzer Leberwurst* oder Mettwurst „Braunschweiger Art“*",
+      "package": "im Ring, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Presssack*",
+      "package": "Hausmacher Art, weiß oder rot, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Schweine-Schulter-Krustenbraten*",
+      "package": "ohne Knochen, *nicht in allen Märkten erhältlich, 100g",
+      "price": 0.66,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Spareribs*",
+      "package": "natur oder mariniert, aus der Schweinebrustspitz, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 0.59,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Strohschwein Minutensteaks* vom Rücken, oder Steaks*",
+      "package": "vom Hals, natur oder mariniert, *nicht in allen Märkten erhältlich, je 100g",
+      "price": 1.09,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Paulaner Münchner Hell,",
+      "package": "auch alkoholfrei, +3.10 Pfand, je Träger 20x0,5l Flasche, (1l=1.30)",
+      "price": 12.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Jana Eistee",
+      "package": "verschiedene Sorten, +0.25 Pfand, je 1,5l Flasche, (1l=0.66)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Schneider Weisse oder Helles",
+      "package": "verschiedene Sorten, auch alkoholfrei, +3.10 Pfand, je Träger 20x0,5l Flasche, (1l=1.60)",
+      "price": 15.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "EDEKA Herzstücke Saft oder Nektar",
+      "package": "aus Konzentrat, +0.25 Pfand, je 1l Flasche",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Freixenet Sekt,",
+      "package": "auch alkoholfrei, je 0,75l Flasche, (1l=5.32)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Franken Brunnen Mineralwasser",
+      "package": "spritzig, medium, sanft oder naturelle, +3.30 Pfand, je Träger 12x1l Flasche, (1l=0.54)",
+      "price": 6.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Coca-Cola*, Fanta, Sprite, mezzo mix* oder Lift",
+      "package": "+3.30 Pfand, *koffeinhaltig, je Träger 12x1l Flasche, (1l=0.97)",
+      "price": 10.99,
+      "previousPrice": 11.69,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Booster Energy Drink",
+      "package": "mit Taurin und Koffein, +0.25 Pfand, je 0,33l Dose, (1l=1.48)",
+      "price": 0.39,
+      "previousPrice": 0.49,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Paulaner Spezi*, auch zero*, Cola* oder Limo",
+      "package": "Orange oder Zitrone, +0.25 Pfand, *koffeinhaltig, je 0,33l Dose, (1l=2.09)",
+      "price": 0.59,
+      "previousPrice": 0.69,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Jack Daniel‘s Tennessee Whiskey",
+      "package": "35/40% Vol., je 0,7l Flasche, (1l=22.84)",
+      "price": 14.99,
+      "previousPrice": 15.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Lillet Wein-Aperitif",
+      "package": "17% Vol. oder alkoholfrei, je 0,75l Flasche, (1l=14.65)",
+      "price": 9.99,
+      "previousPrice": 10.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Spanien Freixenet",
+      "package": "Mederaño oder Mia, je 0,75l Flasche, (1l=3.99)",
+      "price": 2.79,
+      "previousPrice": 2.99,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "Almdudler,",
+      "package": "auch zuckerfrei, +0.25 Pfand, je 1l Flasche",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Chiemseer Hell",
+      "package": "+0.25 Pfand, 0,5l Dose, (1l=2.00)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Deutschland Rebenthaler Wein",
+      "package": "je 1l Packung",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Die Original Winzerschorle",
+      "package": "je 0,33l Flasche, (1l=3.03)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Cockta Limonade",
+      "package": "+0.25 Pfand, 0,5l Flasche, (1l=1.78)",
+      "price": 0.89,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Golden Eagle Energy Drink,",
+      "package": "auch Sugar Free, mit Taurin und Koffein, +0.25 Pfand, je 0,25l Dose, (1l=3.16)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Juicy 100% Fruchtsaft",
+      "package": "aus Konzentrat, je 1l Packung",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Karamalz Classic",
+      "package": "alkoholfreies Malzgetränk, +3.10 Pfand, Träger 20x0,5l Flasche, (1l=1.20)",
+      "price": 11.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "AriZona Ice Tea",
+      "package": "+0.25 Pfand, je 1,5l Flasche, (1l=0.93)",
+      "price": 1.39,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bionade",
+      "package": "biologisches Erfrischungsgetränk, +2.46 Pfand, je Träger 12x0,33l Flasche, (1l=2.14)",
+      "price": 8.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Vöslauer Mineralwasser",
+      "package": "ohne Kohlensäure oder prickelnd, +0.25 Pfand, je 1,5l Flasche, (1l=0.53)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "effect",
+      "package": "Energy Drink mit Taurin und Koffein, +0.25 Pfand, je 0,33l Dose, (1l=2.09)",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "pepsi*, Schwip Schwap* oder 7up Zero",
+      "package": "+0.25 Pfand, *koffeinhaltig, je 1,25l Flasche, (1l=0.63)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "9 Mile Vodka",
+      "package": "37,5% Vol., hergestellt in Deutschland, 0,7l Flasche, (1l=14.27)",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Faber Sekt oder Light live",
+      "package": "Sparkling, Wein oder Cocktail, auch alkoholfrei, je 0,75l Flasche, (1l=3.72)",
+      "price": 2.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Finsbury London Dry Gin, 37,5% Vol. oder Finsbury alkoholfrei",
+      "package": "je 0,7l Flasche, (1l=12.84)",
+      "price": 8.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Italien Weingenuss Merlot, Soave",
+      "package": "und weitere Sorten, je 0,75l Flasche, (1l=2.51)",
+      "price": 1.88,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Jardin du Soleil Wein-Aperitif",
+      "package": "Blanc, Neu im Sortiment!, 0,75l Flasche, (1l=7.99)",
+      "price": 5.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Württemberg Trollinger, Lemberger",
+      "package": "und weitere Sorten, je 0,75l Flasche, (1l=4.65)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Captain Morgan Rum",
+      "package": "35-40% Vol. oder alkoholfrei, Wochenend-Knüller, gültig von Do-Sa!, je 0,7l Flasche, (1l=13.57)",
+      "price": 9.5,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Oettinger Helles",
+      "package": "und weitere Sorten, +3.10 Pfand, Wochenend-Knüller, gültig von Do-Sa!, je Träger 20x0,5l Flasche, (1l=0.68)",
+      "price": 6.8,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Pircher Edelbrand oder Haselnuss-Spirituose",
+      "package": "40/30% Vol., je 0,7l Flasche, (1l=21.41)",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Valdobbiadene Prosecco Superiore Brut Millesimato DOCG",
+      "package": "0,75l Flasche, (1l=7.99)",
+      "price": 5.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Milka Schokolade",
+      "package": "Großtafel, je 250-300g Tafel, (1kg=11.96-9.97)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "duplo, kinder Riegel oder hanuta",
+      "package": "10 Stück, je 182-220g Packung, (1kg=13.68-11.32)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Knoppers minis",
+      "package": "220g Beutel, (1kg=9.09)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Chio Tortillas",
+      "package": "je 110g Beutel, (1kg=10.82)",
+      "price": 0.99,
+      "previousPrice": 1.19,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "DeBeukelaer Prinzen-Rolle",
+      "package": "je 352/450g Packung, (1kg=4.80/3.76)",
+      "price": 1.49,
+      "previousPrice": 1.69,
+      "market": "EDEKA Morsestraße",
+      "status": "app-offer"
+    },
+    {
+      "name": "EDEKA Herzstücke Schokolade",
+      "package": "je 90g Tafel, (1kg=12.33)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Chips for Friends",
+      "package": "Paprika oder gesalzen, auch geriffelt, je 200g Beutel, (1kg=4.45)",
+      "price": 0.89,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Treets The Peanut Company",
+      "package": "verschiedene Sorten, vegan, je 175/200g Beutel, (1kg=11.37/9.95)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "funny-frisch Kessel-Chips",
+      "package": "je 120g Beutel, (1kg=12.42)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "kinder Schokolade oder Yogurette",
+      "package": "je 100g Packung, (1kg=14.90)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "nimm2 Lachgummi",
+      "package": "je 200-325g Beutel, (1kg=4.95-3.05)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Bahlsen ABC Kekse",
+      "package": "Russisch Brot, 100g Beutel, (1kg=10.00)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Griesson soft cake",
+      "package": "je 300g Packung, (1kg=6.67)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Toblerone",
+      "package": "schweizer Schokolade mit Honig, Mandeln und Nougat, 100g Packung, (1kg=20.00)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Choco Smoki",
+      "package": "Flips mit Schokoladenüberzug, 40g Beutel, (1kg=19.75)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Smoki Erdnussflips",
+      "package": "gepuffter Snack mit Erdnuss-Aroma, 150g Beutel, (1kg=7.40)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Manner Waffeln oder Snack minis",
+      "package": "Wochenend-Knüller, gültig von Do-Sa!, je 400/300g Beutel, (1kg=5.98/7.97)",
+      "price": 2.39,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Persil Waschmittel",
+      "package": "Pulver, Gel oder Discs, 10-20 Waschladungen, je Packung/Beutel/Flasche/Dose, (1WL=0.50-0.25)",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Tempo Taschentücher",
+      "package": "je 20/24x 9/30x10/ 2x 90/100er Packung",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Cottonelle feuchtes Toilettenpapier",
+      "package": "42 Stück, je Packung",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dove Deospray",
+      "package": "Deo Basis 48h, je 150ml Dose, (1l=13.33)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Labello Lippenpflege",
+      "package": "je Packung",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Sensodyne Sensitiv Fluorid Zahncreme,",
+      "package": "auch Extra Frisch, je 75ml Tube, (1l=26.67)",
+      "price": 2,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "duschdas Duschgel",
+      "package": "je 225ml Flasche, (1l=4.44)",
+      "price": 1,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Domestos WC-Stein oder -Reiniger",
+      "package": "je 48/50g/750ml Packung/Flasche, (1kg=31.04/29.80/",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Guhl Shampoo oder Spülung",
+      "package": "je 250/200ml Flasche, (1l=13.16/16.45)",
+      "price": 3.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Nivea Sonnenmilch, -spray oder Gesichtssonnencreme",
+      "package": "LSF 30/50/50+, je 30-250ml Tube/Flasche/Packung, (1l=266.33-31.96)",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Regina Toilettenpapier",
+      "package": "3-lagig, je 8x150 Blatt Packung",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Somat Maschinengeschirrreiniger",
+      "package": "Pulver, Tabs oder Caps, je 960g/16-28er Beutel/Packung, (1kg=4.16/1Stück=0.25-0.14)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Vernel Weichspüler",
+      "package": "46/50 Waschladungen, dauerhaft mehr Inhalt!, je 1,012/1,1l Flasche, (1WL=0.05)",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Zewa Wisch&Weg Küchentücher",
+      "package": "Wochenend-Knüller, gültig von Do-Sa!, je 2x 72/90/4x 45/74 Blatt Packung",
+      "price": 2.44,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Sheba Katzennahrung",
+      "package": "je 85g Beutel/Schale, (1kg=5.76)",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Dokas Hundesnack",
+      "package": "je 70/90g Beutel, (1kg=21.29/16.56)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Gut&Günstig Saftige Brocken Alleinfuttermittel",
+      "package": "für ausgewachsene Hunde, saftige Fleischstücke,",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Shelma Katzennahrung",
+      "package": "je 12x85g Packung, (1kg=4.89)",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Chrysanthemen-Busch",
+      "package": "in verschiedenen Farben, Pflanzensortiment nicht in allen Märkten erhältlich, im 19cm Topf",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Lavendel angustifolia Busch",
+      "package": "Pflanzensortiment nicht in allen Märkten erhältlich, im 23cm Topf",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Sonnenhut „Echinacea purpurea“",
+      "package": "in verschiedenen Farben, Pflanzensortiment nicht in allen Märkten erhältlich, im 19cm Topf",
+      "price": 6.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "20er „Fairtrade“ Rosenstrauß",
+      "package": "in verschiedenen Farben oder bunt gemischt, Wochenend-Knüller, gültig von Do-Sa!, Pflanzensortiment nicht in allen Märkten erhältlich, je Bund",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "EDEKA Morsestraße",
+      "status": "offer"
+    },
+    {
+      "name": "Milka Schokolade",
+      "package": "versch. Sorten , je 90-g-Tafel , (1 kg = 11,00 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Youcook Internationales Fertiggericht",
+      "package": "versch. Sorten , je 420-g-Pckg. , (1 kg = 9,02 €)",
+      "price": 3.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Aperol Aperitif Bitter",
+      "package": "11% Vol. , je 0,7-l-Fl. , (1 l = 13,56 €)",
+      "price": 9.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Exquisa Der Sahnige",
+      "package": "65% Fett i.Tr. , je 200-g-Pckg. , (1 kg = 5,55 €)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rotkäppchen Sekt oder Aperitivo",
+      "package": "versch. Sorten , je 0,75-l-Fl. , (1 l = 4,39 €)",
+      "price": 3.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Lorenz Naturals",
+      "package": "Rosmarin , je 95-g-Btl. , (1 kg = 16,74 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Felix Katzennahrung",
+      "package": "versch. Sorten , je 12 x 85-g-Multipckg. , (1 kg = 3,91 €)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Original Wagner Steinofen Pizza Salami",
+      "package": "tiefgefroren , je 320-g-Pckg. , (1 kg = 6,22 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Weihenstephan Haltbare Milch",
+      "package": "1,5/3,5% Fett , je 1-l-Pckg.",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mövenpick Eis",
+      "package": "versch. Sorten , je 850-ml-Pckg. , (1 l = 1,75 €)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pritt 2 Klebestifte + 1 gratis Radiergummi",
+      "package": "2x ca. 22 g Classic Add-On Promo + 1 gratis Radiergummi , je 1-Pckg. , (1 kg = 67,95 €)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mirée Französische Kräuter",
+      "package": "65% Fett i.Tr. , je 150-g-Becher , (1 kg = 7,40 €)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Reinert Geflügel Nuggetz",
+      "package": "je 120-g-Pckg. , (1 kg = 16,58 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Jacobs 2in1 Classic",
+      "package": "je 124-g-Pckg. , (1 kg = 16,05 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mentos Mint Kaubonbons",
+      "package": "je 3 x 38-g-Pckg. , (1 kg = 11,32 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kerrygold Original Irische Butter",
+      "package": "je 250-g-Pckg. , (1 kg = 7,96 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Garden Gourmet Sensational Burger",
+      "package": "2 Stück , je 226-g-Pckg. , (1 kg = 11,02 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chupa Chups Lollipops The Best of",
+      "package": "je 120-g-Btl. , (1 kg = 10,75 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Müller Froop",
+      "package": "versch. Sorten , je 150-g-Becher , (1 kg = 3,27 €)",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Veltins Pilsener",
+      "package": "versch. Sorten, teilw. koffeinhaltig , je 0,5-l-Dose , (1 l = 1,58 €) , zzgl. 0,25 € Pfand",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Landliebe Konfitüre",
+      "package": "versch. Sorten , je 200-g-Glas , (1 kg = 8,45 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Calgon 4 in 1 Tabs Wasserenthärter",
+      "package": "je 47-Tab-Pckg. , (1 Tab = 0,17 €)",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Lorenz Saltletts Pausen Cracker",
+      "package": "je 100-g-Btl. , (1 kg = 15,90 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Jacobs 3in1 Classic",
+      "package": "je 120-g-Pckg. , (1 kg = 16,58 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Landliebe Landkäse sanft-aromatisch",
+      "package": "Schnittkäse, 48% Fett i.Tr. , je 150-g-Pckg. , (1 kg = 10,60 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pelikan Deckfarbkasten K12",
+      "package": "je 1-Pckg.",
+      "price": 6.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Maggi Magic Asia Saucy Noodles Teriyaki",
+      "package": "je 75-g-Becher , (1 kg = 13,20 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chio Ready Made Popcorn süß",
+      "package": "je 120-g-Btl. , (1 kg = 9,92 €)",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Maggi 5 Minuten Terrine Nudeln in Rahmsauce",
+      "package": "je 61-g-Becher , (1 kg = 16,23 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rama Cremefine 100% Pflanzlich",
+      "package": "je 200-ml-Becher , (1 l = 4,95 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Fol Epi Classic",
+      "package": "frz. Schnittkäse , je 150-g-Pckg. , (1 kg = 11,27 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Volvic Mineralwasser",
+      "package": "Naturelle , je 6 x 1,5-l-Fl.-Pckg. , (1 l = 0,50 €) , zzgl. 1,50 € Pfand",
+      "price": 4.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Alpro Barista Haferdrink oder Not Milk",
+      "package": "je 1-l-Pckg.",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rama Cremefine zum Kochen",
+      "package": "je 250-ml-Fl. , (1 l = 3,96 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chio Tortillas Nacho Cheese",
+      "package": "je 110-g-Btl. , (1 kg = 10,82 €)",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Ehrmann High Protein Pudding oder High Protein Joghurt",
+      "package": "versch. Sorten , je 200-g-Becher , (1 kg = 4,95 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Garnier Wahre Schätze Shampoo",
+      "package": "versch. Sorten , je 250-ml-Fl. , (1 l = 7,96 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Reinert Schinken Nuggetz",
+      "package": "herzhaft oder extra mager , je 150-g-Pckg. , (1 kg = 13,27 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Erasco Eintopf",
+      "package": "versch. Sorten , je 800-g-Dose , (1 kg = 2,49 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Original Wagner Flammkuchen Elsässer Art",
+      "package": "tiefgefroren , je 300-g-Pckg. , (1 kg = 6,63 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Duroc Serrano-Schinken",
+      "package": "18 Monate gereift , je 100-g-",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Tress Brüder Bio Curry",
+      "package": "versch. Sorten , je 400-g-Box , (1 kg = 6,23 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kerrygold Kräuterbutter",
+      "package": "je 4 x 20-g-Pckg. , (1 kg = 24,88 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Beste Wahl Kernarme Wassermelone",
+      "package": "Kl. I , je 1-kg-",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Freche Freunde Bio Kinder-Pasta",
+      "package": "tiefgefroren, versch. Sorten , je 350-g-Btl. , (1 kg = 9,97 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Frischer Bio Knoblauch",
+      "package": "Kl. II , je 100-g-",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Garden Gourmet Vegetarische Gemüsebällchen",
+      "package": "je 200-g-Pckg. , (1 kg = 12,45 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Followfood Pomodoro Classico",
+      "package": "Bio Tomatensauce , je 340-g-Glas , (1 kg = 5,26 €)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Züger Cottage Pearls",
+      "package": "je 200-g-Becher , (1 kg = 9,95 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Clementinen",
+      "package": "Sorte: siehe Etikett, Kl. I , je 750-g-Netz , (1 kg = 2,65 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Gelb- oder weißfleischige Nektarinen",
+      "package": "Kl. I , je 1-kg-",
+      "price": 3.33,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bio Himbeeren",
+      "package": "Kl. I , je 125-g-Schale , (1 kg = 27,92 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Andechser Natur Bio Jogurt mild",
+      "package": "3,8% Fett , je 500-g-Becher , (1 kg = 2,58 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Züger Mozza Vella",
+      "package": "je 125-g-Pckg. , (1 kg = 15,92 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bio Plattnektarinen",
+      "package": "Kl. II , je 500-g-Schale , (1 kg = 4,98 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kaiserschoten",
+      "package": "Ursprung: siehe Etikett, Kl. I , je 200-g-Pckg. , (1 kg = 11,10 €)",
+      "price": 2.22,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Caffe Latte",
+      "package": "je 250-ml-Becher , (1 l = 3,16 €)",
+      "price": 0.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schiller GQB Strohschwein Bistrosalami",
+      "package": "je 100-g-",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Snack Äpfel",
+      "package": "»Gala«, Kl. I , je 1-kg-Schale",
+      "price": 3.33,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rinder-Steakhüfte",
+      "package": "am Stück oder in Scheiben , je 100-g-",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Followfood Pesto Alla Genovese",
+      "package": "Biologico , je 130-g-Glas , (1 kg = 13,77 €)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Cappelletti",
+      "package": "versch. Sorten , je 250-g-Pckg. , (1 kg = 7,16 €)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bio Ingwer",
+      "package": "je 100-g-",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rote Johannisbeeren",
+      "package": "Kl. I , je 1-z.B. , (1 kg = 5,98 €)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Erdbeeren",
+      "package": "Kl. I , je 250-g-Schale , (1 kg = 9,96 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dunkle Pflaumen",
+      "package": "Kl. I , je 1-kg-",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bananen",
+      "package": "Ursprung: siehe Etikett , je 1-kg-",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kirschen",
+      "package": "Ursprung: siehe Etikett, Kl. I , je 100-g-",
+      "price": 0.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bio Zucchini",
+      "package": "Kl. II , je 500-g-Bund , (1 kg = 2,22 €)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chicorée",
+      "package": "Kl. I , je 500-g-Pckg. , (1 kg = 3,38 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Heidelbeeren",
+      "package": "Kl. I , je 200-g-Schale , (1 kg = 9,95 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio, BayBio, Naturland, Bio Rispentomaten",
+      "package": "Kl. II , je 500-g-Schale , (1 kg = 4,98 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Romana Salatherzen",
+      "package": "Kl. I , je 3-St.-Pckg.",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rispentomaten",
+      "package": "Kl. I , je 1-kg-",
+      "price": 0.95,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Paprika",
+      "package": "versch. Farben, Kl. I , je 1-kg-",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Anton oder Scharfe Anna",
+      "package": "Schweizer Hartkäse, mind. 50% Fett i.Tr. , je 100-g-",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Houdek Kabanos",
+      "package": "je 100-g-",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Weihenstephan Naturjoghurt mild",
+      "package": "versch. Sorten , je 500-g-Becher , (1 kg = 1,98 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Nadler Edle Matjesfilets",
+      "package": "Nordische Art , je 300-g-Pckg. , (1 kg = 8,30 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Frisches Hähnchen-Brustfilet",
+      "package": "je 100-g-",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Strohschwein- Tomahawk Steak",
+      "package": "je 100-g-",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Zimmermann Kernrauchschinken",
+      "package": "je 100-g-",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker Bourbon-Vanille Soße",
+      "package": "je 250-ml-Becher , (1 l = 5,16 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Palatum Oliven-Mix",
+      "package": "je 100-g-",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rama zum Streichen, Backen & Kochen",
+      "package": "je 400-g-Becher , (1 kg = 3,23 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Käse-Chips",
+      "package": "je 100-g-",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schweine-Filet-Medaillons",
+      "package": "in würzig-scharfer Marinade, am Spieß , je 100-g-",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chavroux Ziegenfrischkäse",
+      "package": "45% Fett i.Tr. , je 150-g-Pckg. , (1 kg = 15,27 €)",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Meisterschinken",
+      "package": "gegart , je 100-g-",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Brunch Brotaufstrich",
+      "package": "versch. Sorten , je 185-g-Becher , (1 kg = 6,97 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Müller Milch Reis",
+      "package": "Natur , je 200-g-Becher , (1 kg = 2,45 €)",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schiller GQB Strohschwein Frischwurst-Aufschnitt",
+      "package": "versch. Sorten , je 100-g-",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Milram Müritzer Original",
+      "package": "Schnittkäse, 55% Fett i.Tr. , je 100-g-",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Becel Gold",
+      "package": "je 225-g-Becher , (1 kg = 5,73 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Meica Bratmaxe",
+      "package": "versch. Sorten , je 313-g-Pckg. , (1 kg = 12,11 €)",
+      "price": 3.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bergader Lottes Liebling",
+      "package": "Weichkäse, cremig-mild, 50% Fett i.Tr. , je 100-g-",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bergader Almzeit oder Bavaria blu",
+      "package": "Weichkäse, versch. Sorten , je 175-g-Pckg. , (1 kg = 11,37 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rinder-Braten oder Gulasch",
+      "package": "aus der Schulter , je 100-g-",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Lamm-Hüfte",
+      "package": "natur oder mariniert , je 100-g-",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bifi Roll Original",
+      "package": "je 3 x 45-g-Pckg. , (1 kg = 14,74 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bratwurst",
+      "package": "versch. Sorten , je 100-g-",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Wolfsbarsch",
+      "package": "ganz, ausgenommen, feiner milder Geschmack, ideal zum Braten und Grillen , je 100-g-",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Tilapia-Filet",
+      "package": "weißes, sehr zartes Fleisch, getaut , je 100-g-",
+      "price": 1.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Müller Grießpudding",
+      "package": "Himbeere , je 160-g-Becher , (1 kg = 3,06 €)",
+      "price": 0.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Danone Activia Joghurt",
+      "package": "versch. Sorten , je 4 x 115-g-Becher-Pckg. , (1 kg = 3,24 €)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rügenwalder Vegane Mühlen Salami oder Veganer Schinken Spicker Mortadella",
+      "package": "je 80-g-Pckg. , (1 kg = 13,88 €)",
+      "price": 1.11,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Saint Albray",
+      "package": "frz. Weichkäse , je 180-g-Pckg. , (1 kg = 12,72 €)",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kalbs-Steaks",
+      "package": "aus dem Rücken , je 100-g-",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker High Protein Pudding Schoko oder Rote Grütze",
+      "package": "je 400-g-Becher , (1 kg = 4,98 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schwarzer Heilbutt geräuchert",
+      "package": "Mittelstücke, reich an ungesättigten Fettsäuren , je 100-g-",
+      "price": 2.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bifi Chicken High Protein",
+      "package": "je 100-g-Pckg. , (1 kg = 19,90 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Wiesenhof Geflügel Mortadella",
+      "package": "versch. Sorten , je 100-g-Pckg. , (1 kg = 11,90 €)",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Butcher’s Wagyu Beef Burger Patties",
+      "package": "je 230-g-Pckg. , (1 kg = 23,00 €)",
+      "price": 5.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Apfel-Bananenmark",
+      "package": "je 360-g-Glas , (1 kg = 3,19 €)",
+      "price": 1.15,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Regional Gulasch gemischt",
+      "package": "vom Schwein und Rind , je 500-g-Pckg. , (1 kg = 13,32 €)",
+      "price": 6.66,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Butcher’s Jumbo Pommes Frites",
+      "package": "je 700-g-Btl. , (1 kg = 2,27 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Nature & Respect Frische Freiland- Hähnchen-Innenfilets",
+      "package": "in Paprika-Chili-Marinade, SB-verpackt , je 1-kg-",
+      "price": 19.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Regional Schweinebratwurst",
+      "package": "fein , je 200-g-Pckg. , (1 kg = 11,10 €)",
+      "price": 2.22,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Nutella Eis",
+      "package": "je 470-ml-Becher , (1 l = 8,49 €)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Salat High Protein Hähnchensalat",
+      "package": "versch. Sorten , je 310-g-Schale , (1 kg = 7,39 €)",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schöller Multipackung Pirulo Kaktus",
+      "package": "je 9 x 45-ml-Pckg. , (1 l = 5,48 €)",
+      "price": 2.22,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Meister Rostbratwurst",
+      "package": "fein oder mittelgrob , je 100-g-",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker Götterspeise XXL Waldmeister",
+      "package": "je 500-g-Becher , (1 kg = 2,58 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Butcherʼs Angus XXL Irish Beef Burger Patties",
+      "package": "feinstes irisches Rindfleisch , je 800-g-Pckg. , (1 kg = 14,36 €)",
+      "price": 11.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker La Mia Familia Vier Käse",
+      "package": "tiefgefroren , je 480-g-Pckg. , (1 kg = 7,27 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Hackfleisch gemischt",
+      "package": "vom Rind und Schwein, Family Pack , je 1000-g-Pckg.",
+      "price": 8.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Saint Agur oder Etorki",
+      "package": "frz. Weich- oder Schnittkäse, versch. Sorten , je 100-g-",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker La Mia Grande Salame Piccante",
+      "package": "tiefgefroren , je 380-g-Pckg. , (1 kg = 9,18 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Metten Salami-Aufschnitt",
+      "package": "versch. Sorten , je 100-g-",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Steinhaus Krustenbraten",
+      "package": "je 100-g-",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Butcher’s Burger Cheese Cheddar",
+      "package": "je 100-g-Pckg. , (1 kg = 12,90 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Magnum La Pistache",
+      "package": "je 270-ml-Pckg. , (1 l = 9,22 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schweine-Filet",
+      "package": "je 100-g-",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Wilhelm Brandenburg Tyrolini",
+      "package": "versch. Sorten , je 90-g-Pckg. , (1 kg = 22,11 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Käserebellen Heublumen Rebell",
+      "package": "Schnittkäse, mind. 50% Fett i.Tr. , je 100-g-",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schöller Multipackung Pirulo Watermelon",
+      "package": "je 5 x 73-ml-Pckg. , (1 l = 6,08 €)",
+      "price": 2.22,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pick Original ungarische Salami oder Paprika-Kolbasz",
+      "package": "je 100-g-",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Gouda",
+      "package": "gerieben , je 150-g-Btl. , (1 kg = 10,60 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Regional Rinder-Hackfleisch",
+      "package": "je 250-g-Pckg. , (1 kg = 15,96 €)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Magnum Mini Mix Classic, Almond, White",
+      "package": "je 330-ml-Pckg. , (1 l = 7,55 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chovi Allioli",
+      "package": "versch. Sorten , je 150-ml-Becher , (1 l = 13,27 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Popp Feinster Fleischsalat",
+      "package": "versch. Sorten , je 200-g-Becher , (1 kg = 6,45 €)",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Vita Coco Kokosnusswasser",
+      "package": "versch. Sorten , je 1-l-Pckg.",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Regional Frische Puten-Medaillons",
+      "package": "je 400-g-Pckg. , (1 kg = 14,23 €)",
+      "price": 5.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pahmeyer Mini Reibekuchen oder Süßkartoffel Rösti",
+      "package": "je 300-g-Schale , (1 kg = 5,97 €)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Aggenstein Emmentaler",
+      "package": "Hartkäse, 45% Fett i.Tr. , je 100-g-",
+      "price": 1.19,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Porree",
+      "package": "Kl. I , je 1-St.",
+      "price": 0.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Butcher‘s Wedges Kräuter",
+      "package": "je 350-g-Schale , (1 kg = 4,54 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Wilhelm Brandenburg Bratensülze-Teller",
+      "package": "je 350-g-St. , (1 kg = 8,54 €)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Innocent Direktsaft",
+      "package": "versch. Sorten , je 900-ml-Fl. , (1 l = 2,99 €) , zzgl. 0,25 € Pfand",
+      "price": 2.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Plattpfirsiche",
+      "package": "Kl. I , je 500-g-Schale , (1 kg = 1,98 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Coca-Cola",
+      "package": "versch. Sorten, teilw. koffeinhaltig , je 2-l-Fl. , (1 l = 0,75 €) , zzgl. 0,25 € Pfand",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Hafer Cookies",
+      "package": "Milchschokolade , je 300-g-Pckg. , (1 kg = 10,97 €)",
+      "price": 3.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Trenker Südtiroler Schüttelbrot",
+      "package": "mit Kürbiskernen & Sesam , je 150-g-Pckg. , (1 kg = 13,27 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dallmayr Kaffee Classic",
+      "package": "gemahlener Bohnenkaffee, versch. Sorten , je 500-g-Pckg. , (1 kg = 13,98 €)",
+      "price": 6.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Milka Tender",
+      "package": "Milch , je 5 x 37-g-Pckg. , (1 kg = 10,76 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Leimer Croutons",
+      "package": "versch. Sorten , je 100-g-Pckg. , (1 kg = 9,90 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Lindt Hello",
+      "package": "Japanese Cheesecake , je 100-g-Tafel , (1 kg = 29,90 €)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "De Cecco Natives Olivenöl Extra",
+      "package": "Classico , je 500-ml-Fl. , (1 l = 11,98 €)",
+      "price": 5.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Jacobs Barista Editions",
+      "package": "ganze Bohnen, versch. Sorten , je 1000-g-Pckg.",
+      "price": 13.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ja! Brechbohnen",
+      "package": "tiefgefroren , je 1000-g-Btl.",
+      "price": 2.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Helle Tafeltrauben",
+      "package": "Sorte: siehe Etikett, Kl. I , je 500-g-Schale , (1 kg = 3,38 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Gelbe Speisezwiebeln",
+      "package": "Kl. II , je 1,5-kg-Netz , (1 kg = 1,06 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kölln Bio Haferflocken",
+      "package": "versch. Sorten , je 500-g-Pckg. , (1 kg = 3,38 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Coca-Cola",
+      "package": "versch. Sorten, koffeinhaltig , je 0,33-l-Dose , (1 l = 2,27 €) , zzgl. 0,25 € Pfand",
+      "price": 0.75,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ja! Milder Sahne Joghurt",
+      "package": "versch. Sorten , je 150-g-Becher , (1 kg = 2,60 €)",
+      "price": 0.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Samyang Hot Chicken Ramen",
+      "package": "Cheese Flavour , je 140-g-Btl. , (1 kg = 14,21 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Milka Choco & Cake",
+      "package": "je 175-g-Pckg. , (1 kg = 11,37 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Knorr Spaghetteria Pasta Spinaci Käse",
+      "package": "je 178-g-Btl. , (1 kg = 8,37 €)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Max Premium Pistazien",
+      "package": "geröstet & gesalzen , je 225-g-Dose , (1 kg = 22,18 €)",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Nong Shim Shin Ramyun",
+      "package": "spicy & creamy , je 137-g-Pckg. , (1 kg = 10,88 €)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mazzetti Essig",
+      "package": "versch. Sorten , je 500-ml-Fl. , (1 l = 5,98 €)",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Ritter Sport Schokolade Nussklasse",
+      "package": "versch. Sorten , je 100-g-Tafel , (1 kg = 16,90 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Joghurt",
+      "package": "versch. Sorten, 3,8% Fett , je 150-g-Becher , (1 kg = 3,93 €)",
+      "price": 0.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Melitta Bella Crema",
+      "package": "La Crema Kaffeepads , je 120-g-Btl. , (1 kg = 16,58 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Melitta Auslese",
+      "package": "Klassisch Kaffeepads , je 126-g-Btl. , (1 kg = 15,79 €)",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker Vitalis Schoko Müsli",
+      "package": "Klassisch , je 450-g-Pckg. , (1 kg = 5,53 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Kichererbsen",
+      "package": "je 330-g-Glas , (1 kg = 3,21 €) , 215 g Abtropfgewicht",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ja! Apfelsaftschorle",
+      "package": "je 0,5-l-Fl. , (1 l = 0,78 €) , zzgl. 0,25 € Pfand",
+      "price": 0.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Leicht & Cross Knusperbrot",
+      "package": "versch. Sorten , je 125-g-Pckg. , (1 kg = 7,92 €)",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Weiße Champignons",
+      "package": "Kl. I , je 400-g-Schale , (1 kg = 3,98 €)",
+      "price": 1.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Oryza Reisspezialität",
+      "package": "versch. Sorten , je 500-g-Btl. , (1 kg = 3,58 €)",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Max Premium Pistazienkerne",
+      "package": "geröstet & gesalzen , je 150-g-Dose , (1 kg = 33,27 €)",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Katjes Fruchtgummi",
+      "package": "versch. Sorten , je 210-g-Btl. , (1 kg = 3,67 €)",
+      "price": 0.77,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Dr. Oetker Vitalis Müsli",
+      "package": "Weniger süß , je 600-g-Pckg. , (1 kg = 4,15 €)",
+      "price": 2.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Kidney-Bohnen",
+      "package": "je 400-g-Dose , (1 kg = 2,71 €) , 255 g Abtropfgewicht",
+      "price": 0.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Bio Haferpops",
+      "package": "je 375-g-Btl. , (1 kg = 6,53 €)",
+      "price": 2.45,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Hofbräuhaus München Helles Vollbier",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,50 €) , zzgl. 3,10 € Pfand",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Fernet Branca Kräuterlikör",
+      "package": "35% Vol. , je 0,7-l-Fl. , (1 l = 18,56 €)",
+      "price": 12.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Somat Excellence",
+      "package": "4 in 1 , je 49-WL-Pckg. , (1 WL = 0,15 €)",
+      "price": 7.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Oxford Schreibwaren",
+      "package": "Schulhefte DIN A4, 16 Blatt, Lin. 25-28 0.99 Sammeltasche DIN A3 1.99 Federmäppchen schwarz 8.99 , je 1-St.",
+      "price": 0.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pril Geschirrspülmittel",
+      "package": "Original , je 675-ml-Fl. , (1 l = 2,06 €)",
+      "price": 1.39,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Krombacher Spezi",
+      "package": "koffeinhaltig , je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,20 €) , zzgl. 3,10 € Pfand",
+      "price": 11.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Allgäuer Büble Edelbräu",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,50 €) , zzgl. 4,50 € Pfand",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Malibu Kokoslikör",
+      "package": "18% Vol. , je 0,7-l-Fl. , (1 l = 14,27 €)",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Staedtler Schreibwaren",
+      "package": "Lineal ca. 30 cm 1.29 UVP 1.99 Noris Buntstifte 12er-Pack + 1 Bleistift 2.49 UVP 4.50 Lumocolor non-permanent Marker 2er-Pack 2.99 UVP 5.00 NORIX Set 2 Bleistifte, 1 Radierer und 1 Spitzdose 5.99 UVP 8.60 , je 1-Pckg.",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Estrella Damm",
+      "package": "spanisches Lagerbier , je 6 x 0,33-l-Fl.-Sixpack , (1 l = 2,52 €) , zzgl. 0,48 € Pfand",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Spaten Münchner Hell",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,50 €) , zzgl. 3,10 € Pfand",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Tanqueray London Dry Gin",
+      "package": "43,1% Vol. oder 0,0% Alkoholfrei , je 0,7-l-Fl. , (1 l = 22,84 €)",
+      "price": 15.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Corona Mexican Beer",
+      "package": "je 20 x 0,35-l-Fl.-Kasten , (1 l = 2,39 €) , zzgl. 3,10 € Pfand",
+      "price": 16.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Oettinger Pils oder Export",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 0,70 €) , zzgl. 3,10 € Pfand",
+      "price": 6.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Sanpellegrino Limonade",
+      "package": "versch. Sorten , je 0,33-l-Dose , (1 l = 2,70 €) , zzgl. 0,25 € Pfand",
+      "price": 0.89,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Arcobräu Moos Mooser Liesl",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,60 €) , zzgl. 3,10 € Pfand",
+      "price": 15.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Kloster Scheyern Klostergold¹",
+      "package": "je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,40 €) , zzgl. 3,10 € Pfand",
+      "price": 13.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Fuze Tea",
+      "package": "versch. Sorten , je 1,25-l-Fl. , (1 l = 1,03 €) , zzgl. 0,25 € Pfand",
+      "price": 1.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mezzacorona",
+      "package": "trocken , je 0,75-l-Fl. , (1 l = 5,32 €)",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Zubrowka Biala Vodka",
+      "package": "37,5% Vol. , je 0,7-l-Fl. , (1 l = 11,41 €)",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Martini Bianco Wermut",
+      "package": "14,5% Vol. oder Vibrante Aperitif alkoholfrei , je 0,75-l-Fl. , (1 l = 10,65 €)",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Adelholzener Mineralwasser",
+      "package": "versch. Sorten , je 12 x 1-l-Fl.-Kasten , (1 l = 0,54 €) , zzgl. 4,80 € Pfand",
+      "price": 6.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Beck’s Pils",
+      "package": "versch. Sorten , je 20 x 0,5-l-Fl.-Kasten , (1 l = 1,15 €) , zzgl. 3,10 € Pfand",
+      "price": 11.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Valensina Saft",
+      "package": "versch. Sorten, aus Fruchtsaft- konzentrat , je 1-l-Fl. , zzgl. 0,25 € Pfand",
+      "price": 1.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Grand Sud Vin de France",
+      "package": "versch. Sorten, trocken , je 1-l-Fl.",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Anheuser- Busch Bud",
+      "package": "je 24 x 0,3-l-Fl.-Kasten , (1 l = 2,36 €) , zzgl. 3,42 € Pfand",
+      "price": 16.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Trendhaus Schreibwaren",
+      "package": "Lese-Lernhilfe 2er-Pack 1.99 Zauber Malbuch ABC mit magischem Bleistift 2.99 Mehrfarbkuli Einhorn 3.99 , je 1-Pckg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Frankenbrunnen Mineralwasser",
+      "package": "versch. Sorten , je 12 x 0,75-l-Fl.-Kasten , (1 l = 0,55 €) , zzgl. 3,30 € Pfand",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Ouzo 12",
+      "package": "38% Vol. , je 0,7-l-Fl. , (1 l = 14,27 €)",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Havana Club Añejo 3 Años oder Especial",
+      "package": "40% Vol. , je 0,7-l-Fl. , (1 l = 14,99 €)",
+      "price": 10.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Gerolsteiner Mineralwasser",
+      "package": "versch. Sorten , je 12 x 1-l-Fl.-Kasten , (1 l = 0,67 €) , zzgl. 3,30 € Pfand",
+      "price": 7.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Peroni Nastro Azzurro",
+      "package": "je 6 x 0,33-l-Fl.-Sixpack , (1 l = 2,52 €) , zzgl. 0,48 € Pfand",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Trendhaus Schultüten",
+      "package": "ca. 15 cm 1.99 ca. 22 cm 2.69 ca. 35 cm 3.29 ca. 50 cm 5.99 , je 1-St.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Monster Energy Drink",
+      "package": "versch. Sorten, koffeinhaltig , je 10 x 0,5-l-Dosen-Pckg. , (1 l = 1,78 €) , zzgl. 2,50 € Pfand",
+      "price": 8.88,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Sellner Schreibwaren",
+      "package": "radierbare Gelstifte 3er-Pack versch. Tiermotive 2.99 Silikonköcher versch. Tiermotive 5.99 radierbare Textmarker 4er-Pack versch. Farben 6.99 , je 1-Pckg.",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Jameson Irish Whiskey",
+      "package": "40% Vol. , je 0,7-l-Fl. , (1 l = 21,41 €)",
+      "price": 14.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Mezzo Mix",
+      "package": "koffeinhaltig , je 0,5-l-Dose , (1 l = 1,50 €) , zzgl. 0,25 € Pfand",
+      "price": 0.75,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Schöfferhofer Weizen",
+      "package": "versch. Sorten , je 6 x 0,33-l-Fl.-Sixpack , (1 l = 2,02 €) , zzgl. 0,48 € Pfand",
+      "price": 3.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Rötkäppchen Secconade",
+      "package": "versch. Sorten , je 0,33-l-Fl. , (1 l = 5,12 €)",
+      "price": 1.69,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Peanuts/Woodstock Isolierflasche ca. 500 ml oder Woodstock Brotdose",
+      "package": "je 1-St.",
+      "price": 5.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pritt Kleber",
+      "package": "Bastelkleber ca. 150 g 1.99 (1 kg = 13.27) Klebestifte 2x ca. 22 g + 1x ca. 20 g gratis 2.99 (1 kg = 46.72) Mini Korrekturroller 2+1 gratis je ca. 7 m 2.99 (1 m = 0.14) , je 1-Pckg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Pelikan Schreibwaren",
+      "package": "Tintenlöscher »Super Pirat« 2er-Pack 1.99 Zeichenblock DIN A3, 20 Blatt blanko, ca. 100 g/m² 2.99 Pinsel 10er Starter-Set 6.99 Füller »Twist« inkl. 2 Tintenpatronen Schriftfarbe blau 7.99 , je 1-Pckg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Vitakraft Bonas Kaustangen mit Huhn oder Filets Streifen mit Entenbrust",
+      "package": "je 80-g-Pckg. , (1 kg = 23,63 €)",
+      "price": 1.89,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Beste Wahl Edelweiß",
+      "package": "mit weißen, sternförmigen Blüten , je 1-Topf",
+      "price": 2.79,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Spee Color Gel",
+      "package": "je 20-WL-Fl. , (1 WL = 0,17 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Sukkulente oder Einblatt",
+      "package": "in dekorativer Keramik , je 1-Topf",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Gerbera",
+      "package": "versch. Farben, mit Schnittblumen­nahrung , je 1-Bund",
+      "price": 3.33,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Orchidee",
+      "package": "in farblich passender Keramik , je 1-Topf",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Tena Discreet Einlagen",
+      "package": "Extra , je 10-St.-Pckg.",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "VIVESS LED Tischlampe",
+      "package": "je 1-St.",
+      "price": 6.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Tena Discreet Ultra Einlagen",
+      "package": "Normal , je 16-St.-Pckg.",
+      "price": 2.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "L'Oréal Men Expert Duschgel",
+      "package": "versch. Sorten , je 250-ml-Fl. , (1 l = 5,96 €)",
+      "price": 1.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "MATTEL Monster High Puppe",
+      "package": "je 1-St.",
+      "price": 9.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ZooRoyal Katzennassfutter",
+      "package": "versch. Sorten , je 100-g-Schale , (1 kg = 3,50 €)",
+      "price": 0.35,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Chrysanthemenbusch",
+      "package": "versch. Farben, ideal für die Kübelbepflanzung , je 1-Topf",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ZooRoyal Tigrooo Katzenstreu mit Babypuderduft",
+      "package": "je 6-kg-Pckg. , (1 kg = 0,92 €)",
+      "price": 5.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "The Papermakers Toilettenpapier",
+      "package": "Edition »Sunny«, 3-lagig , je 16 x 150-Blatt-Pckg.",
+      "price": 4.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "REWE Beste Wahl Flammendes Käthchen oder Mittagsgold »New Day«",
+      "package": "versch. Farben , je 1-Topf",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Carefree Slipeinlagen",
+      "package": "Cotton Feel Normal , je 56-St.-Pckg.",
+      "price": 2.29,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Weißer Riese Megaperls",
+      "package": "je 17-WL-Btl. , (1 WL = 0,21 €)",
+      "price": 3.49,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "Bebe pflegende Reinigungstücher",
+      "package": "je 25-St.-Pckg.",
+      "price": 1.99,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    },
+    {
+      "name": "ZooRoyal Knusperkissen",
+      "package": "Lachs, Forelle & Grünlippmuschel , je 70-g-Btl. , (1 kg = 8,43 €)",
+      "price": 0.59,
+      "previousPrice": null,
+      "market": "REWE Eching",
+      "status": "offer"
+    }
+  ],
+  "computedFromOffers": true,
+  "planRevision": 17,
+  "mealPrep": {
+    "title": "Meal-Prep für 7 Kochblöcke",
+    "summary": "7 Gerichte in sinnvoller Reihenfolge vorbereiten; spätere Mahlzeiten werden eingefroren, empfindliche Bestandteile frisch ergänzt.",
+    "totalMinutes": 122,
+    "freezeCount": 5,
+    "freshCount": 5,
+    "batches": [
+      {
+        "recipeId": "potato-egg-skillet",
+        "name": "Kartoffel-Ei-Pfanne mit Spinat",
+        "day": "Mo 27.07.",
+        "storage": "Kühlschrank",
+        "instruction": "Kartoffeln würfeln und vorgaren. Mit Zwiebeln goldbraun braten. Spinat unterheben. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
+        "cookTime": 30,
+        "firstSteps": [
+          "Kartoffeln würfeln und vorgaren.",
+          "Mit Zwiebeln goldbraun braten."
+        ]
+      },
+      {
+        "recipeId": "spinach-rice-omelette",
+        "name": "Spinat-Reis mit Omelettstreifen",
+        "day": "Di 28.07.",
+        "storage": "Teilweise einfrieren",
+        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Di 28.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "cookTime": 25,
+        "firstSteps": [
+          "Reis kochen.",
+          "Spinat mit Zwiebel weich garen."
+        ]
+      },
+      {
+        "recipeId": "roast-vegetable-couscous",
+        "name": "Ofengemüse mit Couscous",
+        "day": "Mi 29.07.",
+        "storage": "Gefrierschrank",
+        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Mi 29.07. im Kühlschrank auftauen.",
+        "cookTime": 35,
+        "firstSteps": [
+          "Gemüse würfeln und im Ofen rösten.",
+          "Couscous mit heißer Brühe quellen lassen."
+        ]
+      },
+      {
+        "recipeId": "schnitzel-potatoes",
+        "name": "Schnitzel mit Kartoffel-Gurkensalat",
+        "day": "Do 30.07.",
+        "storage": "Teilweise einfrieren",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Do 30.07. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten. Rezept-Hinweis: Schnitzel paniert roh einfrierbar; Salat frisch.",
+        "cookTime": 12,
+        "firstSteps": [
+          "Kartoffeln kochen und mit Gurke als Salat anmachen.",
+          "Schnitzel flach klopfen und panieren."
+        ]
+      },
+      {
+        "recipeId": "wings",
+        "name": "Chicken Wings & Kartoffelspalten",
+        "day": "Fr 31.07.",
+        "storage": "Tiefgekühlt lassen",
+        "instruction": "Tiefkühlware bis zum Fr 31.07. im Gefrierschrank lassen; Beilage und frische Bestandteile erst am Esstag vorbereiten.",
+        "cookTime": 8,
+        "firstSteps": [
+          "Wings und Kartoffelspalten im Ofen zubereiten.",
+          "Dips bereitstellen."
+        ]
+      },
+      {
+        "recipeId": "mexico-pork",
+        "name": "Mexico-Steaks mit Ofenkartoffeln",
+        "day": "Sa 01.08.",
+        "storage": "Teilweise einfrieren",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "cookTime": 12,
+        "firstSteps": [
+          "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen.",
+          "Steaks in Pfanne oder Grill kräftig braten und kurz ruhen lassen."
+        ]
+      },
+      {
+        "recipeId": "beef-onion",
+        "name": "Rindergeschnetzeltes in Zwiebelsoße",
+        "day": "So 02.08.",
+        "storage": "Gefrierschrank",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "cookTime": 35,
+        "firstSteps": [
+          "Kartoffeln kochen.",
+          "Rind portionsweise scharf anbraten und herausnehmen."
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "time": "0–20 Min.",
+        "title": "Kartoffel-Ei-Pfanne mit Spinat",
+        "instruction": "Kartoffeln würfeln und vorgaren. Mit Zwiebeln goldbraun braten. Spinat unterheben. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Kartoffeln und Spinat ja; Ei besser frisch stocken lassen.",
+        "storage": "Kühlschrank",
+        "recipeId": "potato-egg-skillet"
+      },
+      {
+        "time": "20–36 Min.",
+        "title": "Spinat-Reis mit Omelettstreifen",
+        "instruction": "Die laut Rezept einfrierbaren Komponenten am Einkaufstag portionieren und einfrieren. Am Vorabend von Di 28.07. im Kühlschrank auftauen; alle übrigen Bestandteile am Esstag zubereiten. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "storage": "Teilweise einfrieren",
+        "recipeId": "spinach-rice-omelette"
+      },
+      {
+        "time": "36–59 Min.",
+        "title": "Ofengemüse mit Couscous",
+        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Mi 29.07. im Kühlschrank auftauen.",
+        "storage": "Gefrierschrank",
+        "recipeId": "roast-vegetable-couscous"
+      },
+      {
+        "time": "59–69 Min.",
+        "title": "Schnitzel mit Kartoffel-Gurkensalat",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Do 30.07. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten. Rezept-Hinweis: Schnitzel paniert roh einfrierbar; Salat frisch.",
+        "storage": "Teilweise einfrieren",
+        "recipeId": "schnitzel-potatoes"
+      },
+      {
+        "time": "69–79 Min.",
+        "title": "Chicken Wings & Kartoffelspalten",
+        "instruction": "Tiefkühlware bis zum Fr 31.07. im Gefrierschrank lassen; Beilage und frische Bestandteile erst am Esstag vorbereiten.",
+        "storage": "Tiefgekühlt lassen",
+        "recipeId": "wings"
+      },
+      {
+        "time": "79–89 Min.",
+        "title": "Mexico-Steaks mit Ofenkartoffeln",
+        "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
+        "storage": "Teilweise einfrieren",
+        "recipeId": "mexico-pork"
+      },
+      {
+        "time": "89–112 Min.",
+        "title": "Rindergeschnetzeltes in Zwiebelsoße",
+        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "storage": "Gefrierschrank",
+        "recipeId": "beef-onion"
+      },
+      {
+        "time": "112–122 Min.",
+        "title": "Portionieren & beschriften",
+        "instruction": "Behälter mit Gericht, Portionenzahl und Esstag beschriften; Gefrierportionen erst vollständig abgekühlt einräumen.",
+        "storage": "Organisation"
+      }
+    ]
+  },
+  "preferences": {
+    "excludedIngredients": [
+      "Milch"
+    ]
+  }
 }

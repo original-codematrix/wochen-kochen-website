@@ -107,6 +107,70 @@ test('generateOfferPlan does not substitute chicken wings for chicken breast', (
   assert.equal(names.includes('Hähnchen-Flügel'), false);
 });
 
+test('generateOfferPlan accepts chicken wings but rejects chicken nuggets for wings', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'wings', name: 'Chicken Wings', cat: 'TK & Ofen', cost: 13, rating: 5, ingredients: ['600 g Chicken Wings'] }],
+    offers: [
+      { name: 'Hähnchen Wings', package: '600 g', price: 4.99, market: 'Markt A', status: 'offer' },
+      { name: 'Chicken Nuggets', package: '600 g', price: 2.99, market: 'Markt A', status: 'offer' }
+    ],
+    basePlan: {}
+  });
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+
+  assert.deepEqual(offeredNames, ['Hähnchen Wings']);
+});
+
+test('generateOfferPlan accepts chicken breast but rejects a whole chicken for breast', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'breast', name: 'Hähnchenbrust', cat: 'Reis', cost: 13, rating: 5, ingredients: ['600 g Hähnchenbrust'] }],
+    offers: [
+      { name: 'Hähnchen-Brustfilet', package: '600 g', price: 5.99, market: 'Markt A', status: 'offer' },
+      { name: 'Frisches ganzes Hähnchen', package: '1,2 kg', price: 2.99, market: 'Markt A', status: 'offer' }
+    ],
+    basePlan: {}
+  });
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+
+  assert.deepEqual(offeredNames, ['Hähnchen-Brustfilet']);
+});
+
+test('generateOfferPlan accepts chicken legs but rejects chicken breast for legs', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'legs', name: 'Hähnchenkeulen', cat: 'Kartoffeln', cost: 13, rating: 5, ingredients: ['600 g Hähnchenkeulen'] }],
+    offers: [
+      { name: 'Hähnchenschenkel', package: '600 g', price: 4.99, market: 'Markt A', status: 'offer' },
+      { name: 'Hähnchenbrustfilet', package: '600 g', price: 2.99, market: 'Markt A', status: 'offer' }
+    ],
+    basePlan: {}
+  });
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+
+  assert.deepEqual(offeredNames, ['Hähnchenschenkel']);
+});
+
+test('generateOfferPlan requires both pork neck and steak for pork neck steaks', () => {
+  const plan = generateOfferPlan({
+    recipes: [{ id: 'neck-steak', name: 'Nackensteaks', cat: 'Kartoffeln', cost: 14, rating: 5, ingredients: ['750 g Schweinenackensteaks'] }],
+    offers: [
+      { name: 'Schweinenackensteaks', package: '750 g', price: 4.99, market: 'Markt A', status: 'offer' },
+      { name: 'Schweinenackenbraten', package: '750 g', price: 2.99, market: 'Markt A', status: 'offer' }
+    ],
+    basePlan: {}
+  });
+  const offeredNames = plan.shopping.flatMap(group => group.items)
+    .filter(item => item.status === 'offer')
+    .map(item => item.name);
+
+  assert.deepEqual(offeredNames, ['Schweinenackensteaks']);
+});
+
 test('generateOfferPlan charges a whole retail package instead of a prorated unit price', () => {
   const plan = generateOfferPlan({
     recipes: [{ id: 'cheese', name: 'Käse-Abend', cat: 'TK & Ofen', cost: 10, rating: 5, ingredients: ['80 g Käse'] }],
