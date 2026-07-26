@@ -758,6 +758,82 @@ test('generateOfferPlan assigns every required ingredient to exactly one shoppin
   assert.equal(new Set(ingredientIds).size, 4);
 });
 
+test('generateOfferPlan groups priced and estimated items by supermarket department', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'departments',
+      name: 'Abteilungs-Test',
+      cat: 'Pfanne',
+      cost: 20,
+      rating: 5,
+      servings: 2,
+      ingredients: [
+        '650 g Rindergeschnetzeltes',
+        '600 g TK-Blattspinat',
+        '1 Gurke',
+        '2 Zwiebeln',
+        '2 Knoblauchzehen',
+        '400 g Couscous',
+        '150 g Paniermehl',
+        '500 ml zubereitete Rinderbrühe',
+        '2 EL Öl',
+        '1 EL Senf',
+        '1 TL Stärke'
+      ]
+    }],
+    offers: [{ name: 'Tafelsalz', package: '500 g', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const namesByDepartment = Object.fromEntries(
+    plan.shopping.map(group => [group.department, group.items.map(item => item.name)])
+  );
+
+  assert.ok(namesByDepartment['Fleisch & Frischetheke'].includes('Rindergeschnetzeltes'));
+  assert.ok(namesByDepartment['Kühlregal & Tiefkühl'].includes('TK-Blattspinat'));
+  assert.deepEqual(
+    ['Gurke', 'Zwiebeln', 'Knoblauchzehen'].every(name => namesByDepartment['Obst & Gemüse'].includes(name)),
+    true
+  );
+  assert.deepEqual(
+    ['Couscous', 'Paniermehl'].every(name => namesByDepartment['Nudeln, Reis & Beilagen'].includes(name)),
+    true
+  );
+  assert.deepEqual(
+    ['zubereitete Rinderbrühe', 'EL Öl', 'EL Senf', 'TL Stärke']
+      .every(fragment => namesByDepartment['Soßen, Gewürze & Vorrat'].some(name => name.includes(fragment))),
+    true
+  );
+  assert.equal(
+    (namesByDepartment['Weitere Zutaten'] || []).some(name => /Rindergeschnetzeltes|Spinat|Gurke|Zwiebel|Knoblauch|Couscous|Paniermehl|Brühe|Öl|Senf|Stärke/i.test(name)),
+    false
+  );
+});
+
+test('generateOfferPlan puts priced and estimated items from the same category in the same department', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'same-department',
+      name: 'Gurken-Test',
+      cat: 'Salat',
+      cost: 8,
+      rating: 5,
+      servings: 2,
+      ingredients: ['1 Gurke', '200 g Gewürzgurken']
+    }],
+    offers: [{ name: 'Gurke', package: '1 Stück', price: 0.79, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const pricedGroup = plan.shopping.find(group => (
+    group.items.some(item => item.name === 'Gurke' && item.status === 'offer')
+  ));
+  const estimatedGroup = plan.shopping.find(group => (
+    group.items.some(item => item.name === 'Gewürzgurken' && item.status === 'estimated')
+  ));
+
+  assert.equal(pricedGroup.department, estimatedGroup.department);
+  assert.equal(pricedGroup.department, 'Obst & Gemüse');
+});
+
 test('generateOfferPlan uses ten different recipes across today-to-Sunday and next week', () => {
   const recipes = Array.from({ length: 12 }, (_, index) => ({
     id: `recipe-${index}`,

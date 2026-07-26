@@ -298,6 +298,40 @@ function reasonFor(evaluation, market, repeated = false) {
     : `Geschmacklich starke Auswahl; fehlende Normalpreise werden transparent als Schätzung geführt.`;
 }
 
+const SHOPPING_DEPARTMENTS = [
+  'Fleisch & Frischetheke',
+  'Obst & Gemüse',
+  'Kühlregal & Tiefkühl',
+  'Nudeln, Reis & Beilagen',
+  'Soßen, Gewürze & Vorrat',
+  'Weitere Zutaten'
+];
+
+function shoppingDepartment(item) {
+  const name = String(item.name || '').toLocaleLowerCase('de-DE');
+  const category = item.category || '';
+  if (/(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|gewürz)(?!\p{L})/iu.test(name)) {
+    return 'Soßen, Gewürze & Vorrat';
+  }
+  if (['chicken', 'beef', 'pork', 'nuggets', 'leberkaese', 'sausage', 'ham'].includes(category)) {
+    return 'Fleisch & Frischetheke';
+  }
+  if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
+  if (['pizza', 'wraps', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)) {
+    return 'Kühlregal & Tiefkühl';
+  }
+  if (
+    ['cucumber', 'tomatoes', 'onions', 'broccoli', 'spinach', 'carrots', 'peppers'].includes(category)
+    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|paprika|brokkoli|spinat|karotten?|möhren?)\b/i.test(name)
+  ) return 'Obst & Gemüse';
+  if (
+    ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas'].includes(category)
+    || /\b(?:couscous|paniermehl)\b/i.test(name)
+  ) return 'Nudeln, Reis & Beilagen';
+  if (category === 'coconut') return 'Soßen, Gewürze & Vorrat';
+  return 'Weitere Zutaten';
+}
+
 function buildShopping(selected, market) {
   const pricedItems = new Map();
   const estimatedItems = new Map();
@@ -331,6 +365,7 @@ function buildShopping(selected, market) {
       const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
       const existing = estimatedItems.get(key) || {
         name: cleanName,
+        category: ingredient.category,
         ingredientIds: [],
         rawQuantities: [],
         count: 0,
@@ -345,51 +380,45 @@ function buildShopping(selected, market) {
       estimatedItems.set(key, existing);
     }
   }
-  const departments = {
-    Fleisch: new Set(['chicken', 'beef', 'pork', 'nuggets', 'leberkaese', 'sausage', 'ham']),
-    'Beilagen & Gemüse': new Set(['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'broccoli', 'spinach', 'cucumber', 'tomatoes', 'onions', 'peas', 'lentils', 'carrots', 'peppers']),
-    'Kühlung & schnelle Küche': new Set(['pizza', 'wraps', 'cheese', 'eggs', 'yogurt', 'cream', 'coconut'])
-  };
-  const groups = Object.entries(departments).map(([department, categories]) => ({
-    department,
-    items: [...pricedItems.values()].filter(item => categories.has(item.category)).map(item => {
-      const regularPrice = item.regularCount === item.count ? item.regularTotal : null;
-      const savings = regularPrice !== null ? roundMoney(Math.max(0, regularPrice - item.total)) : null;
-      const isPublicRegular = item.sourceType === 'regular' || item.sourceType === 'stale-regular';
-      const capturedLabel = item.offer.capturedAt
-        ? new Intl.DateTimeFormat('de-DE').format(new Date(item.offer.capturedAt))
-        : null;
-      return {
-        name: item.offer.name,
-        ingredientIds: [...new Set(item.ingredientIds)],
-        quantity: `für ${item.count} Gericht${item.count === 1 ? '' : 'e'} · ${item.offer.package || 'Angebotspackung'}`,
-        price: item.total,
-        regularPrice,
-        savings,
-        priceType: item.sourceType,
-        referencePriceType: item.offer.referencePriceType || null,
-        status: item.sourceType,
-        sourceUrl: item.offer.sourceUrl || null,
-        capturedAt: item.offer.capturedAt || null,
-        note: isPublicRegular
-          ? item.sourceType === 'stale-regular'
-            ? `Öffentlicher Preis bei ${market}, zuletzt gesehen am ${capturedLabel}`
-            : `Normalpreis bei ${market} öffentlich geprüft${capturedLabel ? ` am ${capturedLabel}` : ''}`
-          : regularPrice !== null
-            ? `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market} statt veröffentlichtem Vergleichspreis ${regularPrice.toFixed(2).replace('.', ',')} €`
-            : `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market}`
-      };
-    })
-  })).filter(group => group.items.length);
-  groups.push({
-    department: 'Weitere Zutaten',
-    items: [...estimatedItems.values()].map(item => ({
-      ...item,
+  const finishedPricedItems = [...pricedItems.values()].map(item => {
+    const regularPrice = item.regularCount === item.count ? item.regularTotal : null;
+    const savings = regularPrice !== null ? roundMoney(Math.max(0, regularPrice - item.total)) : null;
+    const isPublicRegular = item.sourceType === 'regular' || item.sourceType === 'stale-regular';
+    const capturedLabel = item.offer.capturedAt
+      ? new Intl.DateTimeFormat('de-DE').format(new Date(item.offer.capturedAt))
+      : null;
+    return {
+      name: item.offer.name,
+      category: item.category,
       ingredientIds: [...new Set(item.ingredientIds)],
-      quantity: `${[...new Set(item.rawQuantities)].join(' + ')} · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
-    }))
+      quantity: `für ${item.count} Gericht${item.count === 1 ? '' : 'e'} · ${item.offer.package || 'Angebotspackung'}`,
+      price: item.total,
+      regularPrice,
+      savings,
+      priceType: item.sourceType,
+      referencePriceType: item.offer.referencePriceType || null,
+      status: item.sourceType,
+      sourceUrl: item.offer.sourceUrl || null,
+      capturedAt: item.offer.capturedAt || null,
+      note: isPublicRegular
+        ? item.sourceType === 'stale-regular'
+          ? `Öffentlicher Preis bei ${market}, zuletzt gesehen am ${capturedLabel}`
+          : `Normalpreis bei ${market} öffentlich geprüft${capturedLabel ? ` am ${capturedLabel}` : ''}`
+        : regularPrice !== null
+          ? `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market} statt veröffentlichtem Vergleichspreis ${regularPrice.toFixed(2).replace('.', ',')} €`
+          : `${item.sourceType === 'app-offer' ? 'App-Angebot' : 'Angebot'} bei ${market}`
+    };
   });
-  return groups.filter(group => group.items.length);
+  const finishedEstimatedItems = [...estimatedItems.values()].map(item => ({
+    ...item,
+    ingredientIds: [...new Set(item.ingredientIds)],
+    quantity: `${[...new Set(item.rawQuantities)].join(' + ')} · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
+  }));
+  const allItems = [...finishedPricedItems, ...finishedEstimatedItems];
+  return SHOPPING_DEPARTMENTS.flatMap(department => {
+    const items = allItems.filter(item => shoppingDepartment(item) === department);
+    return items.length ? [{ department, items }] : [];
+  });
 }
 
 function assertCompleteShopping(selected, shopping) {
@@ -602,4 +631,11 @@ function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now 
   };
 }
 
-module.exports = { allocateDays, subtractPantry, recommendMarket, generateOfferPlan, buildMealPrepPlan };
+module.exports = {
+  allocateDays,
+  subtractPantry,
+  recommendMarket,
+  generateOfferPlan,
+  buildMealPrepPlan,
+  shoppingDepartment
+};
