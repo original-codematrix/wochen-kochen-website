@@ -205,7 +205,7 @@ const RECIPE_SEASONINGS = {
   },
   'pesto-pea-pasta': {
     required: ['1/4 TL schwarzer Pfeffer', '1/2 TL getrocknetes Basilikum'],
-    tip: 'Für eine frischere Kräuternote 1/2 TL getrocknetes Basilikum zusammen mit dem Pesto einrühren.'
+    tip: 'Für leichte Schärfe 1/4 TL Chiliflocken zusammen mit dem Pesto einrühren; milder bleibt die Pasta ohne Chili.'
   },
   'vegetable-egg-rice': {
     required: ['1/2 TL Knoblauchpulver', '1/4 TL schwarzer Pfeffer'],
