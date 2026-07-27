@@ -2120,5 +2120,11 @@ KOCHBUCH_DATA.recipes = KOCHBUCH_DATA.recipes.map(recipe => {
   };
 });
 
+const expansionRecipes = typeof module !== 'undefined' && module.exports
+  ? require('./recipe-expansion')
+  : window.EXPANSION_RECIPES;
+
+KOCHBUCH_DATA.recipes = [...KOCHBUCH_DATA.recipes, ...expansionRecipes];
+
 if (typeof window !== 'undefined') window.KOCHBUCH_DATA = KOCHBUCH_DATA;
 if (typeof module !== 'undefined') module.exports = KOCHBUCH_DATA;
