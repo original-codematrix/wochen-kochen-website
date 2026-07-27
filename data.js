@@ -2100,5 +2100,25 @@ const KOCHBUCH_DATA = {
     "Gewürze": 1.99
   }
 };
+
+const seasoningData = typeof module !== 'undefined' && module.exports
+  ? require('./recipe-seasonings')
+  : window.RECIPE_SEASONINGS;
+
+const VAGUE_SEASONING = /^(?:Gewürze|Salz|Pfeffer|Salz[, ]+(?:und )?Pfeffer|Salz, Pfeffer, mildes Paprikapulver|Muskat, Salz und Pfeffer|Knoblauch|Rosmarin|Paprikapulver|italienische Kräuter|grüner oder schwarzer Pfeffer|Gyrosgewürz)$/i;
+
+KOCHBUCH_DATA.recipes = KOCHBUCH_DATA.recipes.map(recipe => {
+  const seasoning = seasoningData[recipe.id];
+  if (!seasoning) throw new Error(`Gewürzdaten fehlen für ${recipe.id}`);
+  return {
+    ...recipe,
+    ingredients: [
+      ...recipe.ingredients.filter(item => !VAGUE_SEASONING.test(item.trim())),
+      ...seasoning.required
+    ],
+    seasoningTip: seasoning.tip
+  };
+});
+
 if (typeof window !== 'undefined') window.KOCHBUCH_DATA = KOCHBUCH_DATA;
 if (typeof module !== 'undefined') module.exports = KOCHBUCH_DATA;
