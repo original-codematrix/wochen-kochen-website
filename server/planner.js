@@ -171,6 +171,10 @@ function isOfferSuitable(ingredient, category, offerName) {
     if (pickled.test(ingredient)) return pickled.test(name);
     if (pickled.test(name)) return false;
   }
+  if (category === 'peppers') {
+    const powder = /paprikapulver/i;
+    if (powder.test(ingredient) !== powder.test(name)) return false;
+  }
   if (category === 'rice' && /(milch\s*reis|pudding|dessert|waffel)/i.test(name)) return false;
   if (category === 'cheese' && /(chips|snack|soße|sauce)/i.test(name)) return false;
   if (category === 'pasta' && /(salat|fertiggericht|terrine|soße|sauce|spaghetteria|spinaci|ramen)/i.test(name)) return false;
@@ -307,11 +311,50 @@ const SHOPPING_DEPARTMENTS = [
   'Weitere Zutaten'
 ];
 
+function parseAmount(value) {
+  const text = String(value).replace(',', '.').trim();
+  const mixed = text.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (mixed) return Number(mixed[1]) + Number(mixed[2]) / Number(mixed[3]);
+  const fraction = text.match(/^(\d+)\/(\d+)$/);
+  if (fraction) return Number(fraction[1]) / Number(fraction[2]);
+  return Number(text);
+}
+
+function formatAmount(value) {
+  const roundedEighths = Math.round(value * 8);
+  if (Math.abs(value * 8 - roundedEighths) < 1e-9) {
+    const whole = Math.floor(roundedEighths / 8);
+    const remainder = roundedEighths % 8;
+    if (!remainder) return String(whole);
+    const divisor = remainder % 4 === 0 ? 4 : remainder % 2 === 0 ? 2 : 1;
+    const fraction = `${remainder / divisor}/${8 / divisor}`;
+    return whole ? `${whole} ${fraction}` : fraction;
+  }
+  return Number(value.toFixed(3)).toLocaleString('de-DE');
+}
+
+function shoppingIngredient(value, portionScale) {
+  const raw = String(value);
+  const measured = raw.match(
+    /^\s*(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*(?:(TL|EL|Prise|kg|g|ml|l|Stück|Packungen?|Dosen?|Gläser?|Stangen?|Bund|Becher)\b\s*)?/i
+  );
+  if (measured) {
+    return {
+      name: raw.slice(measured[0].length).trim() || raw,
+      quantity: `${formatAmount(parseAmount(measured[1]) * portionScale)}${measured[2] ? ` ${measured[2]}` : ''}`
+    };
+  }
+  return {
+    name: raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:(?:kg|g|ml|l|stück|packungen?)\b)?\s*/i, '') || raw,
+    quantity: null
+  };
+}
+
 function shoppingDepartment(item) {
   const name = String(item.name || '').toLocaleLowerCase('de-DE');
   const category = item.category || '';
   if (
-    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam)(?!\p{L})/iu.test(name)
+    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|petersilie|basilikum|schnittlauch|salbei|dill|kreuzkümmel|ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel)(?!\p{L})/iu.test(name)
   ) {
     return 'Soßen, Gewürze & Vorrat';
   }
@@ -321,18 +364,21 @@ function shoppingDepartment(item) {
   if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
   if (
     ['pizza', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)
-    || /\b(?:milch|butter|quark|ei(?:er)?|käsetortellini|frosta|fertiggericht)\b/i.test(name)
+    || /\b(?:milch|butter|quark|ei(?:er)?|joghurt|gouda|emmentaler|cheddar|käsetortellini|frosta|fertiggericht)\b/i.test(name)
+    || /(?:magerquark|kräuterquark|naturjoghurt)/i.test(name)
   ) {
     return 'Kühlregal & Tiefkühl';
   }
   if (
     ['cucumber', 'tomatoes', 'onions', 'broccoli', 'spinach', 'carrots', 'peppers'].includes(category)
-    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|paprika|brokkoli|spinat|karotten?|möhren?|salat|asia-gemüse|champignons?)\b/i.test(name)
+    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|limette|paprika|brokkoli|blumenkohl(?:röschen)?|spinat|kürbis|lauch|karotten?|möhren?|salat|asia-gemüse|champignons?)\b/i.test(name)
+    || /(?:hokkaidokürbis|äpfel?)/i.test(name)
   ) return 'Obst & Gemüse';
   if (
     ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas', 'wraps'].includes(category)
-    || /\b(?:couscous|paniermehl|basmatireis|bandnudeln|wraps?)\b/i.test(name)
+    || /\b(?:couscous|paniermehl|basmatireis|langkornreis|bandnudeln|tagliatelle|orzo|bulgur|weizentortillas?|wraps?)\b/i.test(name)
   ) return 'Nudeln, Reis & Beilagen';
+  if (/\b(?:salsiccia|speckwürfel)\b/i.test(name)) return 'Fleisch & Frischetheke';
   if (category === 'coconut') return 'Soßen, Gewürze & Vorrat';
   return 'Weitere Zutaten';
 }
@@ -365,9 +411,11 @@ function buildShopping(selected, market) {
     }
     const matchedIngredientIds = new Set(evaluation.matches.map(match => coverageId(match.ingredient)));
     for (const ingredient of evaluation.ingredients.filter(item => !matchedIngredientIds.has(coverageId(item)))) {
-      const cleanName = ingredient.raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:(?:kg|g|ml|l|stück|packungen?)\b)?\s*/i, '') || ingredient.raw;
+      const portionScale = 2 / (Number(evaluation.recipe.servings) || 4);
+      const shoppingValue = shoppingIngredient(ingredient.raw, portionScale);
+      const cleanName = shoppingValue.name;
       const key = `${ingredient.category || 'uncategorized'}|${cleanName.toLocaleLowerCase('de-DE')}`;
-      const price = baselineCost(ingredient.raw, ingredient.category, 2 / (Number(evaluation.recipe.servings) || 4));
+      const price = baselineCost(ingredient.raw, ingredient.category, portionScale);
       const existing = estimatedItems.get(key) || {
         name: cleanName,
         category: ingredient.category,
@@ -380,7 +428,7 @@ function buildShopping(selected, market) {
       };
       existing.ingredientIds.push(coverageId(ingredient));
       existing.count += 1;
-      existing.rawQuantities.push(ingredient.raw);
+      if (shoppingValue.quantity) existing.rawQuantities.push(shoppingValue.quantity);
       if (price > 0) existing.price = roundMoney((existing.price || 0) + price);
       estimatedItems.set(key, existing);
     }
@@ -417,7 +465,7 @@ function buildShopping(selected, market) {
   const finishedEstimatedItems = [...estimatedItems.values()].map(item => ({
     ...item,
     ingredientIds: [...new Set(item.ingredientIds)],
-    quantity: `${[...new Set(item.rawQuantities)].join(' + ')} · ${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
+    quantity: `${item.rawQuantities.length ? `${[...new Set(item.rawQuantities)].join(' + ')} · ` : ''}${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
   }));
   const allItems = [...finishedPricedItems, ...finishedEstimatedItems];
   return SHOPPING_DEPARTMENTS.flatMap(department => {

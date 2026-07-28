@@ -807,8 +807,8 @@ test('generateOfferPlan groups priced and estimated items by supermarket departm
     true
   );
   assert.deepEqual(
-    ['zubereitete Rinderbrühe', 'EL Öl', 'EL Senf', 'TL Stärke']
-      .every(fragment => namesByDepartment['Soßen, Gewürze & Vorrat'].some(name => name.includes(fragment))),
+    ['zubereitete Rinderbrühe', 'Öl', 'Senf', 'Stärke']
+      .every(name => namesByDepartment['Soßen, Gewürze & Vorrat'].includes(name)),
     true
   );
   assert.equal(
@@ -851,6 +851,14 @@ test('shoppingDepartment assigns known catalog names to supermarket departments'
     ['Pfeffer', null, 'Soßen, Gewürze & Vorrat'],
     ['Kräuter', null, 'Soßen, Gewürze & Vorrat'],
     ['Rosmarin', null, 'Soßen, Gewürze & Vorrat'],
+    ['Salz', null, 'Soßen, Gewürze & Vorrat'],
+    ['Muskat', null, 'Soßen, Gewürze & Vorrat'],
+    ['Knoblauchpulver', null, 'Soßen, Gewürze & Vorrat'],
+    ['Kurkuma', null, 'Soßen, Gewürze & Vorrat'],
+    ['Chiliflocken', null, 'Soßen, Gewürze & Vorrat'],
+    ['getrockneter Oregano', null, 'Soßen, Gewürze & Vorrat'],
+    ['getrockneter Thymian', null, 'Soßen, Gewürze & Vorrat'],
+    ['getrockneter Majoran', null, 'Soßen, Gewürze & Vorrat'],
     ['Hoisin', null, 'Soßen, Gewürze & Vorrat'],
     ['Pesto', null, 'Soßen, Gewürze & Vorrat'],
     ['Honig', null, 'Soßen, Gewürze & Vorrat'],
@@ -865,6 +873,8 @@ test('shoppingDepartment assigns known catalog names to supermarket departments'
     ['Salat', null, 'Obst & Gemüse'],
     ['Asia-Gemüse', null, 'Obst & Gemüse'],
     ['Champignons', null, 'Obst & Gemüse'],
+    ['Paprika', 'peppers', 'Obst & Gemüse'],
+    ['Kräuterquark', null, 'Kühlregal & Tiefkühl'],
     ['Dressing nach Wahl', null, 'Soßen, Gewürze & Vorrat'],
     ['Käsetortellini', null, 'Kühlregal & Tiefkühl']
   ];
@@ -893,13 +903,87 @@ test('generateOfferPlan groups known catalog ingredients outside Weitere Zutaten
   );
 
   assert.deepEqual(namesByDepartment['Nudeln, Reis & Beilagen'], ['Bandnudeln', 'Wraps']);
-  assert.deepEqual(namesByDepartment['Soßen, Gewürze & Vorrat'], ['TL Paprikapulver']);
+  assert.deepEqual(namesByDepartment['Soßen, Gewürze & Vorrat'], ['Paprikapulver']);
   assert.deepEqual(namesByDepartment['Kühlregal & Tiefkühl'], ['Milch']);
   assert.deepEqual(namesByDepartment['Obst & Gemüse'], ['Salat']);
   assert.equal(namesByDepartment['Weitere Zutaten'], undefined);
 });
 
+test('generateOfferPlan scales measured pantry quantities and separates them from item names', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'scaled-seasoning',
+      name: 'Skalierte Gewürze',
+      cat: 'Pfanne',
+      cost: 8,
+      rating: 5,
+      servings: 4,
+      ingredients: [
+        '1/2 TL Muskat',
+        '3/4 TL Salz',
+        '1/4 TL Knoblauchpulver',
+        '1 EL Olivenöl',
+        '1 Prise Chili',
+        '400 g Couscous',
+        '2 Zwiebeln'
+      ]
+    }],
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
+  const quantityByName = new Map(pantry.items.map(item => [item.name, item.quantity]));
+
+  assert.match(quantityByName.get('Muskat'), /^1\/4 TL\b/);
+  assert.match(quantityByName.get('Salz'), /^3\/8 TL\b/);
+  assert.match(quantityByName.get('Knoblauchpulver'), /^1\/8 TL\b/);
+  assert.match(quantityByName.get('Olivenöl'), /^1\/2 EL\b/);
+  assert.match(quantityByName.get('Chili'), /^1\/2 Prise\b/);
+  const items = plan.shopping.flatMap(group => group.items);
+  assert.equal(items.find(item => item.name === 'Couscous').quantity, '200 g · 1 Kochblock');
+  assert.equal(items.find(item => item.name === 'Zwiebeln').quantity, '1 · 1 Kochblock');
+  assert.deepEqual([...quantityByName.keys()], ['Muskat', 'Salz', 'Knoblauchpulver', 'Olivenöl', 'Chili']);
+});
+
+test('generateOfferPlan carries measured recipe seasoning into pantry shopping', () => {
+  const recipe = catalogRecipes.find(item => item.id === 'garlic-pasta');
+  const plan = generateOfferPlan({
+    recipes: [recipe],
+    offers: [{ name: 'Penne', package: '500 g', price: 0.99, market: 'Testmarkt', status: 'offer' }],
+    basePlan: {},
+    now: new Date('2026-07-27T12:00:00+02:00')
+  });
+  const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
+
+  assert.ok(pantry.items.some(item => /Paprikapulver/i.test(item.name)));
+  assert.ok(pantry.items.some(item => /Pfeffer/i.test(item.name)));
+});
+
+test('generateOfferPlan does not substitute fresh peppers for paprika powder', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'paprika-powder',
+      name: 'Paprikapulver-Test',
+      cat: 'Pfanne',
+      cost: 8,
+      rating: 5,
+      servings: 4,
+      ingredients: ['1 TL mildes Paprikapulver']
+    }],
+    offers: [{ name: 'Spitzpaprika', package: '500 g', price: 1.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
+  assert.ok(pantry, 'Paprikapulver fehlt als geschätzte Gewürzposition');
+  const powder = pantry.items.find(item => item.name === 'mildes Paprikapulver');
+
+  assert.equal(powder.status, 'estimated');
+  assert.equal(powder.quantity, '1/2 TL · 1 Kochblock');
+  assert.equal(plan.shopping.flatMap(group => group.items).some(item => item.name === 'Spitzpaprika'), false);
+});
+
 test('generateOfferPlan catalog audit leaves no required ingredient in Weitere Zutaten', () => {
+  assert.equal(catalogRecipes.length, 100);
   const audit = {
     unplannedRecipes: [],
     incompleteRecipes: [],
