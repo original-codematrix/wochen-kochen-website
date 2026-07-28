@@ -354,7 +354,7 @@ function shoppingDepartment(item) {
   const name = String(item.name || '').toLocaleLowerCase('de-DE');
   const category = item.category || '';
   if (
-    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|petersilie|basilikum|schnittlauch|salbei|dill|kreuzkümmel|ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel)(?!\p{L})/iu.test(name)
+    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|getrocknete[rs]?\s+(?:petersilie|basilikum|schnittlauch|salbei|dill)|kreuzkümmel|gemahlene[rs]?\s+ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel)(?!\p{L})/iu.test(name)
   ) {
     return 'Soßen, Gewürze & Vorrat';
   }
@@ -372,6 +372,7 @@ function shoppingDepartment(item) {
   if (
     ['cucumber', 'tomatoes', 'onions', 'broccoli', 'spinach', 'carrots', 'peppers'].includes(category)
     || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|limette|paprika|brokkoli|blumenkohl(?:röschen)?|spinat|kürbis|lauch|karotten?|möhren?|salat|asia-gemüse|champignons?)\b/i.test(name)
+    || /^(?:frische[rs]?\s+)?(?:petersilie|basilikum|schnittlauch|salbei|dill)$|^(?:frischer\s+)?ingwer$/i.test(name)
     || /(?:hokkaidokürbis|äpfel?)/i.test(name)
   ) return 'Obst & Gemüse';
   if (

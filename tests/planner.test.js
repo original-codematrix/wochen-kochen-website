@@ -959,6 +959,58 @@ test('generateOfferPlan carries measured recipe seasoning into pantry shopping',
   assert.ok(pantry.items.some(item => /Pfeffer/i.test(item.name)));
 });
 
+test('generateOfferPlan keeps honey-soy measured garlic seasoning in pantry shopping', () => {
+  const recipe = catalogRecipes.find(item => item.id === 'honey-soy');
+  const plan = generateOfferPlan({
+    recipes: [recipe],
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.99, market: 'Testmarkt', status: 'offer' }],
+    basePlan: {}
+  });
+  const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
+  const produce = plan.shopping.find(group => group.department === 'Obst & Gemüse');
+
+  assert.ok(pantry.items.some(item => item.name === 'Knoblauchpulver'));
+  assert.equal(produce?.items.some(item => item.name === 'Knoblauch'), false);
+});
+
+test('generateOfferPlan separates fresh herbs and ginger from dried or ground pantry seasoning', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'fresh-and-dried-seasoning',
+      name: 'Frisch-und-getrocknet-Test',
+      cat: 'Pfanne',
+      cost: 8,
+      rating: 5,
+      servings: 2,
+      ingredients: [
+        '1 Bund frische Petersilie',
+        '20 g frischer Ingwer',
+        '1 TL getrocknete Petersilie',
+        '1/2 TL gemahlener Ingwer',
+        '1 TL getrocknetes Basilikum',
+        '1 TL getrockneter Schnittlauch',
+        '1 TL getrockneter Salbei',
+        '1 TL getrockneter Dill'
+      ]
+    }],
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.99, market: 'Testmarkt', status: 'offer' }],
+    basePlan: {}
+  });
+  const namesByDepartment = Object.fromEntries(
+    plan.shopping.map(group => [group.department, group.items.map(item => item.name)])
+  );
+
+  assert.deepEqual(namesByDepartment['Obst & Gemüse'], ['frische Petersilie', 'frischer Ingwer']);
+  assert.deepEqual(namesByDepartment['Soßen, Gewürze & Vorrat'], [
+    'getrocknete Petersilie',
+    'gemahlener Ingwer',
+    'getrocknetes Basilikum',
+    'getrockneter Schnittlauch',
+    'getrockneter Salbei',
+    'getrockneter Dill'
+  ]);
+});
+
 test('generateOfferPlan does not substitute fresh peppers for paprika powder', () => {
   const plan = generateOfferPlan({
     recipes: [{

@@ -196,7 +196,7 @@ const KOCHBUCH_DATA = {
         "500 g Brokkoli",
         "5 EL Sojasoße",
         "2 EL Honig",
-        "1 TL Knoblauch",
+        "1 TL Knoblauchpulver",
         "1 TL Stärke"
       ],
       "steps": [
