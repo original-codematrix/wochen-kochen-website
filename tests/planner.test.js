@@ -968,8 +968,12 @@ test('generateOfferPlan keeps honey-soy measured garlic seasoning in pantry shop
   });
   const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
   const produce = plan.shopping.find(group => group.department === 'Obst & Gemüse');
+  const garlicIngredients = recipe.ingredients.filter(item => /knoblauchpulver/i.test(item));
+  const garlicItem = pantry.items.find(item => item.name === 'Knoblauchpulver');
 
-  assert.ok(pantry.items.some(item => item.name === 'Knoblauchpulver'));
+  assert.deepEqual(garlicIngredients, ['1/2 TL Knoblauchpulver']);
+  assert.deepEqual(garlicItem.ingredientIds, ['0|honey-soy:6']);
+  assert.equal(garlicItem.quantity, '1/4 TL · 1 Kochblock');
   assert.equal(produce?.items.some(item => item.name === 'Knoblauch'), false);
 });
 
@@ -985,12 +989,22 @@ test('generateOfferPlan separates fresh herbs and ginger from dried or ground pa
       ingredients: [
         '1 Bund frische Petersilie',
         '20 g frischer Ingwer',
+        '1 Bund frischer Rosmarin',
+        '1 Bund frischer Oregano',
+        '1 Bund frischer Thymian',
+        '1 Bund frischer Majoran',
+        '1 Bund frische Kräuter',
         '1 TL getrocknete Petersilie',
         '1/2 TL gemahlener Ingwer',
         '1 TL getrocknetes Basilikum',
         '1 TL getrockneter Schnittlauch',
         '1 TL getrockneter Salbei',
-        '1 TL getrockneter Dill'
+        '1 TL getrockneter Dill',
+        '1 TL Rosmarin',
+        '1 TL Oregano',
+        '1 TL Thymian',
+        '1 TL Majoran',
+        '1 TL Kräuter'
       ]
     }],
     offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.99, market: 'Testmarkt', status: 'offer' }],
@@ -1000,14 +1014,27 @@ test('generateOfferPlan separates fresh herbs and ginger from dried or ground pa
     plan.shopping.map(group => [group.department, group.items.map(item => item.name)])
   );
 
-  assert.deepEqual(namesByDepartment['Obst & Gemüse'], ['frische Petersilie', 'frischer Ingwer']);
+  assert.deepEqual(namesByDepartment['Obst & Gemüse'], [
+    'frische Petersilie',
+    'frischer Ingwer',
+    'frischer Rosmarin',
+    'frischer Oregano',
+    'frischer Thymian',
+    'frischer Majoran',
+    'frische Kräuter'
+  ]);
   assert.deepEqual(namesByDepartment['Soßen, Gewürze & Vorrat'], [
     'getrocknete Petersilie',
     'gemahlener Ingwer',
     'getrocknetes Basilikum',
     'getrockneter Schnittlauch',
     'getrockneter Salbei',
-    'getrockneter Dill'
+    'getrockneter Dill',
+    'Rosmarin',
+    'Oregano',
+    'Thymian',
+    'Majoran',
+    'Kräuter'
   ]);
 });
 

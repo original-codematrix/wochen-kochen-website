@@ -354,6 +354,11 @@ function shoppingDepartment(item) {
   const name = String(item.name || '').toLocaleLowerCase('de-DE');
   const category = item.category || '';
   if (
+    /\bfrische[rs]?\s+(?:kräuter|petersilie|basilikum|schnittlauch|salbei|dill|rosmarin|oregano|thymian|majoran|ingwer)\b/i.test(name)
+  ) {
+    return 'Obst & Gemüse';
+  }
+  if (
     /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|getrocknete[rs]?\s+(?:petersilie|basilikum|schnittlauch|salbei|dill)|kreuzkümmel|gemahlene[rs]?\s+ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel)(?!\p{L})/iu.test(name)
   ) {
     return 'Soßen, Gewürze & Vorrat';
