@@ -91,6 +91,28 @@ test('catalog adds exactly 25 complete fish-free Feierabend recipes', () => {
   }
 });
 
+test('expansion recipes do not introduce unmeasured salt through their steps', () => {
+  const { recipes } = require('../data');
+  const additions = recipes.filter(recipe => EXPANSION_IDS.includes(recipe.id));
+  for (const recipe of additions) {
+    assert.doesNotMatch(recipe.steps.join(' '), /\bSalzwasser\b/i, recipe.id);
+  }
+});
+
+test('mustard pork strips include their declared rice side dish', () => {
+  const { recipes } = require('../data');
+  const recipe = recipes.find(candidate => candidate.id === 'pork-mustard-strips');
+  assert.ok(recipe.ingredients.some(item => /^300 g Langkornreis$/i.test(item)));
+  assert.match(recipe.steps.join(' '), /\bReis\b/i);
+  assert.match(recipe.lowcarb, /\bstatt Reis\b/i);
+});
+
+test('bean and cheese quesadilla calories reflect the listed full meal', () => {
+  const { recipes } = require('../data');
+  const recipe = recipes.find(candidate => candidate.id === 'bean-cheese-quesadillas');
+  assert.ok(recipe.kcal >= 850 && recipe.kcal <= 1000, String(recipe.kcal));
+});
+
 test('all measured broth ingredients explain that broth is prepared liquid', () => {
   const { recipes } = require('../data');
   const measured = recipes

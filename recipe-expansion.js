@@ -21,7 +21,7 @@ const EXPANSION_RECIPES = [
       '1/4 TL schwarzer Pfeffer'
     ],
     steps: [
-      'Pasta in Salzwasser bissfest kochen und 150 ml Kochwasser auffangen.',
+      'Pasta in Wasser bissfest kochen und 150 ml Kochwasser auffangen.',
       'Erbsen während der letzten fünf Minuten zur Pasta geben und mitgaren.',
       'Frischkäse, Brühe, Basilikum, Knoblauchpulver, Salz und Pfeffer bei kleiner Hitze verrühren.',
       'Pasta, Erbsen, Zitronenabrieb und zwei Esslöffel Zitronensaft unterheben und mit Kochwasser cremig ziehen.'
@@ -391,7 +391,7 @@ const EXPANSION_RECIPES = [
     cat: 'Bowls & Wraps',
     time: 25,
     cost: 11,
-    kcal: 620,
+    kcal: 930,
     protein: 29,
     tags: ['fleischfrei', 'schnell', 'familientauglich'],
     desc: 'Knusprige Tortillataschen mit würzigen Bohnen, Mais und geschmolzenem Käse.',
@@ -572,12 +572,13 @@ const EXPANSION_RECIPES = [
     cat: 'Fleisch',
     time: 30,
     cost: 17,
-    kcal: 590,
+    kcal: 690,
     protein: 45,
     tags: ['Fleisch', 'schnell', 'Pfannengericht'],
     desc: 'Zartes Schweinegeschnetzeltes mit Lauch in einer würzigen Senfrahmsoße.',
     ingredients: [
       '700 g Schweinegeschnetzeltes',
+      '300 g Langkornreis',
       '2 Stangen Lauch',
       '250 ml Kochsahne',
       '200 ml zubereitete Gemüsebrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)',
@@ -589,7 +590,7 @@ const EXPANSION_RECIPES = [
       '1/2 TL schwarzer Pfeffer'
     ],
     steps: [
-      'Lauch in Ringe schneiden und gründlich waschen.',
+      'Reis nach Packungsangabe garen; währenddessen den Lauch in Ringe schneiden und gründlich waschen.',
       'Fleisch portionsweise im heißen Öl kräftig anbraten, mit Salz und Pfeffer würzen und herausnehmen.',
       'Lauch im Bratensatz fünf Minuten braten, Brühe, Kochsahne, Senf, Thymian und Paprikapulver einrühren.',
       'Fleisch zurückgeben und fünf Minuten bei kleiner Hitze in der Soße fertig garen.'
@@ -771,7 +772,7 @@ const EXPANSION_RECIPES = [
       '1/2 TL schwarzer Pfeffer'
     ],
     steps: [
-      'Kartoffeln würfeln und in Salzwasser acht Minuten vorkochen, dann abgießen.',
+      'Kartoffeln würfeln und in Wasser acht Minuten vorkochen, dann abgießen.',
       'Bratwurst in dicke Scheiben schneiden und im Öl rundum braun braten, anschließend herausnehmen.',
       'Kartoffeln und Zwiebelspalten im Bratfett zwölf Minuten goldbraun braten.',
       'Apfelspalten, Bratwurst, Majoran, Paprikapulver, Kümmel, Salz und Pfeffer zugeben und weitere fünf Minuten braten.'
