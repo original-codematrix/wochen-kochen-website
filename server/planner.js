@@ -78,6 +78,7 @@ const CATEGORY_RULES = [
 ];
 
 function categoryFor(value) {
+  if (/\bpaprikapulver\b/i.test(String(value))) return 'seasoning';
   return CATEGORY_RULES.find(([, pattern]) => pattern.test(String(value)))?.[0] || null;
 }
 
@@ -336,7 +337,7 @@ function formatAmount(value) {
 function shoppingIngredient(value, portionScale) {
   const raw = String(value);
   const measured = raw.match(
-    /^\s*(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*(?:(TL|EL|Prise|kg|g|ml|l|Stück|Packungen?|Dosen?|Gläser?|Stangen?|Bund|Becher)\b\s*)?/i
+    /^\s*(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*(?:(TL|EL|Prise|kg|g|ml|l|Stück|Packungen?|Dosen?|Glas|Gläser|Stangen?|Bund|Becher)\b\s*)?/i
   );
   if (measured) {
     return {
@@ -348,6 +349,34 @@ function shoppingIngredient(value, portionScale) {
     name: raw.replace(/^\s*\d+(?:[.,]\d+)?\s*(?:TK[- ]*)?(?:(?:kg|g|ml|l|stück|packungen?)\b)?\s*/i, '') || raw,
     quantity: null
   };
+}
+
+function quantityUnitKey(unit) {
+  const normalized = String(unit || '').toLocaleLowerCase('de-DE');
+  if (/^packungen?$/.test(normalized)) return 'packung';
+  if (/^dosen?$/.test(normalized)) return 'dose';
+  if (/^(?:glas|gläser)$/.test(normalized)) return 'glas';
+  if (/^stangen?$/.test(normalized)) return 'stange';
+  return normalized;
+}
+
+function summarizeQuantities(rawQuantities) {
+  const groups = new Map();
+  for (const quantity of rawQuantities) {
+    const match = String(quantity).match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)(?:\s+(.+))?$/);
+    if (!match) {
+      groups.set(`raw:${quantity}`, { raw: String(quantity) });
+      continue;
+    }
+    const unit = match[2] || '';
+    const key = `unit:${quantityUnitKey(unit)}`;
+    const existing = groups.get(key) || { amount: 0, unit };
+    existing.amount += parseAmount(match[1]);
+    groups.set(key, existing);
+  }
+  return [...groups.values()].map(group => (
+    group.raw || `${formatAmount(group.amount)}${group.unit ? ` ${group.unit}` : ''}`
+  )).join(' + ');
 }
 
 function shoppingDepartment(item) {
@@ -471,7 +500,7 @@ function buildShopping(selected, market) {
   const finishedEstimatedItems = [...estimatedItems.values()].map(item => ({
     ...item,
     ingredientIds: [...new Set(item.ingredientIds)],
-    quantity: `${item.rawQuantities.length ? `${[...new Set(item.rawQuantities)].join(' + ')} · ` : ''}${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
+    quantity: `${item.rawQuantities.length ? `${summarizeQuantities(item.rawQuantities)} · ` : ''}${item.count} Kochblock${item.count === 1 ? '' : 'e'}`
   }));
   const allItems = [...finishedPricedItems, ...finishedEstimatedItems];
   return SHOPPING_DEPARTMENTS.flatMap(department => {
@@ -580,7 +609,17 @@ function buildMealPrepPlan({ recipes, nextWeek }) {
   };
 }
 
-function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now = new Date(), variation = 0, excludedIngredients }) {
+function generateOfferPlan({
+  recipes,
+  offers,
+  regularPrices = [],
+  basePlan,
+  now = new Date(),
+  variation = 0,
+  excludedIngredients,
+  recipeSequence = null,
+  generatedAt = new Date().toISOString()
+}) {
   const exclusions = normalizeExclusions(excludedIngredients ?? basePlan?.preferences?.excludedIngredients);
   const preferences = { ...(basePlan?.preferences || {}), excludedIngredients: exclusions };
   const allowedRecipes = recipes.filter(recipe => (
@@ -597,11 +636,13 @@ function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now 
   const marketPlans = markets.map(market => {
     const marketOffers = allowedOffers.filter(offer => offer.market === market);
     const marketRegularPrices = allowedRegularPrices.filter(record => record.market === market);
-    const selected = rotatedSelection(
-      allowedRecipes.map(recipe => evaluateRecipe(recipe, marketOffers, marketRegularPrices)),
-      variation,
-      visibleDayCount
-    );
+    const evaluations = allowedRecipes.map(recipe => evaluateRecipe(recipe, marketOffers, marketRegularPrices));
+    const selected = Array.isArray(recipeSequence) && recipeSequence.length
+      ? recipeSequence
+        .map(recipeId => evaluations.find(item => item.recipe.id === recipeId))
+        .filter(Boolean)
+        .slice(0, visibleDayCount)
+      : rotatedSelection(evaluations, variation, visibleDayCount);
     const total = roundMoney(selected.reduce((sum, item) => {
       const confirmed = item.matches.reduce((matchSum, match) => matchSum + match.cost, 0);
       return sum + Math.max(item.estimatedCost, confirmed);
@@ -667,7 +708,7 @@ function generateOfferPlan({ recipes, offers, regularPrices = [], basePlan, now 
     preferences,
     computedFromOffers: true,
     planRevision: Number(variation) || 0,
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     title: `Neu berechneter Angebotsplan`,
     notice: `Aus ${allowedOffers.length} erlaubten Angeboten neu berechnet; ${allowedOffers.filter(offer => Number(offer.previousPrice) > 0).length} veröffentlichte Vergleichspreise und ${allowedRegularPrices.length} gezielt geprüfte Produktpreise erkannt.${exclusions.length ? ` Ohne: ${exclusions.join(', ')}.` : ''} App-Preise sind gesondert gekennzeichnet.`,
     weekend,

@@ -56,6 +56,34 @@ const EXPANSION_IDS = [
   'ham-cheese-potato-bake'
 ];
 
+const EXPANSION_MATRIX = [
+  ['lemon-pea-pasta', 'Zitronige Erbsen-Frischkäse-Pasta', 'Nudeln'],
+  ['mushroom-spinach-tagliatelle', 'Champignon-Spinat-Tagliatelle', 'Nudeln'],
+  ['pumpkin-sage-gnocchi', 'Kürbis-Salbei-Gnocchi', 'Nudeln'],
+  ['cauliflower-cheese-pasta', 'Blumenkohl-Käse-Pasta', 'Nudeln'],
+  ['creamy-bean-orzo', 'Cremige Bohnen-Orzo-Pfanne', 'Nudeln'],
+  ['potato-zucchini-fritters', 'Kartoffel-Zucchini-Puffer', 'Kartoffeln'],
+  ['mushroom-potato-goulash', 'Champignon-Kartoffel-Gulasch', 'Kartoffeln'],
+  ['cauliflower-potato-curry', 'Blumenkohl-Kartoffel-Curry', 'Reis'],
+  ['spinach-potato-gratin', 'Spinat-Kartoffel-Gratin', 'Kartoffeln'],
+  ['crispy-potato-egg-tray', 'Knusperkartoffeln mit Ofeneiern', 'TK & Ofen'],
+  ['lentil-spinach-curry', 'Linsen-Spinat-Curry', 'Reis'],
+  ['bean-cheese-quesadillas', 'Bohnen-Käse-Quesadillas', 'Bowls & Wraps'],
+  ['vegetable-bulgur-bowl', 'Ofengemüse-Bulgur-Bowl', 'Reis'],
+  ['beef-mushroom-one-pan-pasta', 'One-Pan-Hack-Pasta mit Champignons', 'Nudeln'],
+  ['salsiccia-spinach-rigatoni', 'Salsiccia-Spinat-Rigatoni', 'Nudeln'],
+  ['paprika-chicken-rice', 'Paprika-Hähnchen-Reis', 'Reis'],
+  ['pork-mustard-strips', 'Senf-Schweinegeschnetzeltes', 'Fleisch'],
+  ['turkey-leek-pasta', 'Puten-Lauch-Pasta', 'Nudeln'],
+  ['chicken-broccoli-potato-bake', 'Hähnchen-Brokkoli-Kartoffelauflauf', 'TK & Ofen'],
+  ['beef-bean-burrito-bowl', 'Rind-Bohnen-Burrito-Bowl', 'Bowls & Wraps'],
+  ['meatball-orzo-pan', 'Hackbällchen-Orzo-Pfanne', 'Nudeln'],
+  ['bratwurst-apple-onion-pan', 'Bratwurst-Apfel-Zwiebel-Pfanne', 'Kartoffeln'],
+  ['bacon-pea-gnocchi', 'Speck-Erbsen-Gnocchi', 'Nudeln'],
+  ['chicken-fajita-tray', 'Hähnchen-Fajita-Blech', 'TK & Ofen'],
+  ['ham-cheese-potato-bake', 'Schinken-Käse-Kartoffelauflauf', 'TK & Ofen']
+];
+
 test('recipe data can be consumed by the weekly Node.js planner', () => {
   const data = require('../data');
   assert.ok(data.recipes.length >= 75);
@@ -72,12 +100,16 @@ test('recipe data can be consumed by the weekly Node.js planner', () => {
   }
 });
 
-test('catalog adds exactly 25 complete fish-free Feierabend recipes', () => {
+test('catalog exposes the exact 25-recipe expansion contract with valid metrics', () => {
   const { recipes } = require('../data');
   const additions = recipes.filter(recipe => EXPANSION_IDS.includes(recipe.id));
   assert.equal(recipes.length, 100);
   assert.equal(additions.length, 25);
-  assert.equal(new Set(additions.map(recipe => recipe.id)).size, 25);
+  assert.equal(new Set(recipes.map(recipe => recipe.id)).size, recipes.length);
+  assert.deepEqual(
+    additions.map(recipe => [recipe.id, recipe.name, recipe.cat]),
+    EXPANSION_MATRIX
+  );
   assert.ok(additions.filter(recipe => recipe.tags.includes('fleischfrei')).length >= 13);
   for (const recipe of additions) {
     for (const field of ['name', 'cat', 'desc', 'freeze', 'lowcarb', 'difficulty', 'seasoningTip']) {
@@ -88,6 +120,11 @@ test('catalog adds exactly 25 complete fish-free Feierabend recipes', () => {
     assert.ok(recipe.ingredients.length >= 6, recipe.id);
     assert.ok(recipe.steps.length >= 4, recipe.id);
     assert.doesNotMatch(`${recipe.name} ${recipe.ingredients.join(' ')}`, /fisch|lachs|thunfisch|garnele|hummer|meeresfr/i);
+  }
+  for (const recipe of recipes) {
+    for (const field of ['cost', 'kcal', 'protein', 'rating']) {
+      assert.ok(Number.isFinite(recipe[field]) && recipe[field] > 0, `${recipe.id}: ${field}`);
+    }
   }
 });
 
@@ -127,17 +164,64 @@ test('all measured broth ingredients explain that broth is prepared liquid', () 
   )), true);
 });
 
-test('all original recipes have measured seasoning and an individual seasoning tip', () => {
+test('all original recipes apply their individual measured seasoning in the exported steps', () => {
   const { recipes } = require('../data');
+  const seasoningData = require('../recipe-seasonings');
   const originals = recipes.filter(recipe => ORIGINAL_RECIPE_IDS.includes(recipe.id));
   assert.equal(originals.length, 75);
+  assert.deepEqual(Object.keys(seasoningData), ORIGINAL_RECIPE_IDS);
+  assert.equal(new Set(Object.values(seasoningData).map(seasoning => seasoning.application)).size, 75);
   for (const recipe of originals) {
+    const seasoning = seasoningData[recipe.id];
     assert.equal(typeof recipe.seasoningTip, 'string', recipe.id);
     assert.ok(recipe.seasoningTip.trim().length >= 20, recipe.id);
+    assert.equal(typeof seasoning.application, 'string', `${recipe.id}: application`);
+    assert.ok(seasoning.application.trim().length >= 30, `${recipe.id}: application`);
+    assert.ok(recipe.steps.includes(seasoning.application), `${recipe.id}: Anwendung fehlt im Export`);
+    for (const required of seasoning.required) {
+      const keyword = required.match(
+        /\b(Paprikapulver|Knoblauchpulver|Chiliflocken|Kurkuma|Muskat|Salz|Pfeffer|Oregano|Thymian|Rosmarin|Majoran|Petersilie|Basilikum|Schnittlauch|Kräuter)\b/i
+      )?.[1];
+      assert.ok(keyword, `${recipe.id}: unbekannte Pflichtwürzung ${required}`);
+      assert.match(
+        seasoning.application,
+        new RegExp(`\\b${keyword}\\b`, 'i'),
+        `${recipe.id}: ${required} fehlt im Anwendungsschritt`
+      );
+    }
     assert.ok(recipe.ingredients.some(item => (
       /(?:TL|EL|Prise) .*(?:salz|pfeffer|paprika|curry|muskat|oregano|thymian|rosmarin|kümmel|chili|knoblauch|kräuter)/i.test(item)
     )), `messbare Würzung fehlt: ${recipe.id}`);
     assert.equal(recipe.ingredients.some(item => /^Gewürze$/i.test(item)), false, recipe.id);
     assert.equal(recipe.ingredients.some(item => /^(?:Salz|Pfeffer)(?:,| und )/i.test(item)), false, recipe.id);
+    assert.doesNotMatch(recipe.steps.join(' '), /\bGewürze\b/i, `${recipe.id}: pauschaler Schritt`);
+    for (const seasoningName of ['Salz', 'Pfeffer']) {
+      if (new RegExp(`\\b${seasoningName}\\b`, 'i').test(recipe.steps.join(' '))) {
+        assert.ok(
+          recipe.ingredients.some(item => new RegExp(`(?:TL|EL|Prise) [^,]*\\b${seasoningName}\\b`, 'i').test(item)),
+          `${recipe.id}: ${seasoningName} im Schritt ohne gemessene Pflichtzutat`
+        );
+      }
+    }
   }
+});
+
+test('expansion recipes explicitly consume split seasoning quantities', () => {
+  const { recipes } = require('../data');
+  const bulgur = recipes.find(recipe => recipe.id === 'vegetable-bulgur-bowl');
+  const chickenRice = recipes.find(recipe => recipe.id === 'paprika-chicken-rice');
+
+  assert.match(bulgur.steps.join(' '), /restliche[mn]? Pfeffer/i);
+  assert.match(chickenRice.steps.join(' '), /restliche[sn]? Salz/i);
+  assert.match(chickenRice.steps.join(' '), /restliche[sn]? Pfeffer/i);
+});
+
+test('spinach potato gratin cooks 1.2 kg potato slices through reliably', () => {
+  const { recipes } = require('../data');
+  const gratin = recipes.find(recipe => recipe.id === 'spinach-potato-gratin');
+  const steps = gratin.steps.join(' ');
+  const precooksSlices = /Kartoffelscheiben.*(?:8|acht)[–-](?:10|zehn) Minuten.*vorkochen/i.test(steps);
+  const longBake = /(?:50|fünfzig|55|fünfundfünfzig|60|sechzig) Minuten backen/i.test(steps);
+
+  assert.ok(precooksSlices || longBake, steps);
 });

@@ -945,6 +945,79 @@ test('generateOfferPlan scales measured pantry quantities and separates them fro
   assert.deepEqual([...quantityByName.keys()], ['Muskat', 'Salz', 'Knoblauchpulver', 'Olivenöl', 'Chili']);
 });
 
+test('generateOfferPlan adds compatible seasoning quantities without losing ingredient ids', () => {
+  const ingredients = [
+    '1/4 TL Salz',
+    '1/4 TL Salz',
+    '1/4 TL Salz',
+    '1/8 TL schwarzer Pfeffer',
+    '1/8 TL schwarzer Pfeffer',
+    '1/8 TL schwarzer Pfeffer',
+    '1/8 TL schwarzer Pfeffer',
+    '1/8 TL schwarzer Pfeffer',
+    '1/4 TL schwarzer Pfeffer',
+    '1 TL Kräuter',
+    '2 g Kräuter'
+  ];
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'quantity-sums',
+      name: 'Mengen-Summen',
+      cat: 'Pfanne',
+      cost: 8,
+      rating: 5,
+      servings: 2,
+      ingredients
+    }],
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const items = plan.shopping.flatMap(group => group.items);
+  const salt = items.find(item => item.name === 'Salz');
+  const pepper = items.find(item => item.name === 'schwarzer Pfeffer');
+  const herbs = items.find(item => item.name === 'Kräuter');
+  const ingredientIds = items.flatMap(item => item.ingredientIds || []);
+
+  assert.match(salt.quantity, /^3\/4 TL\b/);
+  assert.match(pepper.quantity, /^7\/8 TL\b/);
+  assert.match(herbs.quantity, /^1 TL \+ 2 g\b/);
+  assert.deepEqual(salt.ingredientIds, [
+    '0|quantity-sums:0',
+    '0|quantity-sums:1',
+    '0|quantity-sums:2'
+  ]);
+  assert.deepEqual(pepper.ingredientIds, [
+    '0|quantity-sums:3',
+    '0|quantity-sums:4',
+    '0|quantity-sums:5',
+    '0|quantity-sums:6',
+    '0|quantity-sums:7',
+    '0|quantity-sums:8'
+  ]);
+  assert.equal(new Set(ingredientIds).size, ingredients.length);
+  assert.equal(ingredientIds.length, ingredients.length);
+});
+
+test('generateOfferPlan parses Glas and Gläser as quantity units', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'jar-units',
+      name: 'Glas-Einheiten',
+      cat: 'Beilagen',
+      cost: 5,
+      rating: 5,
+      servings: 2,
+      ingredients: ['1 Glas Gewürzgurken', '2 Gläser Apfelmus']
+    }],
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {}
+  });
+  const items = plan.shopping.flatMap(group => group.items);
+
+  assert.equal(items.find(item => item.name === 'Gewürzgurken').quantity, '1 Glas · 1 Kochblock');
+  assert.equal(items.find(item => item.name === 'Apfelmus').quantity, '2 Gläser · 1 Kochblock');
+});
+
 test('generateOfferPlan carries measured recipe seasoning into pantry shopping', () => {
   const recipe = catalogRecipes.find(item => item.id === 'garlic-pasta');
   const plan = generateOfferPlan({
@@ -1058,7 +1131,39 @@ test('generateOfferPlan does not substitute fresh peppers for paprika powder', (
 
   assert.equal(powder.status, 'estimated');
   assert.equal(powder.quantity, '1/2 TL · 1 Kochblock');
+  assert.equal(powder.price, null);
   assert.equal(plan.shopping.flatMap(group => group.items).some(item => item.name === 'Spitzpaprika'), false);
+  assert.equal(plan.recommendation.estimatedTotal, 4);
+  assert.equal(plan.recommendation.estimatedNormalPriceTotal, 4);
+});
+
+test('generateOfferPlan still prices a real paprika powder offer as pantry seasoning', () => {
+  const plan = generateOfferPlan({
+    recipes: [{
+      id: 'paprika-powder-offer',
+      name: 'Paprikapulver-Angebot',
+      cat: 'Pfanne',
+      cost: 8,
+      rating: 5,
+      servings: 4,
+      ingredients: ['1 TL mildes Paprikapulver']
+    }],
+    offers: [{
+      name: 'Mildes Paprikapulver',
+      package: '50 g',
+      price: 1.29,
+      market: 'Markt A',
+      status: 'offer'
+    }],
+    basePlan: {}
+  });
+  const pantry = plan.shopping.find(group => group.department === 'Soßen, Gewürze & Vorrat');
+  const powder = pantry.items.find(item => item.name === 'Mildes Paprikapulver');
+
+  assert.equal(powder.category, 'seasoning');
+  assert.equal(powder.status, 'offer');
+  assert.equal(powder.price, 1.29);
+  assert.equal(plan.recommendation.confirmedOfferTotal, 1.29);
 });
 
 test('generateOfferPlan catalog audit leaves no required ingredient in Weitere Zutaten', () => {
@@ -1152,4 +1257,34 @@ test('generateOfferPlan scales ingredient quantities to two portions for unique 
 
   assert.equal(potato.price, 20);
   assert.match(potato.quantity, /10 Gerichte/);
+});
+
+test('generateOfferPlan preserves an explicit sequence and timestamp for deterministic fallback regeneration', () => {
+  const ids = ['sequence-h', 'sequence-a', 'sequence-b', 'sequence-c', 'sequence-d', 'sequence-e', 'sequence-f', 'sequence-g'];
+  const fixedTimestamp = '2026-07-26T12:14:09.025Z';
+  const plan = generateOfferPlan({
+    recipes: ids.map((id, index) => ({
+      id,
+      name: `Sequenzrezept ${index}`,
+      cat: index % 2 ? 'Nudeln' : 'Reis',
+      cost: 8 + index,
+      rating: 4,
+      servings: 2,
+      ingredients: [`${index + 1} TL Salz`]
+    })),
+    offers: [{ name: 'Testartikel', package: '1 Stück', price: 0.49, market: 'Markt A', status: 'offer' }],
+    basePlan: {},
+    now: new Date(fixedTimestamp),
+    variation: 17,
+    recipeSequence: ids,
+    generatedAt: fixedTimestamp
+  });
+
+  assert.deepEqual([...plan.weekend, ...plan.nextWeek].map(day => day.recipeId), ids);
+  assert.equal(plan.planRevision, 17);
+  assert.equal(plan.generatedAt, fixedTimestamp);
+  assert.equal(
+    plan.shopping.flatMap(group => group.items).flatMap(item => item.ingredientIds).length,
+    ids.length
+  );
 });

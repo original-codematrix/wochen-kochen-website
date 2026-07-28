@@ -443,7 +443,9 @@ function regeneratePlan(options = {}) {
     basePlan: current,
     now: options.now || new Date(),
     variation: options.variation ?? (Number(current.planRevision) || 0) + 1,
-    excludedIngredients: options.excludedIngredients ?? current.preferences?.excludedIngredients
+    excludedIngredients: options.excludedIngredients ?? current.preferences?.excludedIngredients,
+    recipeSequence: options.recipeSequence,
+    generatedAt: options.generatedAt
   });
   fs.mkdirSync(dataDir, { recursive: true });
   const temporary = `${target}.tmp`;

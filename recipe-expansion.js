@@ -304,6 +304,7 @@ const EXPANSION_RECIPES = [
     ],
     steps: [
       'Backofen auf 200 °C Ober-/Unterhitze vorheizen und Kartoffeln in dünne Scheiben hobeln.',
+      'Kartoffelscheiben in kochendem Wasser 8–10 Minuten vorkochen und gründlich abgießen.',
       'Spinat ausdrücken und mit fein geriebenem Knoblauch, Muskat, der Hälfte von Salz und Pfeffer mischen.',
       'Kartoffeln und Spinat in eine Auflaufform schichten; Kochsahne, Milch, restliches Salz und Pfeffer verrühren und angießen.',
       'Käse darüberstreuen und das Gratin 35 Minuten backen, bis die Kartoffeln weich sind.'
@@ -450,7 +451,7 @@ const EXPANSION_RECIPES = [
       'Backofen auf 220 °C Ober-/Unterhitze vorheizen und Gemüse in mundgerechte Stücke schneiden.',
       'Gemüse und Kichererbsen mit Öl, Oregano, Paprikapulver, der Hälfte von Salz und Pfeffer mischen und 25 Minuten rösten.',
       'Bulgur mit der heißen Brühe übergießen, zehn Minuten quellen lassen und mit einer Gabel lockern.',
-      'Joghurt mit Zitronenabrieb, zwei Esslöffeln Zitronensaft und restlichem Salz verrühren und alles in Schalen anrichten.'
+      'Joghurt mit Zitronenabrieb, zwei Esslöffeln Zitronensaft, restlichem Salz und restlichem Pfeffer verrühren und alles in Schalen anrichten.'
     ],
     freeze: 'Bulgur und Ofengemüse bis 3 Monate getrennt einfrieren; den Zitronenjoghurt frisch zubereiten.',
     lowcarb: 'Bulgur durch 700 g fein gehackten, kurz gebratenen Blumenkohl ersetzen.',
@@ -556,7 +557,7 @@ const EXPANSION_RECIPES = [
     steps: [
       'Hähnchen würfeln, mit der Hälfte von Paprikapulver, Salz und Pfeffer mischen und im Öl rundum anbraten.',
       'Hähnchen herausnehmen, Zwiebel- und Paprikawürfel im Bratensatz fünf Minuten braten.',
-      'Reis, Brühe, Knoblauchpulver, Thymian und restliches Paprikapulver einrühren und zwölf Minuten zugedeckt köcheln.',
+      'Reis, Brühe, Knoblauchpulver, Thymian, restliches Paprikapulver, restliches Salz und restlichen Pfeffer einrühren und zwölf Minuten zugedeckt köcheln.',
       'Hähnchen zurückgeben und weitere acht Minuten garen, bis Reis und Fleisch durchgegart sind.'
     ],
     freeze: 'Bis 3 Monate rasch abkühlen lassen, portionsweise einfrieren und vollständig durcherhitzen.',
