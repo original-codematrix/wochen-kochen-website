@@ -4717,11 +4717,11 @@
         "name": "Spinat-Reis mit Omelettstreifen",
         "day": "Mo 27.07.",
         "storage": "Kühlschrank",
-        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Eier zu dünnen Omeletts braten. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "instruction": "Reis kochen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Spinat mit Zwiebel weich garen. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
         "cookTime": 25,
         "firstSteps": [
           "Reis kochen.",
-          "Spinat mit Zwiebel weich garen."
+          "Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden."
         ]
       },
       {
@@ -4729,11 +4729,11 @@
         "name": "Ofengemüse mit Couscous",
         "day": "Di 28.07.",
         "storage": "Gefrierschrank",
-        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
+        "instruction": "Paprikapulver und Thymian mit Öl am Gemüse verteilen und vor dem Rösten aufs Blech geben; den Pfeffer danach in den Couscous rühren. Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
         "cookTime": 35,
         "firstSteps": [
-          "Gemüse würfeln und im Ofen rösten.",
-          "Couscous mit heißer Brühe quellen lassen."
+          "Paprikapulver und Thymian mit Öl am Gemüse verteilen und vor dem Rösten aufs Blech geben; den Pfeffer danach in den Couscous rühren.",
+          "Gemüse würfeln und im Ofen rösten."
         ]
       },
       {
@@ -4756,8 +4756,8 @@
         "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Do 30.07. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten. Rezept-Hinweis: Schnitzel paniert roh einfrierbar; Salat frisch.",
         "cookTime": 12,
         "firstSteps": [
-          "Kartoffeln kochen und mit Gurke als Salat anmachen.",
-          "Schnitzel flach klopfen und panieren."
+          "Paprikapulver und Pfeffer ins Paniermehl mischen; das Salz vollständig in den noch warmen Kartoffel-Gurkensalat geben.",
+          "Kartoffeln kochen und mit Gurke als Salat anmachen."
         ]
       },
       {
@@ -4768,8 +4768,8 @@
         "instruction": "Tiefkühlware bis zum Fr 31.07. im Gefrierschrank lassen; Beilage und frische Bestandteile erst am Esstag vorbereiten.",
         "cookTime": 8,
         "firstSteps": [
-          "Wings und Kartoffelspalten im Ofen zubereiten.",
-          "Dips bereitstellen."
+          "Geräuchertes Paprikapulver und Knoblauchpulver vor dem Backen gleichmäßig auf Wings und Kartoffelspalten verteilen.",
+          "Wings und Kartoffelspalten im Ofen zubereiten."
         ]
       },
       {
@@ -4780,8 +4780,8 @@
         "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Sa 01.08. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten.",
         "cookTime": 12,
         "firstSteps": [
-          "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen.",
-          "Steaks in Pfanne oder Grill kräftig braten und kurz ruhen lassen."
+          "Geräuchertes Paprikapulver und Knoblauchpulver mit wenig Öl an die Kartoffelspalten geben, bevor sie 30–35 Minuten backen.",
+          "Kartoffeln in Spalten schneiden, würzen und 30–35 Minuten backen."
         ]
       },
       {
@@ -4789,11 +4789,11 @@
         "name": "Rindergeschnetzeltes in Zwiebelsoße",
         "day": "So 02.08.",
         "storage": "Gefrierschrank",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "instruction": "Kartoffeln kochen. Den Pfeffer direkt vor dem portionsweisen Anbraten aufs Rind geben und den Thymian beim Ablöschen in die Zwiebelsoße rühren. Rind portionsweise scharf anbraten und herausnehmen. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
         "cookTime": 35,
         "firstSteps": [
           "Kartoffeln kochen.",
-          "Rind portionsweise scharf anbraten und herausnehmen."
+          "Den Pfeffer direkt vor dem portionsweisen Anbraten aufs Rind geben und den Thymian beim Ablöschen in die Zwiebelsoße rühren."
         ]
       }
     ],
@@ -4801,14 +4801,14 @@
       {
         "time": "0–16 Min.",
         "title": "Spinat-Reis mit Omelettstreifen",
-        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Eier zu dünnen Omeletts braten. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "instruction": "Reis kochen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Spinat mit Zwiebel weich garen. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
         "storage": "Kühlschrank",
         "recipeId": "spinach-rice-omelette"
       },
       {
         "time": "16–39 Min.",
         "title": "Ofengemüse mit Couscous",
-        "instruction": "Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Mit Zitronensaft und Öl abschmecken. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
+        "instruction": "Paprikapulver und Thymian mit Öl am Gemüse verteilen und vor dem Rösten aufs Blech geben; den Pfeffer danach in den Couscous rühren. Gemüse würfeln und im Ofen rösten. Couscous mit heißer Brühe quellen lassen. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von Di 28.07. im Kühlschrank auftauen.",
         "storage": "Gefrierschrank",
         "recipeId": "roast-vegetable-couscous"
       },
@@ -4843,7 +4843,7 @@
       {
         "time": "89–112 Min.",
         "title": "Rindergeschnetzeltes in Zwiebelsoße",
-        "instruction": "Kartoffeln kochen. Rind portionsweise scharf anbraten und herausnehmen. Zwiebeln weich schmoren. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
+        "instruction": "Kartoffeln kochen. Den Pfeffer direkt vor dem portionsweisen Anbraten aufs Rind geben und den Thymian beim Ablöschen in die Zwiebelsoße rühren. Rind portionsweise scharf anbraten und herausnehmen. Zwei Portionen vollständig abkühlen, einfrieren und am Vorabend von So 02.08. im Kühlschrank auftauen.",
         "storage": "Gefrierschrank",
         "recipeId": "beef-onion"
       },

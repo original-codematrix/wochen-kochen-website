@@ -2109,18 +2109,23 @@ const VAGUE_SEASONING = /^(?:Gewürze|Salz|Pfeffer|Salz[, ]+(?:und )?Pfeffer|Sal
 KOCHBUCH_DATA.recipes = KOCHBUCH_DATA.recipes.map(recipe => {
   const seasoning = seasoningData[recipe.id];
   if (!seasoning) throw new Error(`Gewürzdaten fehlen für ${recipe.id}`);
-  const steps = recipe.steps.map(step => (
+  const originalSteps = recipe.steps.map(step => (
     step === 'Reis, Brühe und Gewürze in eine Form geben.'
       ? 'Reis und Brühe in eine Form geben.'
       : step
   ));
+  const steps = [
+    ...originalSteps.slice(0, seasoning.applicationIndex),
+    seasoning.application,
+    ...originalSteps.slice(seasoning.applicationIndex)
+  ];
   return {
     ...recipe,
     ingredients: [
       ...recipe.ingredients.filter(item => !VAGUE_SEASONING.test(item.trim())),
       ...seasoning.required
     ],
-    steps: [...steps, seasoning.application],
+    steps,
     seasoningTip: seasoning.tip
   };
 });

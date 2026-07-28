@@ -206,6 +206,74 @@ test('all original recipes apply their individual measured seasoning in the expo
   }
 });
 
+test('all original recipes insert seasoning chronologically without reordering preparation steps', () => {
+  const { recipes } = require('../data');
+  const seasoningData = require('../recipe-seasonings');
+  const representativeOriginalSteps = {
+    'garlic-pasta': [
+      'Nudeln kochen und 250 ml Nudelwasser auffangen.',
+      'Brokkoli in den letzten 7–8 Minuten mitkochen, damit er weich wird.',
+      'Hähnchen würfeln, würzen und kräftig anbraten.',
+      'Zwiebel und Knoblauch zufügen, mit Brühe ablöschen.',
+      'Nudeln, Brokkoli und nach Bedarf Nudelwasser unterheben, bis die Soße cremig bindet.'
+    ],
+    teriyaki: [
+      'Reis garen.',
+      'Brokkoli separat sehr weich kochen.',
+      'Hähnchen scharf anbraten.',
+      'Teriyaki-Soße zugeben und 3–4 Minuten glasieren.',
+      'Mit Reis, Brokkoli und Sesam servieren.'
+    ],
+    nuggets: [
+      'Ofen oder Airfryer vorheizen.',
+      'Pommes und Nuggets nach Packungsangabe zubereiten.',
+      'Dips und eine einfache Beilage bereitstellen.'
+    ],
+    'chicken-rice-bake': [
+      'Reis und Brühe in eine Form geben.',
+      'Hähnchen darauf verteilen.',
+      '35–40 Minuten backen.',
+      'Vorgegarten Brokkoli und optional Käse in den letzten 10 Minuten ergänzen.'
+    ]
+  };
+  const expectedApplicationIndices = {
+    'garlic-pasta': 2,
+    teriyaki: 3,
+    nuggets: 1,
+    'chicken-rice-bake': 1
+  };
+  const indices = [];
+
+  for (const id of ORIGINAL_RECIPE_IDS) {
+    const seasoning = seasoningData[id];
+    const recipe = recipes.find(candidate => candidate.id === id);
+    assert.ok(Number.isInteger(seasoning.applicationIndex), `${id}: applicationIndex`);
+    assert.ok(
+      seasoning.applicationIndex >= 0 && seasoning.applicationIndex < recipe.steps.length,
+      `${id}: applicationIndex außerhalb der Schritte`
+    );
+    assert.equal(recipe.steps[seasoning.applicationIndex], seasoning.application, `${id}: falsche Position`);
+    assert.equal(
+      recipe.steps.filter(step => step === seasoning.application).length,
+      1,
+      `${id}: Anwendung muss genau einmal vorkommen`
+    );
+    indices.push(seasoning.applicationIndex);
+  }
+  assert.ok(new Set(indices).size >= 5, 'Anwendungspositionen müssen rezeptbezogen variieren');
+
+  for (const [id, expectedSteps] of Object.entries(representativeOriginalSteps)) {
+    const seasoning = seasoningData[id];
+    const recipe = recipes.find(candidate => candidate.id === id);
+    assert.equal(seasoning.applicationIndex, expectedApplicationIndices[id], id);
+    assert.deepEqual(
+      recipe.steps.filter(step => step !== seasoning.application),
+      expectedSteps,
+      `${id}: ursprüngliche Schrittreihenfolge verändert`
+    );
+  }
+});
+
 test('expansion recipes explicitly consume split seasoning quantities', () => {
   const { recipes } = require('../data');
   const bulgur = recipes.find(recipe => recipe.id === 'vegetable-bulgur-bowl');
