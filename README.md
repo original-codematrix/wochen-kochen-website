@@ -85,7 +85,8 @@ Freitagabend wird zuerst aktualisiert; Samstagfrüh werden noch fehlende oder ve
 - Eigenmarken wie ja!, Gut & Günstig und K-Classic als günstige Normalpreisoption
 - vollständiger Ausschluss von Fisch und Meeresfrüchten
 - 4-Wochen-Vorlagen
-- 75 vollständige Rezepte, darunter zusätzliche vegetarische Nudel-, Reis-, Spinat-, Kartoffel-, Auflauf- und Fleischgerichte
+- 100 vollständige Rezepte, darunter zusätzliche vegetarische Nudel-, Reis-, Spinat-, Kartoffel-, Auflauf- und Fleischgerichte
+- konkrete Pflichtgewürze mit Mengenangaben für vier Portionen sowie optionale Würzvarianten als separate Gewürzempfehlung
 - veröffentlichte Streich-, Vor- und Vergleichspreise werden getrennt vom Angebotspreis übernommen; die Einkaufsliste zeigt die belastbar berechenbare Ersparnis und lässt unveröffentlichte Regalpreise als Schätzung stehen
 - Suche, Filter und Favoriten
 - Zutaten, Anleitung, Nährwerte, Kosten und Low-Carb-Varianten

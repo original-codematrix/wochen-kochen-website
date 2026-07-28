@@ -16,5 +16,5 @@ test('shopping UI distinguishes public, stale and estimated prices', () => {
 
 test('service worker cache is incremented for the synchronized shopping UI', () => {
   const worker = fs.readFileSync(path.join(__dirname, '..', 'service-worker.js'), 'utf8');
-  assert.match(worker, /kochbuch-v13/);
+  assert.match(worker, /const CACHE = 'kochbuch-v14';/);
 });

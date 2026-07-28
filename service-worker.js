@@ -1,10 +1,12 @@
-// Upgrade from kochbuch-v12 after synchronizing both current shopping views.
-const CACHE = 'kochbuch-v13';
+// Upgrade from kochbuch-v13 for the expanded seasoned recipe catalog.
+const CACHE = 'kochbuch-v14';
 const ASSETS = [
   './',
   './index.html',
   './styles.css',
   './import.css',
+  './recipe-seasonings.js',
+  './recipe-expansion.js',
   './data.js',
   './app.js',
   './manifest.webmanifest',
