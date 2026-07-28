@@ -4717,11 +4717,11 @@
         "name": "Spinat-Reis mit Omelettstreifen",
         "day": "Mo 27.07.",
         "storage": "Kühlschrank",
-        "instruction": "Reis kochen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Spinat mit Zwiebel weich garen. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
         "cookTime": 25,
         "firstSteps": [
           "Reis kochen.",
-          "Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden."
+          "Spinat mit Zwiebel weich garen."
         ]
       },
       {
@@ -4756,8 +4756,8 @@
         "instruction": "Fleisch am Einkaufstag roh portionieren und einfrieren. Am Vorabend von Do 30.07. im Kühlschrank auftauen; Kartoffeln und frische Beilagen am Esstag zubereiten. Rezept-Hinweis: Schnitzel paniert roh einfrierbar; Salat frisch.",
         "cookTime": 12,
         "firstSteps": [
-          "Paprikapulver und Pfeffer ins Paniermehl mischen; das Salz vollständig in den noch warmen Kartoffel-Gurkensalat geben.",
-          "Kartoffeln kochen und mit Gurke als Salat anmachen."
+          "Kartoffeln kochen und mit Gurke als Salat anmachen.",
+          "Paprikapulver und Pfeffer ins Paniermehl mischen; das Salz vollständig in den noch warmen Kartoffel-Gurkensalat geben."
         ]
       },
       {
@@ -4801,7 +4801,7 @@
       {
         "time": "0–16 Min.",
         "title": "Spinat-Reis mit Omelettstreifen",
-        "instruction": "Reis kochen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Spinat mit Zwiebel weich garen. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
+        "instruction": "Reis kochen. Spinat mit Zwiebel weich garen. Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden. Zwei Portionen rasch abkühlen und bis Mo 27.07. kalt stellen. Rezept-Hinweis: Reis und Spinat ja; Omelett besser frisch.",
         "storage": "Kühlschrank",
         "recipeId": "spinach-rice-omelette"
       },

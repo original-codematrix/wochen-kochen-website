@@ -248,7 +248,7 @@ const RECIPE_SEASONINGS = {
   'schnitzel-potatoes': {
     required: ['1 TL mildes Paprikapulver', '1/2 TL Salz', '1/4 TL schwarzer Pfeffer'],
     application: 'Paprikapulver und Pfeffer ins Paniermehl mischen; das Salz vollständig in den noch warmen Kartoffel-Gurkensalat geben.',
-    applicationIndex: 0,
+    applicationIndex: 1,
     tip: 'Für eine kräuterige Panade 1/2 TL getrocknete Petersilie unter das Paniermehl mischen.'
   },
   'meatballs-cream': {
@@ -410,7 +410,7 @@ const RECIPE_SEASONINGS = {
   'spinach-rice-omelette': {
     required: ['1/4 TL Muskat', '1/4 TL schwarzer Pfeffer'],
     application: 'Muskat unter den weich gegarten Spinat rühren und den Pfeffer in die Eier schlagen, bevor die dünnen Omeletts gebraten werden.',
-    applicationIndex: 1,
+    applicationIndex: 2,
     tip: 'Für leicht pikante Omelettstreifen 1/4 TL Chiliflocken in die verquirlten Eier rühren.'
   },
   'paprika-cream-pasta': {

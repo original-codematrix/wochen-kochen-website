@@ -240,7 +240,9 @@ test('all original recipes insert seasoning chronologically without reordering p
     'garlic-pasta': 2,
     teriyaki: 3,
     nuggets: 1,
-    'chicken-rice-bake': 1
+    'chicken-rice-bake': 1,
+    'spinach-rice-omelette': 2,
+    'schnitzel-potatoes': 1
   };
   const indices = [];
 
@@ -262,10 +264,13 @@ test('all original recipes insert seasoning chronologically without reordering p
   }
   assert.ok(new Set(indices).size >= 5, 'Anwendungspositionen müssen rezeptbezogen variieren');
 
+  for (const [id, expectedIndex] of Object.entries(expectedApplicationIndices)) {
+    assert.equal(seasoningData[id].applicationIndex, expectedIndex, id);
+  }
+
   for (const [id, expectedSteps] of Object.entries(representativeOriginalSteps)) {
     const seasoning = seasoningData[id];
     const recipe = recipes.find(candidate => candidate.id === id);
-    assert.equal(seasoning.applicationIndex, expectedApplicationIndices[id], id);
     assert.deepEqual(
       recipe.steps.filter(step => step !== seasoning.application),
       expectedSteps,
