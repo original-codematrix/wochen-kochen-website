@@ -13,6 +13,7 @@
     "node": ">=22"
   },
   "dependencies": {
+    "@modelcontextprotocol/client": "2.0.0",
     "playwright": "1.61.0"
   }
 }
