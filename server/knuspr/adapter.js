@@ -116,6 +116,7 @@ const UNSUPPORTED_SCHEMA_KEYWORDS = new Set([
 const SUPPORTED_SCHEMA_KEYWORDS = new Set([
   'type', 'required', 'properties', 'items', 'minItems', 'maxItems', 'minLength', 'maxLength', 'pattern',
   'enum', 'const', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf',
+  'additionalProperties',
   'title', 'description', 'default', 'examples', '$schema', '$id', 'deprecated', 'readOnly', 'writeOnly',
 ]);
 
@@ -153,6 +154,10 @@ function validateSchemaValue(value, schema, detail) {
   }
   if (schema.properties !== undefined && !isRecord(schema.properties)) throw unsupported(detail);
   if (schema.items !== undefined && !isRecord(schema.items)) throw unsupported(detail);
+  if (schema.additionalProperties !== undefined
+    && typeof schema.additionalProperties !== 'boolean'
+    && !isRecord(schema.additionalProperties)) throw unsupported(detail);
+  if (isRecord(schema.additionalProperties)) validateSchemaValue(undefined, schema.additionalProperties, detail);
   if (schema.enum !== undefined && (!Array.isArray(schema.enum) || schema.enum.length === 0)) throw unsupported(detail);
   if (schema.minLength !== undefined) schemaNumber(schema.minLength, detail, { integer: true });
   if (schema.maxLength !== undefined) schemaNumber(schema.maxLength, detail, { integer: true });
@@ -204,8 +209,13 @@ function validateSchemaValue(value, schema, detail) {
   if (isRecord(value)) {
     for (const key of schema.required || []) if (!own(value, key)) throw invalidResponse(detail);
     for (const [key, item] of Object.entries(value)) {
-      if (!schema.properties || !own(schema.properties, key)) throw invalidResponse(detail);
-      validateSchemaValue(item, schema.properties[key], detail);
+      if (schema.properties && own(schema.properties, key)) {
+        validateSchemaValue(item, schema.properties[key], detail);
+      } else if (schema.additionalProperties === false) {
+        throw invalidResponse(detail);
+      } else if (isRecord(schema.additionalProperties)) {
+        validateSchemaValue(item, schema.additionalProperties, detail);
+      }
     }
   }
 }
@@ -422,4 +432,4 @@ function createKnusprAdapter({ client }) {
   };
 }
 
-module.exports = { createKnusprAdapter };
+module.exports = { createKnusprAdapter, validateSchemaValue };

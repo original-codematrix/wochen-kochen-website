@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 
-const { createKnusprAdapter } = require('../server/knuspr/adapter');
+const { createKnusprAdapter, validateSchemaValue } = require('../server/knuspr/adapter');
 
 function tool(name, description, inputSchema = { type: 'object', properties: {} }) {
   return { name, description, inputSchema };
@@ -248,6 +248,63 @@ test('unsupported schema combinators and blank tool names are unavailable withou
   assert.deepEqual(await blankNameAdapter.capabilities(), { searchProducts: false, readCart: false, addCartItems: false });
   await assert.rejects(blankNameAdapter.searchProducts('Kartoffeln'), (error) => error.code === 'KNUSPR_TOOLSET_UNSUPPORTED');
   assert.deepEqual(blankNameClient.calls, []);
+});
+
+test('additionalProperties false accepts exact mapped search and cart payloads', async () => {
+  const strictSearch = tool('catalog_product_search', 'Search available products', {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+    additionalProperties: false,
+  });
+  const strictCart = tool('cart_get', 'Read the current shopping cart', {
+    type: 'object',
+    properties: {},
+    additionalProperties: false,
+  });
+  const client = fakeClient([strictSearch, strictCart], {
+    catalog_product_search: { structuredContent: { products: [rawProduct] } },
+    cart_get: { structuredContent: { lines: [{ product_id: 'potato-1', title: 'Bio Kartoffeln', quantity: 2, unit_price: 2.49, total_price: 4.98 }] } },
+  });
+  const adapter = createKnusprAdapter({ client });
+
+  assert.equal((await adapter.searchProducts('Kartoffeln'))[0].id, 'potato-1');
+  assert.equal((await adapter.getCart())[0].productId, 'potato-1');
+  assert.deepEqual(client.calls, [
+    { name: 'catalog_product_search', args: { query: 'Kartoffeln' } },
+    { name: 'cart_get', args: {} },
+  ]);
+});
+
+test('additionalProperties false rejects undeclared payload keys before a client call', () => {
+  const schema = {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+    additionalProperties: false,
+  };
+
+  assert.throws(
+    () => validateSchemaValue({ query: 'Kartoffeln', unexpected: 'no' }, schema, 'Suchargument'),
+    (error) => error.code === 'KNUSPR_RESPONSE_INVALID',
+  );
+});
+
+test('schema-valued additionalProperties validates every undeclared payload key', () => {
+  const schema = {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+    additionalProperties: { type: 'string', minLength: 2 },
+  };
+
+  assert.doesNotThrow(() => validateSchemaValue({ query: 'Kartoffeln', locale: 'de' }, schema, 'Suchargument'));
+  assert.throws(
+    () => validateSchemaValue({ query: 'Kartoffeln', locale: 'd' }, schema, 'Suchargument'),
+    (error) => error.code === 'KNUSPR_RESPONSE_INVALID',
+  );
+  assert.doesNotThrow(() => validateSchemaValue({ query: 'Kartoffeln', page: 1 }, {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+    additionalProperties: true,
+  }, 'Suchargument'));
 });
 
 test('search rejects products that lack a stable id, a valid current price, or known availability', async () => {
