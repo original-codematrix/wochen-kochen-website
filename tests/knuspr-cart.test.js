@@ -437,6 +437,51 @@ test('later product change persists prior success and an explicit failed current
   assert.deepEqual(await store.read('knuspr-cart-receipt.json', null), result.receipt);
 });
 
+test('later product refresh checkpoint failure propagates without retrying a duplicate receipt line', async () => {
+  const saved = preview([
+    previewLine('milk-line', 'milk'),
+    previewLine('bread-line', 'bread'),
+  ]);
+  const store = memoryStore(saved);
+  const write = store.write.bind(store);
+  const checkpointError = Object.assign(new Error('receipt storage unavailable'), {
+    code: 'KNUSPR_RECEIPT_WRITE_FAILED',
+  });
+  const failedCheckpointAttempts = [];
+  store.write = async (name, value) => {
+    if (name === 'knuspr-cart-receipt.json' && value.lines.length > 1) {
+      failedCheckpointAttempts.push(structuredClone(value));
+      if (failedCheckpointAttempts.length === 1) throw checkpointError;
+    }
+    return write(name, value);
+  };
+  let breadSearches = 0;
+  const adapter = fakeAdapter({
+    products(query) {
+      if (query === 'bread') breadSearches += 1;
+      return [product(query, 1.09, query !== 'bread' || breadSearches < 3)];
+    },
+  });
+
+  await assert.rejects(
+    applyPreview({
+      previewRevision: saved.revision,
+      acceptedLineIds: ['milk-line', 'bread-line'],
+      adapter,
+      store,
+    }),
+    error => error === checkpointError,
+  );
+
+  assert.deepEqual(failedCheckpointAttempts.map(attempt => attempt.lines.map(line => line.lineId)), [
+    ['milk-line', 'bread-line'],
+  ]);
+  assert.deepEqual(
+    (await store.read('knuspr-cart-receipt.json', null)).lines.map(line => line.lineId),
+    ['milk-line'],
+  );
+});
+
 test('each later line rereads the cart and skips a quantity another client already added', async () => {
   const saved = preview([
     previewLine('milk-line', 'milk'),

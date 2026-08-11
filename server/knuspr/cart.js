@@ -242,29 +242,19 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
   for (const item of delta) {
     let before;
     let requested = item.quantity;
+    let refreshed;
     try {
       const currentPreview = await previewAtRevision(store, previewRevision);
       acceptedLines(currentPreview, [item.lineId]);
-      const refreshed = await revalidatePreview(currentPreview, adapter);
-      if (refreshed.changed) {
-        if (receipt.lines.length === 0) return { receipt, refreshedPreview: refreshed.preview, partial: false };
-        receipt.lines.push({
-          lineId: item.lineId,
-          productId: item.productId,
-          requested,
-          added: 0,
-          status: 'failed',
-          errorCode: 'KNUSPR_RECONFIRM_REQUIRED',
-        });
-        await store.write('knuspr-cart-receipt.json', receipt);
-        return { receipt, refreshedPreview: refreshed.preview, partial: true };
+      refreshed = await revalidatePreview(currentPreview, adapter);
+      if (!refreshed.changed) {
+        const currentCart = await adapter.getCart();
+        before = cartQuantities(currentCart).get(item.productId) || 0;
+        const target = targetQuantityForLine(previewLines, item);
+        requested = Math.max(0, target - before);
+        if (requested === 0) continue;
+        await previewAtRevision(store, previewRevision);
       }
-      const currentCart = await adapter.getCart();
-      before = cartQuantities(currentCart).get(item.productId) || 0;
-      const target = targetQuantityForLine(previewLines, item);
-      requested = Math.max(0, target - before);
-      if (requested === 0) continue;
-      await previewAtRevision(store, previewRevision);
     } catch (error) {
       if (receipt.lines.length === 0) throw error;
       receipt.lines.push({
@@ -277,6 +267,19 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
       });
       await store.write('knuspr-cart-receipt.json', receipt);
       return { receipt, refreshedPreview: null, partial: true };
+    }
+    if (refreshed.changed) {
+      if (receipt.lines.length === 0) return { receipt, refreshedPreview: refreshed.preview, partial: false };
+      receipt.lines.push({
+        lineId: item.lineId,
+        productId: item.productId,
+        requested,
+        added: 0,
+        status: 'failed',
+        errorCode: 'KNUSPR_RECONFIRM_REQUIRED',
+      });
+      await store.write('knuspr-cart-receipt.json', receipt);
+      return { receipt, refreshedPreview: refreshed.preview, partial: true };
     }
     let response;
     let errorCode = null;
