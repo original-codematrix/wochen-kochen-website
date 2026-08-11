@@ -1,0 +1,350 @@
+'use strict';
+
+const assert = require('node:assert/strict');
+const test = require('node:test');
+
+const {
+  applyPreview,
+  computeCartDelta,
+  revalidatePreview,
+} = require('../server/knuspr/cart');
+
+function product(id, price = 1.09, available = true) {
+  return {
+    id,
+    name: `${id} product`,
+    brand: null,
+    url: null,
+    imageUrl: null,
+    available,
+    package: { amount: 1, unit: 'piece', label: '1 Stück' },
+    price: { current: price, regular: null, unit: price, unitLabel: '€/Stück', offer: false },
+    qualityTags: [],
+  };
+}
+
+function previewLine(id, productId, quantity = 1, price = 1.09) {
+  return {
+    id,
+    source: 'additional',
+    department: 'Getränke',
+    demand: { searchTerm: productId, amount: quantity, unit: 'piece', ingredient: productId },
+    recipeIds: [],
+    ingredientIds: [],
+    status: 'selected',
+    product: product(productId, price),
+    alternatives: [],
+    productPackages: quantity,
+    cartQuantity: quantity,
+    totalAmount: quantity,
+    wasteAmount: 0,
+    totalPrice: price * quantity,
+    reason: null,
+    removed: false,
+  };
+}
+
+function preview(lines, revision = 'preview-1') {
+  return {
+    generatedAt: '2026-08-11T10:00:00.000Z',
+    days: [],
+    revision,
+    lines,
+    estimatedTotal: lines.reduce((sum, line) => sum + line.totalPrice, 0),
+    openLineCount: 0,
+  };
+}
+
+function memoryStore(savedPreview) {
+  const files = new Map([['knuspr-preview.json', structuredClone(savedPreview)]]);
+  const writes = [];
+  return {
+    writes,
+    async read(name, fallback) {
+      return files.has(name) ? structuredClone(files.get(name)) : fallback;
+    },
+    async write(name, value) {
+      writes.push({ name, value: structuredClone(value) });
+      files.set(name, structuredClone(value));
+    },
+  };
+}
+
+function fakeAdapter({ products, cart = [], add } = {}) {
+  const currentCart = structuredClone(cart);
+  const searchCalls = [];
+  const addCalls = [];
+  let cartReads = 0;
+  const adapter = {
+    searchCalls,
+    addCalls,
+    currentCart,
+    get cartReads() {
+      return cartReads;
+    },
+    async searchProducts(query) {
+      searchCalls.push(query);
+      const found = typeof products === 'function' ? products(query) : products?.[query];
+      return structuredClone(found || []);
+    },
+    async getCart() {
+      cartReads += 1;
+      return structuredClone(currentCart);
+    },
+    async addCartItems(items) {
+      const requested = structuredClone(items);
+      addCalls.push(requested);
+      if (add) return add({ items: requested, currentCart, callNumber: addCalls.length });
+      for (const item of requested) {
+        const existing = currentCart.find(line => line.productId === item.productId);
+        if (existing) existing.quantity += item.quantity;
+        else currentCart.push({ productId: item.productId, quantity: item.quantity });
+      }
+      return { accepted: true };
+    },
+  };
+  return adapter;
+}
+
+test('delta adds only missing quantities and never removes existing items', () => {
+  assert.deepEqual(
+    computeCartDelta(
+      [{ id: 'milk-line', product: { id: 'milk' }, cartQuantity: 3 }],
+      [{ productId: 'milk', quantity: 2 }],
+    ),
+    [{ lineId: 'milk-line', productId: 'milk', quantity: 1 }],
+  );
+  assert.deepEqual(
+    computeCartDelta(
+      [{ id: 'milk-line', product: { id: 'milk' }, cartQuantity: 1 }],
+      [{ productId: 'milk', quantity: 2 }],
+    ),
+    [],
+  );
+});
+
+test('delta aggregates duplicate cart lines and allocates their quantity across duplicate preview products', () => {
+  const lines = [
+    { id: 'milk-a', product: { id: 'milk' }, cartQuantity: 2 },
+    { id: 'milk-b', product: { id: 'milk' }, cartQuantity: 2 },
+  ];
+  const cart = [
+    { productId: 'milk', quantity: 1 },
+    { productId: 'milk', quantity: 2 },
+  ];
+
+  assert.deepEqual(computeCartDelta(lines, cart), [
+    { lineId: 'milk-b', productId: 'milk', quantity: 1 },
+  ]);
+});
+
+test('changed price returns a refreshed preview without reading or mutating the cart', async () => {
+  const saved = preview([previewLine('milk-line', 'milk', 2, 1.09)]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({ products: { milk: [product('milk', 1.29)] } });
+
+  const result = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(result.status, 'reconfirm-required');
+  assert.equal(result.preview.lines[0].product.price.current, 1.29);
+  assert.equal(result.preview.lines[0].totalPrice, 2.58);
+  assert.notEqual(result.preview.revision, saved.revision);
+  assert.deepEqual(adapter.searchCalls, ['milk']);
+  assert.equal(adapter.cartReads, 0);
+  assert.deepEqual(adapter.addCalls, []);
+  assert.equal(store.writes.at(-1).name, 'knuspr-preview.json');
+});
+
+test('stock change returns a refreshed unavailable line without mutating the cart', async () => {
+  const saved = preview([previewLine('milk-line', 'milk')]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({ products: { milk: [product('milk', 1.09, false)] } });
+
+  const result = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(result.status, 'reconfirm-required');
+  assert.equal(result.preview.lines[0].status, 'missing');
+  assert.equal(result.preview.lines[0].product.available, false);
+  assert.equal(result.preview.openLineCount, 1);
+  assert.equal(adapter.cartReads, 0);
+  assert.deepEqual(adapter.addCalls, []);
+});
+
+test('stale revision fails closed before live reads or cart mutation', async () => {
+  const saved = preview([previewLine('milk-line', 'milk')]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({ products: { milk: [product('milk')] } });
+
+  await assert.rejects(
+    applyPreview({ previewRevision: 'stale', acceptedLineIds: ['milk-line'], adapter, store }),
+    error => error.code === 'KNUSPR_PREVIEW_CONFLICT' && error.statusCode === 409,
+  );
+
+  assert.deepEqual(adapter.searchCalls, []);
+  assert.equal(adapter.cartReads, 0);
+  assert.deepEqual(adapter.addCalls, []);
+  assert.deepEqual(store.writes, []);
+});
+
+test('partial mutation writes a per-line receipt and retry adds only the still-missing product', async () => {
+  const saved = preview([
+    previewLine('milk-line', 'milk'),
+    previewLine('bread-line', 'bread'),
+  ]);
+  const store = memoryStore(saved);
+  let breadFailures = 1;
+  const adapter = fakeAdapter({
+    products: { milk: [product('milk')], bread: [product('bread')] },
+    add({ items, currentCart }) {
+      const item = items[0];
+      if (item.productId === 'bread' && breadFailures > 0) {
+        breadFailures -= 1;
+        throw Object.assign(new Error('timeout'), { code: 'KNUSPR_TIMEOUT' });
+      }
+      currentCart.push({ productId: item.productId, quantity: item.quantity });
+      return { accepted: true };
+    },
+  });
+
+  const first = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line', 'bread-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(first.status, 'partial');
+  assert.deepEqual(first.receipt.lines.map(line => ({
+    lineId: line.lineId,
+    requested: line.requested,
+    added: line.added,
+    status: line.status,
+    errorCode: line.errorCode,
+  })), [
+    { lineId: 'milk-line', requested: 1, added: 1, status: 'added', errorCode: null },
+    { lineId: 'bread-line', requested: 1, added: 0, status: 'failed', errorCode: 'KNUSPR_TIMEOUT' },
+  ]);
+  assert.equal(store.writes.at(-1).name, 'knuspr-cart-receipt.json');
+
+  const callsBeforeRetry = adapter.addCalls.length;
+  const retry = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line', 'bread-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(retry.status, 'complete');
+  assert.deepEqual(
+    adapter.addCalls.slice(callsBeforeRetry).flat().map(item => item.productId),
+    ['bread'],
+  );
+  assert.deepEqual(retry.receipt.lines.map(line => line.productId), ['bread']);
+  assert.deepEqual(adapter.currentCart, [
+    { productId: 'milk', quantity: 1 },
+    { productId: 'bread', quantity: 1 },
+  ]);
+});
+
+test('timeout after a committed add is reconciled from a fresh cart and never blindly retried', async () => {
+  const saved = preview([previewLine('milk-line', 'milk', 2)]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({
+    products: { milk: [product('milk')] },
+    add({ items, currentCart }) {
+      currentCart.push({ productId: 'milk', quantity: items[0].quantity });
+      throw Object.assign(new Error('response lost'), { code: 'KNUSPR_TIMEOUT' });
+    },
+  });
+
+  const result = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(result.status, 'complete');
+  assert.equal(adapter.cartReads, 2);
+  assert.equal(adapter.addCalls.length, 1);
+  assert.deepEqual(result.receipt.lines.map(line => ({
+    requested: line.requested,
+    added: line.added,
+    status: line.status,
+    errorCode: line.errorCode,
+  })), [
+    { requested: 2, added: 2, status: 'added', errorCode: 'KNUSPR_TIMEOUT' },
+  ]);
+});
+
+test('unchanged previews are freshly searched on every apply and write an empty complete receipt when already covered', async () => {
+  const saved = preview([previewLine('milk-line', 'milk')]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({
+    products: { milk: [product('milk')] },
+    cart: [{ productId: 'milk', quantity: 1 }],
+  });
+
+  const first = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+  const second = await applyPreview({
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+
+  assert.equal(first.status, 'complete');
+  assert.equal(second.status, 'complete');
+  assert.deepEqual(first.receipt.lines, []);
+  assert.deepEqual(adapter.searchCalls, ['milk', 'milk']);
+  assert.equal(adapter.cartReads, 2);
+  assert.deepEqual(adapter.addCalls, []);
+});
+
+test('overlapping applies serialize fresh-cart reads so the same quantity is not added twice', async () => {
+  const saved = preview([previewLine('milk-line', 'milk')]);
+  const store = memoryStore(saved);
+  const adapter = fakeAdapter({ products: { milk: [product('milk')] } });
+  const input = {
+    previewRevision: saved.revision,
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  };
+
+  const results = await Promise.all([applyPreview(input), applyPreview(input)]);
+
+  assert.deepEqual(results.map(result => result.status), ['complete', 'complete']);
+  assert.equal(adapter.addCalls.length, 1);
+  assert.deepEqual(adapter.currentCart, [{ productId: 'milk', quantity: 1 }]);
+  assert.deepEqual(results.map(result => result.receipt.lines.length), [1, 0]);
+});
+
+test('revalidation deduplicates fresh searches while preserving unchanged preview identity', async () => {
+  const saved = preview([
+    previewLine('milk-a', 'milk'),
+    previewLine('milk-b', 'milk'),
+  ]);
+  const adapter = fakeAdapter({ products: { milk: [product('milk')] } });
+
+  const result = await revalidatePreview(saved, adapter);
+
+  assert.equal(result.changed, false);
+  assert.deepEqual(result.preview, saved);
+  assert.deepEqual(adapter.searchCalls, ['milk']);
+});
