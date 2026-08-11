@@ -14,7 +14,13 @@ async function createStore() {
   return createKnusprStore({ dataDir: await fs.mkdtemp(path.join(os.tmpdir(), 'knuspr-oauth-')) });
 }
 
-function createFakeSdk({ authorizationRedirectThrows = false } = {}) {
+function createFakeSdk({
+  authorizationRedirectThrows = false,
+  finishAuthError,
+  connectWithTokenError,
+  throwClientCloseAt = [],
+  throwTransportCloseAt = [],
+} = {}) {
   const records = { transports: [], clients: [], finishAuthCalls: 0 };
 
   class UnauthorizedError extends Error {
@@ -34,6 +40,7 @@ function createFakeSdk({ authorizationRedirectThrows = false } = {}) {
     async finishAuth(params) {
       records.finishAuthCalls += 1;
       records.callbackParams = new URLSearchParams(params);
+      if (finishAuthError) throw finishAuthError;
       await this.authProvider.saveTokens(
         { access_token: 'exchanged-token', token_type: 'bearer' },
         { issuer: 'https://auth.example' },
@@ -41,7 +48,11 @@ function createFakeSdk({ authorizationRedirectThrows = false } = {}) {
     }
 
     async close() {
+      this.closeAttempts = (this.closeAttempts || 0) + 1;
       this.closed = true;
+      if (throwTransportCloseAt.includes(records.transports.indexOf(this))) {
+        throw new Error(`Transport close ${records.transports.indexOf(this)} failed`);
+      }
     }
   }
 
@@ -54,7 +65,9 @@ function createFakeSdk({ authorizationRedirectThrows = false } = {}) {
     async connect(transport) {
       this.transport = transport;
       records.connects = (records.connects || 0) + 1;
-      if (!await transport.authProvider.tokens()) {
+      if (await transport.authProvider.tokens()) {
+        if (connectWithTokenError) throw connectWithTokenError;
+      } else {
         await transport.authProvider.saveCodeVerifier('fake-verifier');
         const state = await transport.authProvider.state();
         await transport.authProvider.redirectToAuthorization(
@@ -65,7 +78,11 @@ function createFakeSdk({ authorizationRedirectThrows = false } = {}) {
     }
 
     async close() {
+      this.closeAttempts = (this.closeAttempts || 0) + 1;
       this.closed = true;
+      if (throwClientCloseAt.includes(records.clients.indexOf(this))) {
+        throw new Error(`Client close ${records.clients.indexOf(this)} failed`);
+      }
     }
 
     async listTools() {
@@ -138,6 +155,29 @@ test('beginAuthorization reconnects an existing server-side token session withou
   assert.deepEqual(await client.status(), { connected: true, authorizationPending: false });
 });
 
+test('each explicit authorization start rotates state and replaces stale PKCE and discovery material', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk();
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+
+  const first = await client.beginAuthorization();
+  const firstState = new URL(first.authorizationUrl).searchParams.get('state');
+  const auth = await store.read('knuspr-auth.json', null);
+  await store.write('knuspr-auth.json', {
+    ...auth,
+    codeVerifier: 'stale-verifier',
+    discoveryState: { authorizationServerUrl: 'https://stale.example' },
+  }, { sensitive: true });
+
+  const second = await client.beginAuthorization();
+  const secondState = new URL(second.authorizationUrl).searchParams.get('state');
+  const rotated = await store.read('knuspr-auth.json', null);
+
+  assert.notEqual(secondState, firstState);
+  assert.notEqual(rotated.codeVerifier, 'stale-verifier');
+  assert.equal(rotated.discoveryState, undefined);
+});
+
 test('a valid callback exchanges on an unconnected transport and reconnects with a fresh transport', async () => {
   const store = await createStore();
   const fakeSdk = createFakeSdk();
@@ -168,4 +208,89 @@ test('disconnect closes the active session, removes local credentials and report
   assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
   assert.equal(await store.read('knuspr-auth.json', null), null);
   assert.equal(fakeSdk.records.clients.at(-1).closed, true);
+});
+
+test('disconnect clears credentials after active-session close failures and still attempts every active resource', async () => {
+  const store = await createStore();
+  await store.write('knuspr-auth.json', {
+    tokens: { 'https://auth.example': { access_token: 'persisted-token', token_type: 'bearer' } },
+    latestIssuer: 'https://auth.example',
+  }, { sensitive: true });
+  const fakeSdk = createFakeSdk({ throwClientCloseAt: [0], throwTransportCloseAt: [0] });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+  await client.beginAuthorization();
+
+  await assert.rejects(client.disconnect(), /Client close 0 failed/);
+
+  assert.equal(fakeSdk.records.clients[0].closeAttempts, 1);
+  assert.equal(fakeSdk.records.transports[0].closeAttempts, 1);
+  assert.equal(await store.read('knuspr-auth.json', null), null);
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+});
+
+test('disconnect clears credentials after pending-session close failures and still attempts every pending resource', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk({ throwClientCloseAt: [0], throwTransportCloseAt: [0] });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+  await client.beginAuthorization();
+
+  await assert.rejects(client.disconnect(), /Client close 0 failed/);
+
+  assert.equal(fakeSdk.records.clients[0].closeAttempts, 1);
+  assert.equal(fakeSdk.records.transports[0].closeAttempts, 1);
+  assert.equal(await store.read('knuspr-auth.json', null), null);
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+});
+
+test('finishAuthorization cleans every created resource and preserves a finishAuth failure when cleanup fails', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk({
+    finishAuthError: new Error('finishAuth failed'),
+    throwClientCloseAt: [0, 1],
+    throwTransportCloseAt: [0, 1],
+  });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+  const { authorizationUrl } = await client.beginAuthorization();
+  const state = new URL(authorizationUrl).searchParams.get('state');
+
+  await assert.rejects(client.finishAuthorization(`${redirectUrl}?code=abc&state=${state}`), /finishAuth failed/);
+
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+  assert.equal(fakeSdk.records.clients[0].closeAttempts, 1);
+  assert.equal(fakeSdk.records.clients[1].closeAttempts, 1);
+  assert.equal(fakeSdk.records.transports[0].closeAttempts, 1);
+  assert.equal(fakeSdk.records.transports[1].closeAttempts, 1);
+});
+
+test('finishAuthorization cleans callback and fresh transports after a fresh connection failure', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk({ connectWithTokenError: new Error('fresh connect failed') });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+  const { authorizationUrl } = await client.beginAuthorization();
+  const state = new URL(authorizationUrl).searchParams.get('state');
+
+  await assert.rejects(client.finishAuthorization(`${redirectUrl}?code=abc&state=${state}`), /fresh connect failed/);
+
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+  assert.equal(fakeSdk.records.clients[0].closed, true);
+  assert.equal(fakeSdk.records.clients[1].closed, true);
+  assert.equal(fakeSdk.records.transports[0].closed, true);
+  assert.equal(fakeSdk.records.transports[1].closed, true);
+  assert.equal(fakeSdk.records.transports[2].closed, true);
+});
+
+test('finishAuthorization cleans the new session when closing the previous authorization session fails', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk({ throwClientCloseAt: [0] });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+  const { authorizationUrl } = await client.beginAuthorization();
+  const state = new URL(authorizationUrl).searchParams.get('state');
+
+  await assert.rejects(client.finishAuthorization(`${redirectUrl}?code=abc&state=${state}`), /Client close 0 failed/);
+
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+  assert.equal(fakeSdk.records.clients[1].closed, true);
+  assert.equal(fakeSdk.records.transports[0].closed, true);
+  assert.equal(fakeSdk.records.transports[1].closed, true);
+  assert.equal(fakeSdk.records.transports[2].closed, true);
 });

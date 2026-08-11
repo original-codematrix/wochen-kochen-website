@@ -52,6 +52,20 @@ function createOAuthProvider({ store, redirectUrl, onAuthorizationUrl, stateFact
     await writeAuth(withoutState);
   }
 
+  async function rotateAuthorization() {
+    const auth = await readAuth();
+    const value = stateFactory();
+    if (typeof value !== 'string' || !value) throw new Error('OAuth-State fehlt');
+    const {
+      state: ignoredState,
+      codeVerifier: ignoredCodeVerifier,
+      discoveryState: ignoredDiscoveryState,
+      ...retainedAuth
+    } = auth;
+    await writeAuth({ ...retainedAuth, state: value });
+    return value;
+  }
+
   return {
     get redirectUrl() {
       return redirectUrl;
@@ -67,6 +81,7 @@ function createOAuthProvider({ store, redirectUrl, onAuthorizationUrl, stateFact
     },
     state,
     consumeState,
+    rotateAuthorization,
     async clientInformation(context) {
       const auth = await readAuth();
       return auth.clientInformation && auth.clientInformation[issuerKey(context)];

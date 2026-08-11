@@ -28,8 +28,38 @@ function createKnusprClient({ store, redirectUrl, endpoint = DEFAULT_ENDPOINT, s
 
   async function closeSession(session) {
     if (!session) return;
-    await session.client.close();
-    if (session.transport && typeof session.transport.close === 'function') await session.transport.close();
+    let firstError;
+    if (session.client && typeof session.client.close === 'function') {
+      try {
+        await session.client.close();
+      } catch (error) {
+        firstError = error;
+      }
+    }
+    if (session.transport && typeof session.transport.close === 'function') {
+      try {
+        await session.transport.close();
+      } catch (error) {
+        firstError ||= error;
+      }
+    }
+    if (firstError) throw firstError;
+  }
+
+  async function closeTransport(transport) {
+    if (transport && typeof transport.close === 'function') await transport.close();
+  }
+
+  async function attemptAll(tasks) {
+    let firstError;
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        firstError ||= error;
+      }
+    }
+    return firstError;
   }
 
   function assertCallbackUrl(callback) {
@@ -53,7 +83,15 @@ function createKnusprClient({ store, redirectUrl, endpoint = DEFAULT_ENDPOINT, s
     },
     async beginAuthorization() {
       if (activeSession) throw new Error('Knuspr ist bereits verbunden');
-      if (authorizingSession) await closeSession(authorizingSession);
+      if (authorizingSession) {
+        const previousSession = authorizingSession;
+        authorizingSession = undefined;
+        pendingAuthorizationUrl = undefined;
+        const cleanupError = await attemptAll([() => closeSession(previousSession)]);
+        if (cleanupError) throw cleanupError;
+      }
+      const stateProvider = createOAuthProvider({ store, redirectUrl });
+      await stateProvider.rotateAuthorization();
       pendingAuthorizationUrl = undefined;
       const session = await createUnconnectedSession((url) => {
         pendingAuthorizationUrl = String(url);
@@ -64,7 +102,8 @@ function createKnusprClient({ store, redirectUrl, endpoint = DEFAULT_ENDPOINT, s
       } catch (error) {
         if (!isAuthorizationRedirect(error, session)) {
           authorizingSession = undefined;
-          await closeSession(session);
+          pendingAuthorizationUrl = undefined;
+          await attemptAll([() => closeSession(session)]);
           throw error;
         }
       }
@@ -79,23 +118,45 @@ function createKnusprClient({ store, redirectUrl, endpoint = DEFAULT_ENDPOINT, s
       const stateProvider = createOAuthProvider({ store, redirectUrl });
       await stateProvider.consumeState(callback.searchParams.get('state'));
 
-      const session = await createUnconnectedSession();
-      await session.transport.finishAuth(callback.searchParams);
-      const freshTransport = await createFreshTransport(session.provider, session.sdk);
-      await session.client.connect(freshTransport);
-      await closeSession(authorizingSession);
-      authorizingSession = undefined;
-      pendingAuthorizationUrl = undefined;
-      activeSession = { ...session, transport: freshTransport };
-      return { connected: true };
+      const previousSession = authorizingSession;
+      let session;
+      let freshTransport;
+      let previousSessionCloseAttempted = false;
+      try {
+        session = await createUnconnectedSession();
+        await session.transport.finishAuth(callback.searchParams);
+        freshTransport = await createFreshTransport(session.provider, session.sdk);
+        await session.client.connect(freshTransport);
+        previousSessionCloseAttempted = true;
+        await closeSession(previousSession);
+        authorizingSession = undefined;
+        pendingAuthorizationUrl = undefined;
+        activeSession = { ...session, transport: freshTransport };
+        return { connected: true };
+      } catch (error) {
+        activeSession = undefined;
+        authorizingSession = undefined;
+        pendingAuthorizationUrl = undefined;
+        await attemptAll([
+          () => closeSession(session),
+          () => closeTransport(freshTransport),
+          ...(previousSessionCloseAttempted ? [] : [() => closeSession(previousSession)]),
+        ]);
+        throw error;
+      }
     },
     async disconnect() {
-      await closeSession(activeSession);
-      await closeSession(authorizingSession);
+      const currentActiveSession = activeSession;
+      const currentAuthorizingSession = authorizingSession;
       activeSession = undefined;
       authorizingSession = undefined;
       pendingAuthorizationUrl = undefined;
-      await store.remove('knuspr-auth.json');
+      const cleanupError = await attemptAll([
+        () => closeSession(currentActiveSession),
+        () => closeSession(currentAuthorizingSession),
+        () => store.remove('knuspr-auth.json'),
+      ]);
+      if (cleanupError) throw cleanupError;
     },
     async listTools() {
       if (!activeSession) throw new Error('Knuspr-Verbindung erforderlich');
