@@ -42,6 +42,7 @@ function recommendMarket({ baskets, splitTotal, threshold = 20 }) {
 }
 
 const FORBIDDEN = /\b(fisch|lachs|forelle|thun|kabeljau|seelachs|hering|matjes|makrele|sardine|dorade|zander|karpfen|pangasius|schlemmer.?filet|garnel|shrimp|scampi|hummer|muschel|auster|tintenfisch|calamari|oktopus|seafood|meeresfr|krabbe|surimi|rollmops|anchovis|sardelle)/i;
+const EGG_EXCLUSION_PATTERN = /(?:^|[^a-z])(?:ei(?:er)?|eiweiss|eigelb|eiklar|spiegelei(?:er)?|ruhrei(?:er)?|huhnerei(?:er)?|wachtelei(?:er)?|entenei(?:er)?|ganseei(?:er)?|straussenei(?:er)?|omelett)(?=[^a-z]|$)/i;
 const EXCLUSION_GROUPS = {
   milch: /(milch|sahne|kase|joghurt|butter|parmesan|mozzarella|bechamel|frischkase|quark|schmand|creme fraiche)/i,
   milchprodukte: /(milch|sahne|kase|joghurt|butter|parmesan|mozzarella|bechamel|frischkase|quark|schmand|creme fraiche)/i,
@@ -49,8 +50,8 @@ const EXCLUSION_GROUPS = {
   pilz: /(pilz|champignon)/i,
   pilze: /(pilz|champignon)/i,
   schwein: /(schwein|pork|nacken|schnitzel|medaillon)/i,
-  ei: /(?:^|[^a-z])ei(?:[^a-z]|$)|\beier|spiegelei(?:er)?|ruhrei|huhnerei(?:er)?|omelett/i,
-  eier: /(?:^|[^a-z])ei(?:[^a-z]|$)|\beier|spiegelei(?:er)?|ruhrei|huhnerei(?:er)?|omelett/i,
+  ei: EGG_EXCLUSION_PATTERN,
+  eier: EGG_EXCLUSION_PATTERN,
   nuss: /\bnuss|(?:wal|hasel|erd|para|cashew|macadamia|pistazien)nuss/i,
   nusse: /\bnuss|(?:wal|hasel|erd|para|cashew|macadamia|pistazien)nuss/i,
   walnuss: /walnuss/i,
@@ -927,11 +928,23 @@ function productVariantKey(line) {
   return [
     String(product.id).trim(),
     line.demand.unit,
-    line.department,
     Number(packageInfo.amount),
     String(packageInfo.unit).trim().toLocaleLowerCase('de-DE'),
     price,
   ].join('|');
+}
+
+function consolidatedDepartment(product, componentDepartments) {
+  const productName = String(product && product.name || '').trim();
+  const fromProduct = shoppingDepartment({ name: productName, category: categoryFor(productName) });
+  if (fromProduct !== 'Weitere Zutaten') return fromProduct;
+  const priority = new Map(SHOPPING_DEPARTMENTS.map((department, index) => [department, index]));
+  return [...new Set(componentDepartments)]
+    .sort((left, right) => (
+      (priority.get(left) ?? SHOPPING_DEPARTMENTS.length)
+      - (priority.get(right) ?? SHOPPING_DEPARTMENTS.length)
+      || left.localeCompare(right, 'de-DE')
+    ))[0] || 'Weitere Zutaten';
 }
 
 function uniqueById(values) {
@@ -967,6 +980,10 @@ function consolidateSelectedProductLines(lines) {
         ...(existing.demand.searchTerms || [existing.demand.searchTerm]),
         ...(line.demand.searchTerms || [line.demand.searchTerm]),
       ])],
+      componentDepartments: [...new Set([
+        ...(existing.demand.componentDepartments || [existing.department]),
+        ...(line.demand.componentDepartments || [line.department]),
+      ])],
     };
     const recalculated = chooseProduct(demand, [existing.product], { pinnedProductId: existing.product.id });
     if (recalculated.status !== 'selected') {
@@ -977,6 +994,7 @@ function consolidateSelectedProductLines(lines) {
       ...existing,
       id: `recipe-shared-${previewRevision(demand.ingredientIds).slice(0, 8)}`,
       demand,
+      department: consolidatedDepartment(existing.product, demand.componentDepartments),
       recipeIds: demand.recipeIds,
       ingredientIds: demand.ingredientIds,
       alternatives: uniqueById([...existing.alternatives, ...line.alternatives]),

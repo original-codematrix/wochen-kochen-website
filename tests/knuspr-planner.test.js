@@ -209,6 +209,36 @@ test('Ei exclusion rejects egg recipes without false-positive matching Reis', ()
   assert.equal(selected.some(item => item.id === 'rice-meal'), true);
 });
 
+test('Ei exclusion rejects explicit egg morphology without matching Feierabend-Reis', () => {
+  const eggIngredients = [
+    '100 g Eiweiß',
+    '100 g Eiweiss',
+    '2 Eigelb',
+    '2 Eiklar',
+    '4 Wachteleier',
+    '4 Enteneier',
+    '4 Hühnereier',
+    '4 Gänseeier',
+    '4 Straußeneier',
+  ];
+
+  for (const [index, ingredient] of eggIngredients.entries()) {
+    const eggId = `egg-form-${index}`;
+    const recipes = [
+      recipe(eggId, { ingredients: [ingredient] }),
+      recipe('evening-rice', { name: 'Feierabend-Reis', ingredients: ['400 g Reis'] }),
+      ...catalog().slice(0, 6),
+    ];
+    const choices = buildIngredientDemands(recipes, { servings: 2 })
+      .map(demand => ({ demand, status: 'missing' }));
+    const selected = selectKnusprWeek({ recipes, productChoices: choices, exclusions: ['Ei'], variation: 0 });
+
+    assert.equal(selected.length, 7, ingredient);
+    assert.equal(selected.some(item => item.id === eggId), false, ingredient);
+    assert.equal(selected.some(item => item.id === 'evening-rice'), true, ingredient);
+  }
+});
+
 test('Nuss and folded Nüsse exclusions reject Walnüsse in compound ingredients', () => {
   const recipes = [
     recipe('walnut-meal', { ingredients: ['100 g Walnüsse'] }),
@@ -238,17 +268,17 @@ test('planner reuses a purchased pack across recipes instead of charging it twic
   assert.deepEqual(spinach.recipeIds.slice().sort(), ['spinach-gnocchi', 'spinach-pasta']);
 });
 
-test('planner consolidates compatible potato wording mapped to the same SKU and charges one pack', async () => {
+test('planner consolidates Kartoffeln and Erdäpfel mapped to the same SKU and charges one pack', async () => {
   const recipes = [
     recipe('plain-potatoes', { ingredients: ['600 g Kartoffeln'] }),
-    recipe('waxy-potatoes', { ingredients: ['400 g festkochende Kartoffeln'] }),
+    recipe('earth-apples', { ingredients: ['400 g Erdäpfel'] }),
     recipe('rice-bowl'), recipe('broccoli-bake'), recipe('gnocchi'),
     recipe('chicken', { vegetarian: false }), recipe('beef', { vegetarian: false }),
   ];
   const sharedPotatoes = product('potato-sku', 'festkochende Kartoffeln', 1.99, 1000);
   const adapter = {
     async searchProducts(query) {
-      if (/Kartoffeln/i.test(query)) return [sharedPotatoes];
+      if (/Kartoffeln|Erdäpfel/i.test(query)) return [sharedPotatoes];
       return adapterForProducts().searchProducts(query);
     },
   };
@@ -259,8 +289,30 @@ test('planner consolidates compatible potato wording mapped to the same SKU and 
   assert.equal(potatoLines[0].demand.amount, 500);
   assert.equal(potatoLines[0].productPackages, 1);
   assert.equal(potatoLines[0].totalPrice, 1.99);
-  assert.deepEqual(potatoLines[0].recipeIds.slice().sort(), ['plain-potatoes', 'waxy-potatoes']);
-  assert.deepEqual(potatoLines[0].ingredientIds.slice().sort(), ['plain-potatoes:0', 'waxy-potatoes:0']);
+  assert.equal(potatoLines[0].department, 'Nudeln, Reis & Beilagen');
+  assert.deepEqual(potatoLines[0].recipeIds.slice().sort(), ['earth-apples', 'plain-potatoes']);
+  assert.deepEqual(potatoLines[0].ingredientIds.slice().sort(), ['earth-apples:0', 'plain-potatoes:0']);
+});
+
+test('same-SKU consolidation uses stable component priority when the product department is generic', async () => {
+  const recipes = [
+    recipe('spinach', { ingredients: ['500 g Spinat'] }),
+    recipe('leafy-greens', { ingredients: ['500 g Blattgemüse'] }),
+    recipe('rice-bowl'), recipe('broccoli-bake'), recipe('gnocchi'),
+    recipe('chicken', { vegetarian: false }), recipe('beef', { vegetarian: false }),
+  ];
+  const genericProduct = product('greens-sku', 'Regionaler Beilagenmix', 1.99, 1000);
+  const adapter = {
+    async searchProducts(query) {
+      if (/Spinat|Blattgemüse/i.test(query)) return [genericProduct];
+      return adapterForProducts().searchProducts(query);
+    },
+  };
+  const plan = await serviceWithCatalog(recipes, { adapter }).generatePlan({ variation: 0 });
+  const greensLines = plan.shoppingPreview.lines.filter(line => line.product && line.product.id === 'greens-sku');
+
+  assert.equal(greensLines.length, 1);
+  assert.equal(greensLines[0].department, 'Obst & Gemüse');
 });
 
 test('planner does not consolidate the same product id across incompatible units or variants', async () => {
@@ -286,6 +338,37 @@ test('planner does not consolidate the same product id across incompatible units
 
   assert.equal(specialLines.length, 2);
   assert.deepEqual(specialLines.map(line => line.demand.unit).sort(), ['mass', 'volume']);
+
+  for (const scenario of [
+    {
+      label: 'package',
+      candidate(query) {
+        return product('potato-variant', 'Kartoffeln', 1.99, /Erdäpfel/i.test(query) ? 1500 : 1000);
+      },
+    },
+    {
+      label: 'price',
+      candidate(query) {
+        return product('potato-variant', 'Kartoffeln', /Erdäpfel/i.test(query) ? 2.49 : 1.99, 1000);
+      },
+    },
+  ]) {
+    const variantRecipes = [
+      recipe('plain-potatoes', { ingredients: ['600 g Kartoffeln'] }),
+      recipe('earth-apples', { ingredients: ['400 g Erdäpfel'] }),
+      recipe('rice-bowl'), recipe('broccoli-bake'), recipe('gnocchi'),
+      recipe('chicken', { vegetarian: false }), recipe('beef', { vegetarian: false }),
+    ];
+    const variantAdapter = {
+      async searchProducts(query) {
+        if (/Kartoffeln|Erdäpfel/i.test(query)) return [scenario.candidate(query)];
+        return adapterForProducts().searchProducts(query);
+      },
+    };
+    const variantPlan = await serviceWithCatalog(variantRecipes, { adapter: variantAdapter }).generatePlan({ variation: 0 });
+    const variantLines = variantPlan.shoppingPreview.lines.filter(line => line.product && line.product.id === 'potato-variant');
+    assert.equal(variantLines.length, 2, scenario.label);
+  }
 });
 
 test('plan covers every required selected ingredient exactly once and retains meal prep', async () => {
