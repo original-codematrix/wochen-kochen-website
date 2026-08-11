@@ -96,12 +96,12 @@ Nach den harten Kriterien gilt folgende Rangfolge:
 
 1. fachliche Passgenauigkeit zur Zutat,
 2. ausreichende Gesamtmenge,
-3. möglichst wenig unverwendeter Packungsüberschuss,
-4. festgepinnte oder bereits bewährte Produkte,
-5. belastbare Qualitätsmerkmale aus den MCP-Daten,
-6. Angebots- und Grundpreis sowie Gesamtpreis der benötigten Packungen.
+3. festgepinnte oder bereits bewährte Produkte,
+4. belastbare Qualitätsmerkmale aus den MCP-Daten,
+5. ein ausgewogener Preis-Leistungswert aus Gesamtpreis und einer moderaten Überschussstrafe,
+6. bei nahezu gleichem Preis-Leistungswert der geringere Packungsüberschuss.
 
-Ein günstigeres, aber unpassendes Produkt darf dadurch keinen fachlich passenden Treffer verdrängen. Bio, Marke oder Premiumstufe werden nur bevorzugt, wenn der Nutzer dies festpinnt oder Knuspr dafür ein belastbares, nutzbares Signal liefert. Fehlen Qualitätsdaten, behauptet die Anwendung keine Qualitätswertung.
+Ein günstigeres, aber unpassendes Produkt darf dadurch keinen fachlich passenden Treffer verdrängen. Ein kleiner, später nutzbarer Überschuss darf jedoch gewählt werden, wenn die passende Gesamtpackung deutlich günstiger ist als mehrere kleinere Packungen. Bio, Marke oder Premiumstufe werden nur bevorzugt, wenn der Nutzer dies festpinnt oder Knuspr dafür ein belastbares, nutzbares Signal liefert. Fehlen Qualitätsdaten, behauptet die Anwendung keine Qualitätswertung.
 
 ### Rezeptauswahl
 

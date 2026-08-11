@@ -307,7 +307,7 @@ git add server/knuspr/adapter.js tests/knuspr-adapter.test.js
 git commit -m "feat: normalize Knuspr MCP tools"
 ```
 
-### Task 4: Pack calculations and price-performance product selection
+### Task 4: Pack calculations and balanced price-performance product selection
 
 **Files:**
 - Create: `server/knuspr/product-selection.js`
@@ -326,7 +326,7 @@ test('exact match beats a cheaper prepared product', () => {
   assert.equal(result.selected.id, 'breast');
 });
 
-test('ranking charges whole packs and minimizes waste before small price differences', () => {
+test('ranking charges whole packs and accepts modest reusable waste for a clearly lower total', () => {
   const demand = demandOf('750 g Kartoffeln');
   const result = chooseProduct(demand, [product('onekg','Kartoffeln',1.99,1000), product('two','Kartoffeln',1.79,500)], {});
   assert.deepEqual({ id:result.selected.id, packages:result.packages, totalPrice:result.totalPrice, waste:result.wasteAmount }, { id:'onekg', packages:1, totalPrice:1.99, waste:250 });
@@ -344,16 +344,18 @@ Run: `node --test tests/knuspr-product-selection.test.js`
 
 Expected: FAIL with missing module.
 
-- [ ] **Step 3: Implement lexicographic ranking rather than an opaque magic score**
+- [ ] **Step 3: Implement transparent suitability and value ranking**
 
 ```js
 function rankTuple(choice, preferences) {
+  const valueCost = choice.totalPrice + Math.min(0.5, choice.wasteRatio * 0.5);
   return [
     choice.matchTier,
     choice.missingAmount > 0 ? 1 : 0,
-    choice.wasteRatio,
     choice.product.id === preferences.pinnedProductId ? 0 : 1,
     -choice.qualitySignals.length,
+    valueCost,
+    choice.wasteRatio,
     choice.totalPrice
   ];
 }
