@@ -213,6 +213,10 @@ function mutationErrorCode(error) {
   return nonEmptyString(error && error.code) ? error.code.trim() : 'KNUSPR_CART_ADD_FAILED';
 }
 
+function preconditionErrorCode(error) {
+  return nonEmptyString(error && error.code) ? error.code.trim() : 'KNUSPR_CART_PRECONDITION_FAILED';
+}
+
 function targetQuantityForLine(previewLines, item) {
   let target = 0;
   for (const line of previewLines) {
@@ -236,16 +240,44 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
   };
 
   for (const item of delta) {
-    const currentPreview = await previewAtRevision(store, previewRevision);
-    acceptedLines(currentPreview, [item.lineId]);
-    const refreshed = await revalidatePreview(currentPreview, adapter);
-    if (refreshed.changed) return { receipt, refreshedPreview: refreshed.preview };
-    const currentCart = await adapter.getCart();
-    const before = cartQuantities(currentCart).get(item.productId) || 0;
-    const target = targetQuantityForLine(previewLines, item);
-    const requested = Math.max(0, target - before);
-    if (requested === 0) continue;
-    await previewAtRevision(store, previewRevision);
+    let before;
+    let requested = item.quantity;
+    try {
+      const currentPreview = await previewAtRevision(store, previewRevision);
+      acceptedLines(currentPreview, [item.lineId]);
+      const refreshed = await revalidatePreview(currentPreview, adapter);
+      if (refreshed.changed) {
+        if (receipt.lines.length === 0) return { receipt, refreshedPreview: refreshed.preview, partial: false };
+        receipt.lines.push({
+          lineId: item.lineId,
+          productId: item.productId,
+          requested,
+          added: 0,
+          status: 'failed',
+          errorCode: 'KNUSPR_RECONFIRM_REQUIRED',
+        });
+        await store.write('knuspr-cart-receipt.json', receipt);
+        return { receipt, refreshedPreview: refreshed.preview, partial: true };
+      }
+      const currentCart = await adapter.getCart();
+      before = cartQuantities(currentCart).get(item.productId) || 0;
+      const target = targetQuantityForLine(previewLines, item);
+      requested = Math.max(0, target - before);
+      if (requested === 0) continue;
+      await previewAtRevision(store, previewRevision);
+    } catch (error) {
+      if (receipt.lines.length === 0) throw error;
+      receipt.lines.push({
+        lineId: item.lineId,
+        productId: item.productId,
+        requested,
+        added: 0,
+        status: 'failed',
+        errorCode: preconditionErrorCode(error),
+      });
+      await store.write('knuspr-cart-receipt.json', receipt);
+      return { receipt, refreshedPreview: null, partial: true };
+    }
     let response;
     let errorCode = null;
     try {
@@ -265,6 +297,7 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
         status: 'uncertain',
         errorCode: 'KNUSPR_CART_STATE_UNCERTAIN',
       });
+      await store.write('knuspr-cart-receipt.json', receipt);
       break;
     }
     const after = reconciled.get(item.productId) || 0;
@@ -282,8 +315,9 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
       status: added === requested ? 'added' : 'failed',
       errorCode,
     });
+    await store.write('knuspr-cart-receipt.json', receipt);
   }
-  return { receipt, refreshedPreview: null };
+  return { receipt, refreshedPreview: null, partial: false };
 }
 
 async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapter, store }) {
@@ -313,15 +347,15 @@ async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapt
     store,
   });
   const receipt = outcome.receipt;
-  await store.write('knuspr-cart-receipt.json', receipt);
   if (outcome.refreshedPreview) {
     await store.write('knuspr-preview.json', outcome.refreshedPreview);
     return {
-      status: 'reconfirm-required',
+      status: outcome.partial ? 'partial' : 'reconfirm-required',
       preview: outcome.refreshedPreview,
       receipt,
     };
   }
+  if (receipt.lines.length === 0) await store.write('knuspr-cart-receipt.json', receipt);
   return {
     status: receipt.lines.some(line => line.status !== 'added') ? 'partial' : 'complete',
     receipt,
