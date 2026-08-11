@@ -1,5 +1,8 @@
 'use strict';
 
+const { createHash } = require('node:crypto');
+const { chooseProduct, parseRequiredAmount } = require('./knuspr/product-selection');
+
 function roundMoney(value) {
   return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
 }
@@ -44,7 +47,8 @@ const EXCLUSION_GROUPS = {
   milchprodukte: /(milch|sahne|käse|joghurt|butter|parmesan|mozzarella|béchamel|frischkäse|quark|schmand|crème fraîche)/i,
   laktose: /(milch|sahne|käse|joghurt|butter|parmesan|mozzarella|béchamel|frischkäse|quark|schmand|crème fraîche)/i,
   pilz: /(pilz|champignon)/i,
-  pilze: /(pilz|champignon)/i
+  pilze: /(pilz|champignon)/i,
+  schwein: /(schwein|pork|nacken|schnitzel|medaillon)/i
 };
 const CATEGORY_RULES = [
   ['nuggets', /\b(nuggets?|wings?|flügel|crispy)\b/i, 8],
@@ -731,11 +735,275 @@ function generateOfferPlan({
   };
 }
 
+function ingredientSearchTerm(ingredient) {
+  return String(ingredient || '')
+    .replace(/^\s*optional\s*:\s*/i, '')
+    .replace(/^\s*(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*(?:(?:TL|EL|Prise|kg|g|ml|l|Stück|Stueck|Packungen?|Dosen?|Glas|Gläser|Stangen?|Bund|Becher)\b\s*)?/i, '')
+    .replace(/^zubereitete\s+/i, '')
+    .replace(/\s*\([^)]*\)\s*$/, '')
+    .trim();
+}
+
+function buildIngredientDemands(recipes, { servings = 2 } = {}) {
+  const grouped = new Map();
+  for (const recipe of Array.isArray(recipes) ? recipes : []) {
+    const scale = Number(servings) / (Number(recipe.servings) || 4);
+    for (const [ingredientIndex, ingredient] of (recipe.ingredients || []).entries()) {
+      const parsed = parseRequiredAmount(ingredient, scale);
+      if (parsed.optional) continue;
+      const searchTerm = ingredientSearchTerm(ingredient);
+      if (!searchTerm) continue;
+      const key = `${searchTerm.toLocaleLowerCase('de-DE')}|${parsed.unit || 'unknown'}`;
+      const component = {
+        recipeId: recipe.id,
+        ingredientId: `${recipe.id}:${ingredientIndex}`,
+        ingredient: String(ingredient),
+        amount: parsed.amount,
+        unit: parsed.unit,
+      };
+      const existing = grouped.get(key) || {
+        ingredient: String(ingredient),
+        searchTerm,
+        amount: parsed.amount === null ? null : 0,
+        unit: parsed.unit,
+        optional: false,
+        recipeIds: [],
+        ingredientIds: [],
+        components: [],
+      };
+      if (existing.amount !== null) {
+        existing.amount = parsed.amount === null ? null : Number((existing.amount + parsed.amount).toFixed(6));
+      }
+      if (!existing.recipeIds.includes(recipe.id)) existing.recipeIds.push(recipe.id);
+      existing.ingredientIds.push(component.ingredientId);
+      existing.components.push(component);
+      grouped.set(key, existing);
+    }
+  }
+  return [...grouped.values()];
+}
+
+const KNUSPR_MEAT = /(hähnchen|chicken|geflügel|pute|rind|beef|hack|schwein|pork|nacken|medaillon|leberkäse|leberkas|schinken|bratwurst|schnitzel|steak|wings?|nuggets?|gyros|fleisch|salsiccia|speck)/i;
+
+function isVegetarianRecipe(recipe) {
+  if (typeof recipe.vegetarian === 'boolean') return recipe.vegetarian;
+  if ((recipe.tags || []).some(tag => /^(?:fleischfrei|vegetarisch|vegan)$/i.test(String(tag)))) return true;
+  return !KNUSPR_MEAT.test(`${recipe.name || ''} ${(recipe.ingredients || []).join(' ')} ${(recipe.tags || []).join(' ')}`);
+}
+
+function knusprRecipeAllowed(recipe, exclusions) {
+  const text = `${recipe.name || ''} ${(recipe.ingredients || []).join(' ')} ${(recipe.tags || []).join(' ')}`;
+  if (FORBIDDEN.test(text)) return false;
+  return !normalizeExclusions(exclusions).some(exclusion => recipeMatchesExclusion(recipe, exclusion));
+}
+
+function rotate(values, variation) {
+  if (!values.length) return [];
+  const offset = Math.abs(Number(variation) || 0) % values.length;
+  return values.slice(offset).concat(values.slice(0, offset));
+}
+
+function choiceScore(recipe, productChoices) {
+  const related = (productChoices || []).filter(item => item.demand && item.demand.recipeIds.includes(recipe.id));
+  const missing = related.filter(item => item.status === 'missing').length;
+  const ambiguous = related.filter(item => item.status === 'ambiguous').length;
+  const allocatedCost = related.reduce((sum, item) => (
+    sum + (Number(item.totalPrice) || 0) / Math.max(1, item.demand.recipeIds.length)
+  ), 0);
+  const waste = related.reduce((sum, item) => sum + (Number(item.wasteAmount) || 0), 0);
+  return missing * 40 + ambiguous * 15 + allocatedCost + waste / 1000 - (Number(recipe.rating) || 0) * 0.2;
+}
+
+function selectKnusprWeek({ recipes, productChoices = [], exclusions = [], variation = 0 }) {
+  const eligible = (Array.isArray(recipes) ? recipes : [])
+    .filter(recipe => knusprRecipeAllowed(recipe, exclusions))
+    .sort((left, right) => choiceScore(left, productChoices) - choiceScore(right, productChoices) || left.id.localeCompare(right.id));
+  const ordered = rotate(eligible, variation);
+  const target = Math.min(7, ordered.length);
+  const vegetarianTarget = Math.min(Math.ceil(target / 2), ordered.filter(isVegetarianRecipe).length);
+  const selected = [];
+  const add = (candidate, requireNewCategory = false) => {
+    if (!candidate || selected.some(item => item.id === candidate.id)) return false;
+    if (requireNewCategory && selected.some(item => item.cat === candidate.cat)) return false;
+    selected.push(candidate);
+    return true;
+  };
+
+  for (const candidate of ordered.filter(isVegetarianRecipe)) {
+    if (selected.filter(isVegetarianRecipe).length >= vegetarianTarget) break;
+    add(candidate, true);
+  }
+  for (const candidate of ordered.filter(isVegetarianRecipe)) {
+    if (selected.filter(isVegetarianRecipe).length >= vegetarianTarget) break;
+    add(candidate);
+  }
+  for (const candidate of ordered) {
+    if (selected.length >= target) break;
+    add(candidate, true);
+  }
+  for (const candidate of ordered) {
+    if (selected.length >= target) break;
+    add(candidate);
+  }
+  return selected;
+}
+
+function localIsoDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function previewRevision(value) {
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0, 20);
+}
+
+function sourceChoiceForDemand(demand, productChoices) {
+  const source = (productChoices || []).find(item => (
+    item.demand
+    && item.demand.searchTerm.toLocaleLowerCase('de-DE') === demand.searchTerm.toLocaleLowerCase('de-DE')
+    && item.demand.unit === demand.unit
+  ));
+  if (!source) return null;
+  if (Array.isArray(source.products)) {
+    return { demand, products: source.products, ...chooseProduct(demand, source.products, source.preferences || {}) };
+  }
+  if (source.demand.amount !== demand.amount) return null;
+  return { ...source, demand };
+}
+
+function choiceLine(choice, index) {
+  const demand = choice.demand;
+  return {
+    id: `recipe-${index + 1}-${previewRevision(demand.ingredientIds).slice(0, 8)}`,
+    source: 'recipe',
+    department: shoppingDepartment({ name: demand.searchTerm, category: categoryFor(demand.ingredient) }),
+    demand,
+    recipeIds: [...demand.recipeIds],
+    ingredientIds: [...demand.ingredientIds],
+    status: choice.status,
+    product: choice.selected || null,
+    alternatives: (choice.alternatives || []).map(item => item.product || item),
+    productPackages: choice.packages,
+    cartQuantity: choice.packages,
+    totalAmount: choice.totalAmount,
+    wasteAmount: choice.wasteAmount,
+    totalPrice: choice.totalPrice,
+    reason: choice.reason,
+    removed: false,
+  };
+}
+
+function additionalLine(item, index) {
+  const choice = item.choice || {};
+  return {
+    id: `additional-${item.id}`,
+    source: 'additional',
+    additionalItemId: item.id,
+    additionalCategory: item.category,
+    department: item.category === 'getraenke' ? 'Getränke' : 'Haushalt & Vorrat',
+    demand: { searchTerm: item.searchTerm, amount: item.quantity, unit: 'piece', ingredient: item.label },
+    recipeIds: [],
+    ingredientIds: [],
+    status: choice.status || 'missing',
+    product: choice.selected || null,
+    alternatives: (choice.alternatives || []).map(value => value.product || value),
+    productPackages: choice.packages ?? item.quantity,
+    cartQuantity: choice.packages ?? item.quantity,
+    totalAmount: choice.totalAmount ?? null,
+    wasteAmount: choice.wasteAmount ?? null,
+    totalPrice: choice.totalPrice ?? null,
+    reason: choice.reason || 'Kein passendes lieferbares Produkt',
+    removed: false,
+    order: index,
+  };
+}
+
+function assertKnusprCoverage(selectedRecipes, lines) {
+  const expected = buildIngredientDemands(selectedRecipes, { servings: 2 }).flatMap(demand => demand.ingredientIds);
+  const covered = lines.flatMap(line => line.ingredientIds || []);
+  if (
+    covered.length !== expected.length
+    || new Set(covered).size !== expected.length
+    || expected.some(id => !covered.includes(id))
+  ) {
+    throw new Error('Einkaufsvorschau unvollständig: Pflichtzutaten konnten nicht eindeutig zugeordnet werden');
+  }
+}
+
+function buildKnusprPlan({
+  recipes,
+  productChoices = [],
+  additionalItems = [],
+  exclusions = [],
+  variation = 0,
+  now = new Date(),
+}) {
+  const timestamp = new Date(now);
+  if (Number.isNaN(timestamp.getTime())) throw new Error('Planungszeitpunkt ist ungültig');
+  const selectedRecipes = selectKnusprWeek({ recipes, productChoices, exclusions, variation, now: timestamp });
+  const selectedDemands = buildIngredientDemands(selectedRecipes, { servings: 2 });
+  const selectedChoices = selectedDemands.map(demand => sourceChoiceForDemand(demand, productChoices));
+  if (selectedChoices.some(choice => !choice)) {
+    throw new Error('Einkaufsvorschau unvollständig: Produktauswahl für Pflichtzutat fehlt');
+  }
+  const recipeLines = selectedChoices.map(choiceLine);
+  assertKnusprCoverage(selectedRecipes, recipeLines);
+
+  const start = nextMonday(timestamp);
+  const days = selectedRecipes.map((recipe, index) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + index);
+    return {
+      date: localIsoDate(date),
+      day: dateLabel(date, new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date)),
+      recipeId: recipe.id,
+      name: recipe.name,
+      vegetarian: isVegetarianRecipe(recipe),
+    };
+  });
+  const generatedAt = timestamp.toISOString();
+  const lines = recipeLines.concat((additionalItems || []).filter(item => item.enabled !== false).map(additionalLine));
+  const revisionSeed = {
+    generatedAt,
+    variation: Number(variation) || 0,
+    days: days.map(day => day.recipeId),
+    lines: lines.map(line => [line.id, line.product && line.product.id, line.cartQuantity]),
+  };
+  const planRevision = previewRevision(revisionSeed);
+  const shoppingPreview = {
+    generatedAt,
+    days: days.map(day => ({ ...day })),
+    revision: planRevision,
+    lines,
+    estimatedTotal: roundMoney(lines.reduce((sum, line) => sum + (Number(line.totalPrice) || 0), 0)),
+    openLineCount: lines.filter(line => line.status !== 'selected').length,
+  };
+  const mealPrep = buildMealPrepPlan({ recipes: selectedRecipes, nextWeek: days });
+  return {
+    schemaVersion: 5,
+    generatedAt,
+    planRevision,
+    variation: Number(variation) || 0,
+    servings: 2,
+    days,
+    shoppingPreview,
+    mealPrep,
+    excludedIngredients: normalizeExclusions(exclusions),
+  };
+}
+
 module.exports = {
   allocateDays,
   subtractPantry,
   recommendMarket,
   generateOfferPlan,
   buildMealPrepPlan,
-  shoppingDepartment
+  shoppingDepartment,
+  buildIngredientDemands,
+  selectKnusprWeek,
+  buildKnusprPlan,
+  isVegetarianRecipe,
+  knusprRecipeAllowed,
 };

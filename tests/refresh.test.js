@@ -219,11 +219,24 @@ test('looksLikeChallenge ignores Cloudflare script remnants after the offers are
 
 test('refreshPlan requests regular prices only after selecting visible recipes', async () => {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'kochbuch-refresh-prices-'));
+  const legacyPlanFile = path.join(dataDir, 'legacy-market-plan.json');
+  fs.writeFileSync(legacyPlanFile, JSON.stringify({
+    sources: [
+      { market: 'Kaufland Lohhof' },
+      { market: 'EDEKA Morsestraße' },
+      { market: 'REWE Eching' }
+    ],
+    weekend: [],
+    nextWeek: [],
+    recommendation: {},
+    shopping: [],
+    preferences: { excludedIngredients: [] }
+  }));
   let seenQueries = [];
   try {
     const plan = await refreshPlan({
       dataDir,
-      planFile: path.join(__dirname, '..', 'server', 'current-plan.json'),
+      planFile: legacyPlanFile,
       now: new Date('2026-07-24T12:00:00+02:00'),
       fetchHtml: async url => url.includes('rewe.de')
         ? '<h3>ja! Nudeln</h3><p>500 g</p><strong>0,79 €</strong>'

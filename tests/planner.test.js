@@ -6,7 +6,8 @@ const {
   recommendMarket,
   generateOfferPlan,
   buildMealPrepPlan,
-  shoppingDepartment
+  shoppingDepartment,
+  buildIngredientDemands
 } = require('../server/planner');
 const { recipes: catalogRecipes } = require('../data');
 
@@ -21,6 +22,32 @@ test('allocateDays assigns a different recipe to every day when enough recipes e
     { day: 'Sa', recipeId: 'eggs' },
     { day: 'So', recipeId: 'wrap' }
   ]);
+});
+
+test('Knuspr ingredient demands scale to two servings, merge shared products, and omit optional ingredients', () => {
+  const recipes = [
+    { id: 'one', servings: 4, ingredients: ['400 g Spinat', '1 Zwiebel optional'] },
+    { id: 'two', servings: 4, ingredients: ['600 g Spinat'] }
+  ];
+  const demands = buildIngredientDemands(recipes, { servings: 2 });
+
+  assert.equal(demands.length, 1);
+  assert.deepEqual(
+    {
+      searchTerm: demands[0].searchTerm,
+      amount: demands[0].amount,
+      unit: demands[0].unit,
+      recipeIds: demands[0].recipeIds,
+      ingredientIds: demands[0].ingredientIds
+    },
+    {
+      searchTerm: 'Spinat',
+      amount: 500,
+      unit: 'mass',
+      recipeIds: ['one', 'two'],
+      ingredientIds: ['one:0', 'two:0']
+    }
+  );
 });
 
 test('subtractPantry removes stocked quantities and drops fully stocked items', () => {

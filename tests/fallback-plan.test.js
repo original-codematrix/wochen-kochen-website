@@ -5,75 +5,31 @@ const assert = require('node:assert/strict');
 const plan = require('../server/current-plan.json');
 const { recipes } = require('../data');
 
-test('checked-in fallback plan has a complete itemized shopping list', () => {
-  const items = plan.shopping.flatMap(group => group.items);
-  const timeline = [...plan.weekend, ...plan.nextWeek];
-  const batches = timeline.filter((day, index) => index === 0 || day.recipeId !== timeline[index - 1].recipeId);
+test('checked-in fallback is a complete schema-5 Knuspr plan without legacy market fields', () => {
+  assert.equal(plan.schemaVersion, 5);
+  assert.equal(plan.servings, 2);
+  assert.equal(plan.days.length, 7);
+  assert.equal(new Set(plan.days.map(day => day.recipeId)).size, 7);
+  assert.equal(plan.shoppingPreview.revision, plan.planRevision);
+  assert.deepEqual(plan.shoppingPreview.days, plan.days);
+  assert.ok(plan.mealPrep.batches.length >= 7);
+  assert.ok(Array.isArray(plan.excludedIngredients));
+
+  for (const legacyField of ['weekend', 'nextWeek', 'recommendation', 'shopping', 'sources', 'computedFromOffers']) {
+    assert.equal(legacyField in plan, false, legacyField);
+  }
+
   const recipesById = new Map(recipes.map(recipe => [recipe.id, recipe]));
-  const expectedIngredientIds = batches.flatMap((day, batchIndex) => {
+  const expectedIngredientIds = plan.days.flatMap(day => {
     const recipe = recipesById.get(day.recipeId);
     assert.ok(recipe, `Rezept ${day.recipeId} fehlt in data.js`);
     return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
-      /\boptional\b/i.test(ingredient) ? [] : [`${batchIndex}|${recipe.id}:${ingredientIndex}`]
+      /\boptional\b/i.test(ingredient) ? [] : [`${recipe.id}:${ingredientIndex}`]
     ));
   });
-  const actualIngredientIds = items.flatMap(item => item.ingredientIds || []);
-  const departmentByName = new Map(
-    plan.shopping.flatMap(group => group.items.map(item => [item.name, group.department]))
-  );
-  const freshCucumberIds = batches.flatMap((day, batchIndex) => {
-    const recipe = recipesById.get(day.recipeId);
-    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
-      /^(?:\d+\s+)?Gurke$/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
-    ));
-  });
-  const brothIngredientIds = batches.flatMap((day, batchIndex) => {
-    const recipe = recipesById.get(day.recipeId);
-    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
-      /(brühe|fond)/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
-    ));
-  });
-  const beefBrothIngredientIds = batches.flatMap((day, batchIndex) => {
-    const recipe = recipesById.get(day.recipeId);
-    return recipe.ingredients.flatMap((ingredient, ingredientIndex) => (
-      /rinder(brühe|fond)/i.test(ingredient) ? [`${batchIndex}|${recipe.id}:${ingredientIndex}`] : []
-    ));
-  });
-  const pickledCucumberItems = items.filter(item => /(gewürz|essig|cornichon|eingelegt).*gurke|gurke.*(gewürz|essig|cornichon|eingelegt)/i.test(item.name));
-  const freshCucumberItems = items.filter(item => (
-    /gurke/i.test(item.name) && !pickledCucumberItems.includes(item)
-  ));
-  const brothCoverageItems = items.filter(item => (
-    (item.ingredientIds || []).some(id => brothIngredientIds.includes(id))
-  ));
-  const beefBrothItems = items.filter(item => /rinder(brühe|fond)/i.test(item.name));
+  const actualIngredientIds = plan.shoppingPreview.lines.flatMap(line => line.ingredientIds || []);
 
   assert.deepEqual(actualIngredientIds.slice().sort(), expectedIngredientIds.slice().sort());
   assert.equal(new Set(actualIngredientIds).size, actualIngredientIds.length);
-  assert.equal(items.some(item => /^Weitere Zutaten für |^Senf, Öl und Gewürze$/i.test(item.name)), false);
-  assert.equal(items.some(item => /schnitzel/i.test(item.name)), true);
-  assert.deepEqual(
-    pickledCucumberItems.flatMap(item => item.ingredientIds || []).filter(id => freshCucumberIds.includes(id)),
-    []
-  );
-  assert.ok(freshCucumberItems.length > 0, 'Konkrete frische Gurkenposition fehlt');
-  assert.deepEqual(
-    freshCucumberItems.flatMap(item => item.ingredientIds || []).filter(id => freshCucumberIds.includes(id)).sort(),
-    freshCucumberIds.slice().sort()
-  );
-  assert.equal(brothCoverageItems.every(item => /(brühe|fond)/i.test(item.name)), true);
-  assert.ok(beefBrothItems.length > 0, 'Konkrete Rinderbrühe- oder Rinderfondposition fehlt');
-  assert.deepEqual(
-    beefBrothItems.flatMap(item => item.ingredientIds || []).filter(id => beefBrothIngredientIds.includes(id)).sort(),
-    beefBrothIngredientIds.slice().sort()
-  );
-  assert.equal(departmentByName.get('Rindergeschnetzeltes'), 'Fleisch & Frischetheke');
-  assert.equal(departmentByName.get('Schweineschnitzel von der Frischetheke'), 'Fleisch & Frischetheke');
-  assert.equal(departmentByName.get('Schweinenackensteaks Mexico Style'), 'Fleisch & Frischetheke');
-  assert.equal(departmentByName.get('TK-Blattspinat'), 'Kühlregal & Tiefkühl');
-  assert.equal(departmentByName.get('Gurke'), 'Obst & Gemüse');
-  assert.match(
-    departmentByName.get('zubereitete Rinderbrühe (Wasser + Brühenpulver/-würfel nach Packungsangabe)'),
-    /Soßen, Gewürze & Vorrat/
-  );
+  assert.equal(plan.shoppingPreview.lines.every(line => line.demand && line.demand.searchTerm), true);
 });
