@@ -37,6 +37,7 @@ function ingredientCategory(ingredient) {
   if (/\b(reis|rice)\b/i.test(text)) return 'rice';
   if (/(käse|parmesan|feta|mozzarella)/i.test(text)) return 'cheese';
   if (/\b(pasta|nudeln?|penne|fusilli|rigatoni|spaghetti|mie|spätzle|lasagneplatten)\b/i.test(text)) return 'pasta';
+  if (/\b(pommes|frites?|fries)\b/i.test(text)) return 'fries';
   if (/kartoffel/i.test(text)) return 'potato';
   if (/milch/i.test(text)) return 'milk';
   return null;
@@ -100,9 +101,14 @@ function normalizePackage(packageInfo) {
   return unit ? { amount, unit } : null;
 }
 
+function currentPrice(product) {
+  const value = product && product.price && product.price.current;
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null;
+}
+
 function calculatePackChoice(demand, product) {
   const packageSize = normalizePackage(product && product.package);
-  const price = Number(product && product.price && product.price.current);
+  const price = currentPrice(product);
   const choice = {
     product,
     packages: null,
@@ -113,7 +119,7 @@ function calculatePackChoice(demand, product) {
     missingAmount: demand && Number.isFinite(demand.amount) ? demand.amount : null,
     packageKnown: false,
   };
-  if (!demand || !Number.isFinite(demand.amount) || demand.amount <= 0 || !demand.unit || !packageSize || !Number.isFinite(price) || price < 0) return choice;
+  if (!demand || !Number.isFinite(demand.amount) || demand.amount <= 0 || !demand.unit || !packageSize || price === null) return choice;
   if (packageSize.unit !== demand.unit) return choice;
   const packages = Math.max(1, Math.ceil(demand.amount / packageSize.amount));
   const totalAmount = packages * packageSize.amount;
@@ -130,6 +136,17 @@ function calculatePackChoice(demand, product) {
   };
 }
 
+function explicitSpecies(ingredient) {
+  const text = String(ingredient);
+  if (/(rind|beef)/i.test(text)) return 'beef';
+  if (/(schwein|pork)/i.test(text)) return 'pork';
+  return null;
+}
+
+function hasSpecies(name, species) {
+  return species === 'beef' ? /(rind|beef)/i.test(name) : /(schwein|pork)/i.test(name);
+}
+
 function isSuitable(demand, product) {
   if (!product || product.available !== true || !String(product.name || '').trim()) return false;
   const ingredient = String(demand.ingredient || '');
@@ -139,6 +156,9 @@ function isSuitable(demand, product) {
   if (broth.test(ingredient) !== broth.test(name)) return false;
 
   const cutRule = MEAT_CUT_RULES.find(([pattern]) => pattern.test(ingredient));
+  const species = explicitSpecies(ingredient);
+  if (species && !hasSpecies(name, species)) return false;
+  if (/\bhack(?:fleisch)?\b/i.test(ingredient) && !species && !/(rind|beef|schwein|pork|gemisch|mixed|halb\s*(?:und|&)\s*halb)/i.test(name)) return false;
   if (['chicken', 'beef', 'pork'].includes(category) && cutRule && !cutRule[1].every((pattern) => pattern.test(name))) return false;
   if (category === 'chicken') {
     if (!/(hähnchen|chicken|geflügel|pute)/i.test(name)) return false;
@@ -167,7 +187,8 @@ function isSuitable(demand, product) {
     if (/lasagne/i.test(ingredient) && !/lasagne/i.test(name)) return false;
     if (/\bmie\b/i.test(ingredient) && !/\bmie\b/i.test(name)) return false;
   }
-  if (category === 'potato' && (!/kartoffel/i.test(name) || /pommes/i.test(name))) return false;
+  if (category === 'fries' && !/\b(pommes|frites?|fries)\b/i.test(name)) return false;
+  if (category === 'potato' && (!/kartoffel/i.test(name) || /\b(pommes|frites?|fries)\b|kartoffelsalat/i.test(name))) return false;
   if (category === 'milk' && !/milch/i.test(name)) return false;
   return true;
 }

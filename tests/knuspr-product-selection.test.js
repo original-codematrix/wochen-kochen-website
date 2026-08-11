@@ -68,6 +68,50 @@ test('hard safeguards reject wrong meat cuts, pickles, prepared pasta, and unrel
   }
 });
 
+test('explicit beef and pork demands reject the other species before selecting the cut', () => {
+  const beef = chooseProduct(demandOf('600 g Rindergeschnetzeltes'), [
+    product('pork-strips', 'Schweinegeschnetzeltes', 3.99, 600),
+    product('beef-strips', 'Rindergeschnetzeltes', 5.99, 600),
+  ], {});
+  const pork = chooseProduct(demandOf('600 g Schweinegeschnetzeltes'), [
+    product('beef-strips', 'Rindergeschnetzeltes', 3.99, 600),
+    product('pork-strips', 'Schweinegeschnetzeltes', 5.99, 600),
+  ], {});
+  assert.equal(beef.selected.id, 'beef-strips');
+  assert.equal(pork.selected.id, 'pork-strips');
+});
+
+test('explicit mince species stay separate while generic mince accepts beef pork or mixed mince', () => {
+  const beef = chooseProduct(demandOf('500 g Rinderhack'), [product('pork', 'Schweinehack', 2.99, 500), product('beef', 'Rinderhack', 3.99, 500)], {});
+  const pork = chooseProduct(demandOf('500 g Schweinehack'), [product('beef', 'Rinderhack', 2.99, 500), product('pork', 'Schweinehack', 3.99, 500)], {});
+  const generic = chooseProduct(demandOf('500 g Hackfleisch'), [product('chicken', 'Hähnchenhack', 1.99, 500), product('mixed', 'Gemischtes Hackfleisch', 3.49, 500)], {});
+  assert.equal(beef.selected.id, 'beef');
+  assert.equal(pork.selected.id, 'pork');
+  assert.equal(generic.selected.id, 'mixed');
+});
+
+test('TK-Pommes require fries and reject raw potatoes plus unrelated potato preparations', () => {
+  const result = chooseProduct(demandOf('750 g TK-Pommes'), [
+    product('raw', 'Speisekartoffeln', 1.29, 1000),
+    product('salad', 'Kartoffelsalat', 1.49, 1000),
+    product('croquettes', 'Kartoffelkroketten', 1.99, 750),
+    product('fries', 'TK Pommes Frites', 2.49, 750),
+  ], {});
+  assert.equal(result.selected.id, 'fries');
+  assert.equal(chooseProduct(demandOf('750 g Kartoffeln'), [product('fries', 'TK Pommes Frites', 1.99, 750)], {}).status, 'missing');
+});
+
+test('missing product prices never become free selections while explicitly numeric zero remains valid', () => {
+  for (const price of [null, undefined, '', '   ', NaN, -0.01]) {
+    const result = chooseProduct(demandOf('1 l Milch'), [product('bad', 'Vollmilch', price, 1000, 'ml')], {});
+    assert.notEqual(result.status, 'selected', String(price));
+    assert.equal(result.selected, null, String(price));
+  }
+  const free = chooseProduct(demandOf('1 l Milch'), [product('free', 'Vollmilch Probe', 0, 1000, 'ml')], {});
+  assert.equal(free.selected.id, 'free');
+  assert.equal(free.totalPrice, 0);
+});
+
 test('optional ingredients are not selected automatically', () => {
   const result = chooseProduct(demandOf('Optional: 1 Chili'), [product('chili', 'Rote Chili', 0.39, 1, 'piece')], {});
   assert.equal(result.status, 'missing');
