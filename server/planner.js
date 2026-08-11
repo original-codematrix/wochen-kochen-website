@@ -43,12 +43,18 @@ function recommendMarket({ baskets, splitTotal, threshold = 20 }) {
 
 const FORBIDDEN = /\b(fisch|lachs|forelle|thun|kabeljau|seelachs|hering|matjes|makrele|sardine|dorade|zander|karpfen|pangasius|schlemmer.?filet|garnel|shrimp|scampi|hummer|muschel|auster|tintenfisch|calamari|oktopus|seafood|meeresfr|krabbe|surimi|rollmops|anchovis|sardelle)/i;
 const EXCLUSION_GROUPS = {
-  milch: /(milch|sahne|käse|joghurt|butter|parmesan|mozzarella|béchamel|frischkäse|quark|schmand|crème fraîche)/i,
-  milchprodukte: /(milch|sahne|käse|joghurt|butter|parmesan|mozzarella|béchamel|frischkäse|quark|schmand|crème fraîche)/i,
-  laktose: /(milch|sahne|käse|joghurt|butter|parmesan|mozzarella|béchamel|frischkäse|quark|schmand|crème fraîche)/i,
+  milch: /(milch|sahne|kase|joghurt|butter|parmesan|mozzarella|bechamel|frischkase|quark|schmand|creme fraiche)/i,
+  milchprodukte: /(milch|sahne|kase|joghurt|butter|parmesan|mozzarella|bechamel|frischkase|quark|schmand|creme fraiche)/i,
+  laktose: /(milch|sahne|kase|joghurt|butter|parmesan|mozzarella|bechamel|frischkase|quark|schmand|creme fraiche)/i,
   pilz: /(pilz|champignon)/i,
   pilze: /(pilz|champignon)/i,
-  schwein: /(schwein|pork|nacken|schnitzel|medaillon)/i
+  schwein: /(schwein|pork|nacken|schnitzel|medaillon)/i,
+  ei: /(?:^|[^a-z])ei(?:[^a-z]|$)|\beier|spiegelei(?:er)?|ruhrei|huhnerei(?:er)?|omelett/i,
+  eier: /(?:^|[^a-z])ei(?:[^a-z]|$)|\beier|spiegelei(?:er)?|ruhrei|huhnerei(?:er)?|omelett/i,
+  nuss: /\bnuss|(?:wal|hasel|erd|para|cashew|macadamia|pistazien)nuss/i,
+  nusse: /\bnuss|(?:wal|hasel|erd|para|cashew|macadamia|pistazien)nuss/i,
+  walnuss: /walnuss/i,
+  walnusse: /walnuss/i
 };
 const CATEGORY_RULES = [
   ['nuggets', /\b(nuggets?|wings?|flügel|crispy)\b/i, 8],
@@ -98,13 +104,22 @@ function normalizeExclusions(value) {
   });
 }
 
+function normalizeGermanText(value) {
+  return String(value || '')
+    .toLocaleLowerCase('de-DE')
+    .replace(/ß/g, 'ss')
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '');
+}
+
 function recipeMatchesExclusion(recipe, exclusion) {
-  const text = `${recipe.name} ${(recipe.ingredients || []).join(' ')} ${(recipe.tags || []).join(' ')} ${(recipe.allergens || []).join(' ')}`;
-  const key = exclusion.toLocaleLowerCase('de-DE');
+  const text = normalizeGermanText(`${recipe.name} ${(recipe.ingredients || []).join(' ')} ${(recipe.tags || []).join(' ')} ${(recipe.allergens || []).join(' ')}`);
+  const key = normalizeGermanText(exclusion).trim();
   const grouped = EXCLUSION_GROUPS[key];
   if (grouped) return grouped.test(text);
-  const escaped = exclusion.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(?:^|\\b)${escaped}(?:\\b|$)`, 'i').test(text);
+  if (key.length >= 4) return text.includes(key);
+  const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?:^|[^a-z0-9])${escaped}(?:[^a-z0-9]|$)`, 'i').test(text);
 }
 
 function amountForIngredient(value, category, portionScale = 1) {
@@ -895,6 +910,87 @@ function choiceLine(choice, index) {
   };
 }
 
+function productVariantKey(line) {
+  const product = line.product;
+  const packageInfo = product && product.package;
+  const price = product && product.price && product.price.current;
+  if (
+    line.source !== 'recipe'
+    || line.status !== 'selected'
+    || !String(product && product.id || '').trim()
+    || !Number.isFinite(line.demand && line.demand.amount)
+    || !line.demand.unit
+    || !Number.isFinite(Number(packageInfo && packageInfo.amount))
+    || !String(packageInfo && packageInfo.unit || '').trim()
+    || !Number.isFinite(price)
+  ) return null;
+  return [
+    String(product.id).trim(),
+    line.demand.unit,
+    line.department,
+    Number(packageInfo.amount),
+    String(packageInfo.unit).trim().toLocaleLowerCase('de-DE'),
+    price,
+  ].join('|');
+}
+
+function uniqueById(values) {
+  const seen = new Set();
+  return values.filter(value => {
+    const id = String(value && value.id || '').trim();
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
+function consolidateSelectedProductLines(lines) {
+  const consolidated = [];
+  const groupIndexes = new Map();
+  for (const line of lines) {
+    const key = productVariantKey(line);
+    const existingIndex = key === null ? undefined : groupIndexes.get(key);
+    if (existingIndex === undefined) {
+      if (key !== null) groupIndexes.set(key, consolidated.length);
+      consolidated.push(line);
+      continue;
+    }
+
+    const existing = consolidated[existingIndex];
+    const demand = {
+      ...existing.demand,
+      amount: Number((existing.demand.amount + line.demand.amount).toFixed(6)),
+      recipeIds: [...new Set([...existing.recipeIds, ...line.recipeIds])],
+      ingredientIds: [...new Set([...existing.ingredientIds, ...line.ingredientIds])],
+      components: [...(existing.demand.components || []), ...(line.demand.components || [])],
+      searchTerms: [...new Set([
+        ...(existing.demand.searchTerms || [existing.demand.searchTerm]),
+        ...(line.demand.searchTerms || [line.demand.searchTerm]),
+      ])],
+    };
+    const recalculated = chooseProduct(demand, [existing.product], { pinnedProductId: existing.product.id });
+    if (recalculated.status !== 'selected') {
+      consolidated.push(line);
+      continue;
+    }
+    consolidated[existingIndex] = {
+      ...existing,
+      id: `recipe-shared-${previewRevision(demand.ingredientIds).slice(0, 8)}`,
+      demand,
+      recipeIds: demand.recipeIds,
+      ingredientIds: demand.ingredientIds,
+      alternatives: uniqueById([...existing.alternatives, ...line.alternatives]),
+      productPackages: recalculated.packages,
+      cartQuantity: recalculated.packages,
+      totalAmount: recalculated.totalAmount,
+      wasteAmount: recalculated.wasteAmount,
+      totalPrice: recalculated.totalPrice,
+      reason: recalculated.reason,
+    };
+  }
+  return consolidated;
+}
+
 function additionalLine(item, index) {
   const choice = item.choice || {};
   return {
@@ -943,12 +1039,15 @@ function buildKnusprPlan({
   const timestamp = new Date(now);
   if (Number.isNaN(timestamp.getTime())) throw new Error('Planungszeitpunkt ist ungültig');
   const selectedRecipes = selectKnusprWeek({ recipes, productChoices, exclusions, variation, now: timestamp });
+  if (selectedRecipes.length !== 7 || new Set(selectedRecipes.map(recipe => recipe.id)).size !== 7) {
+    throw new Error('Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt');
+  }
   const selectedDemands = buildIngredientDemands(selectedRecipes, { servings: 2 });
   const selectedChoices = selectedDemands.map(demand => sourceChoiceForDemand(demand, productChoices));
   if (selectedChoices.some(choice => !choice)) {
     throw new Error('Einkaufsvorschau unvollständig: Produktauswahl für Pflichtzutat fehlt');
   }
-  const recipeLines = selectedChoices.map(choiceLine);
+  const recipeLines = consolidateSelectedProductLines(selectedChoices.map(choiceLine));
   assertKnusprCoverage(selectedRecipes, recipeLines);
 
   const start = nextMonday(timestamp);

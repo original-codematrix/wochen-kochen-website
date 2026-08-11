@@ -31,6 +31,33 @@ async function mapConcurrent(values, limit, mapper) {
   return result;
 }
 
+function createLimiter(limit) {
+  const maximum = Math.max(1, Math.min(4, Math.floor(Number(limit) || 1)));
+  const waiting = [];
+  let active = 0;
+
+  function drain() {
+    while (active < maximum && waiting.length > 0) {
+      const { task, resolve, reject } = waiting.shift();
+      active += 1;
+      Promise.resolve()
+        .then(task)
+        .then(resolve, reject)
+        .finally(() => {
+          active -= 1;
+          drain();
+        });
+    }
+  }
+
+  return function limitTask(task) {
+    return new Promise((resolve, reject) => {
+      waiting.push({ task, resolve, reject });
+      drain();
+    });
+  };
+}
+
 function rotate(values, variation) {
   if (!values.length) return [];
   const offset = Math.abs(Number(variation) || 0) % values.length;
@@ -88,12 +115,17 @@ function nowDate(now) {
 }
 
 function planValid(plan) {
+  const recipeIds = Array.isArray(plan && plan.days)
+    ? plan.days.map(day => String(day && day.recipeId || '').trim())
+    : [];
   return Boolean(
     plan
     && plan.schemaVersion === 5
     && typeof plan.generatedAt === 'string'
     && typeof plan.planRevision === 'string'
-    && Array.isArray(plan.days)
+    && recipeIds.length === 7
+    && recipeIds.every(Boolean)
+    && new Set(recipeIds).size === 7
     && Array.isArray(plan.excludedIngredients)
     && plan.mealPrep
     && plan.shoppingPreview,
@@ -120,11 +152,18 @@ function createAdditionalChoice(item, products) {
 
 function createKnusprService({ adapter, store, recipes, now = () => new Date(), concurrency = 4 }) {
   if (!adapter || typeof adapter.searchProducts !== 'function') throw new Error('Knuspr-Adapter fehlt');
-  if (!store || typeof store.read !== 'function' || typeof store.write !== 'function') throw new Error('Knuspr-Speicher fehlt');
+  if (
+    !store
+    || typeof store.read !== 'function'
+    || typeof store.write !== 'function'
+    || typeof store.remove !== 'function'
+  ) throw new Error('Knuspr-Speicher mit read, write und remove fehlt');
   if (!Array.isArray(recipes)) throw new Error('Rezeptkatalog fehlt');
-  const maximumConcurrency = Math.max(1, Math.floor(Number(concurrency) || 1));
+  const maximumConcurrency = Math.max(1, Math.min(4, Math.floor(Number(concurrency) || 1)));
+  const limitSearch = createLimiter(maximumConcurrency);
   let cachePromise;
   let cacheWrite = Promise.resolve();
+  let generationQueue = Promise.resolve();
 
   async function loadCache() {
     if (!cachePromise) {
@@ -179,27 +218,35 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
       await store.write('knuspr-preview.json', preview);
       await store.write('current-plan.json', plan);
     } catch (error) {
-      try {
-        if (previousPreview === null && typeof store.remove === 'function') await store.remove('knuspr-preview.json');
-        else if (previousPreview !== null) await store.write('knuspr-preview.json', previousPreview);
-        if (previousPlan !== null) await store.write('current-plan.json', previousPlan);
-      } catch {
-        // Preserve the original generation error; atomic stores keep individual files valid.
+      for (const [name, previous] of [
+        ['knuspr-preview.json', previousPreview],
+        ['current-plan.json', previousPlan],
+      ]) {
+        try {
+          if (previous === null) await store.remove(name);
+          else await store.write(name, previous);
+        } catch {
+          // Preserve the original generation error after attempting every rollback action.
+        }
       }
       throw error;
     }
   }
 
-  async function generatePlan(input = {}) {
+  async function generatePlanTransaction(input = {}) {
     const requestedAt = nowDate(now);
     const exclusions = input.excludedIngredients || [];
     const variation = Number(input.variation) || 0;
     const shortlist = shortlistRecipes(recipes, exclusions, variation, 14);
-    if (shortlist.length === 0) throw new Error('Keine passenden Rezepte für den Knuspr-Plan');
+    if (shortlist.length < 7) {
+      throw new Error('Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt');
+    }
     const demands = buildIngredientDemands(shortlist, { servings: 2 });
     const additionalItems = await getAdditionalItems();
     const queries = uniqueQueries(demands, additionalItems);
-    const searchResults = await mapConcurrent(queries, maximumConcurrency, query => cachedSearch(query, requestedAt));
+    const searchResults = await Promise.all(queries.map(query => (
+      limitSearch(() => cachedSearch(query, requestedAt))
+    )));
     const productsByQuery = new Map(queries.map((query, index) => [query, searchResults[index]]));
     const productChoices = demands.map(demand => {
       const products = productsByQuery.get(demand.searchTerm) || [];
@@ -224,12 +271,24 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     return plan;
   }
 
-  async function regeneratePlan(input = {}) {
-    const current = await getPlan();
-    return generatePlan({
-      ...input,
-      excludedIngredients: input.excludedIngredients || (current && current.excludedIngredients) || [],
-      variation: input.variation === undefined ? ((current && current.variation) || 0) + 1 : input.variation,
+  function enqueueGeneration(operation) {
+    const result = generationQueue.then(operation, operation);
+    generationQueue = result.catch(() => {});
+    return result;
+  }
+
+  function generatePlan(input = {}) {
+    return enqueueGeneration(() => generatePlanTransaction(input));
+  }
+
+  function regeneratePlan(input = {}) {
+    return enqueueGeneration(async () => {
+      const current = await getPlan();
+      return generatePlanTransaction({
+        ...input,
+        excludedIngredients: input.excludedIngredients || (current && current.excludedIngredients) || [],
+        variation: input.variation === undefined ? ((current && current.variation) || 0) + 1 : input.variation,
+      });
     });
   }
 
