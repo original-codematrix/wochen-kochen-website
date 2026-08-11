@@ -19,9 +19,16 @@ test('additional items reject unknown categories and normalize optional pins', (
 });
 
 test('preview validation requires a preview object and returns a normalized copy', () => {
-  const preview = { generatedAt: '2026-08-11T10:00:00.000Z', days: [{ date: '2026-08-12', items: [] }] };
-  assert.deepEqual(validatePreview(preview), preview);
+  const preview = { generatedAt: ' 2026-08-11T10:00:00.000Z ', days: [{ date: '2026-08-12', items: [] }], revision: 'r1' };
+  const normalized = validatePreview(preview);
+  assert.deepEqual(normalized, { ...preview, generatedAt: '2026-08-11T10:00:00.000Z' });
+  assert.notStrictEqual(normalized, preview);
+  assert.notStrictEqual(normalized.days, preview.days);
+  assert.equal(normalized.revision, 'r1');
   assert.throws(() => validatePreview(null), /Vorschau/);
+  assert.throws(() => validatePreview({}), /Vorschau/);
+  assert.throws(() => validatePreview({ generatedAt: 123, days: [] }), /Vorschau/);
+  assert.throws(() => validatePreview({ generatedAt: '2026-08-11', days: {} }), /Vorschau/);
 });
 
 test('sensitive writes use mode 0600 and survive a complete read', async () => {

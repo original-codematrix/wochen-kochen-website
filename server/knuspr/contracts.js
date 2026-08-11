@@ -23,9 +23,9 @@ function validateAdditionalItems(items) {
 
 function validatePreview(preview) {
   if (!preview || typeof preview !== 'object' || Array.isArray(preview)) throw new Error('Vorschau muss ein Objekt sein');
-  if (preview.generatedAt !== undefined && typeof preview.generatedAt !== 'string') throw new Error('Vorschau ist ungültig');
-  if (preview.days !== undefined && !Array.isArray(preview.days)) throw new Error('Vorschau ist ungültig');
-  return preview;
+  if (typeof preview.generatedAt !== 'string' || !preview.generatedAt.trim()) throw new Error('Vorschau ist ungültig');
+  if (!Array.isArray(preview.days)) throw new Error('Vorschau ist ungültig');
+  return { ...preview, generatedAt: preview.generatedAt.trim(), days: [...preview.days] };
 }
 
 module.exports = { validateAdditionalItems, validatePreview };
