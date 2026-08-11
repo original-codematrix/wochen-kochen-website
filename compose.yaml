@@ -10,6 +10,8 @@ services:
       PORT: 8080
       DATA_DIR: /app/runtime-data
       REFRESH_TOKEN: "${REFRESH_TOKEN}"
+      APP_ORIGIN: "${APP_ORIGIN:-http://localhost:8080}"
+      KNUSPR_MCP_URL: "${KNUSPR_MCP_URL:-https://mcp.knuspr.de/mcp}"
       TZ: Europe/Berlin
     volumes:
       - ./runtime-data:/app/runtime-data

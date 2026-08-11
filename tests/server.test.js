@@ -54,21 +54,10 @@ test('POST /api/refresh runs with the configured token', async () => {
   });
 });
 
-test('POST /api/import-offers accepts saved retailer HTML with the configured token', async () => {
+test('static file traversal is rejected', async () => {
   await withServer(async base => {
-    const response = await fetch(`${base}/api/import-offers`, {
-      method: 'POST',
-      headers: { authorization: 'Bearer secret', 'content-type': 'application/json' },
-      body: JSON.stringify({ market: 'REWE Eching', html: '<h3>Milka</h3><p>0,99 €</p>' })
-    });
-    assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), {
-      market: 'REWE Eching',
-      count: 1,
-      plan: { generatedAt: '2026-07-24T12:01:00+02:00', nextWeek: [] }
-    });
-  }, {
-    importOffers: async payload => ({ market: payload.market, count: 1 })
+    const response = await fetch(`${base}/..%2Fserver.js`);
+    assert.equal(response.status, 403);
   });
 });
 

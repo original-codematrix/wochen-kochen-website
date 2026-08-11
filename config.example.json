@@ -1,4 +1,6 @@
 {
+  "appOrigin": "http://localhost:8080",
+  "knusprMcpUrl": "https://mcp.knuspr.de/mcp",
   "timezone": "Europe/Berlin",
   "splitSavingsThreshold": 20,
   "exclude": ["Fisch", "Meeresfrüchte", "Garnelen", "Muscheln", "Tintenfisch", "Hummer"],
