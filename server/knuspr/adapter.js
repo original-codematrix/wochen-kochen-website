@@ -71,6 +71,7 @@ function toolLabel(tool) {
 function resolveTool(tools, capability) {
   const matches = tools.filter((tool) => isRecord(tool)
     && typeof tool.name === 'string'
+    && tool.name.trim()
     && CAPABILITIES[capability].some((pattern) => pattern.test(toolLabel(tool))));
   if (matches.length !== 1) throw unsupported(capability);
   return matches[0];
@@ -86,6 +87,7 @@ function objectSchema(tool, detail = `${tool.name}: Eingabeschema`) {
   if (!isRecord(tool.inputSchema) || tool.inputSchema.type !== 'object' || !isRecord(tool.inputSchema.properties)) {
     throw unsupported(detail);
   }
+  validateSchemaValue(undefined, tool.inputSchema, detail);
   return tool.inputSchema;
 }
 
@@ -107,14 +109,123 @@ function assertSchemaType(schema, acceptedTypes, detail) {
   if (!isRecord(schema) || !acceptedTypes.includes(schema.type)) throw unsupported(detail);
 }
 
-function searchArguments(tool, query) {
-  const value = requiredString(query, 'Suchbegriff');
+const UNSUPPORTED_SCHEMA_KEYWORDS = new Set([
+  'oneOf', 'anyOf', 'allOf', 'not', 'if', 'then', 'else', '$ref', '$dynamicRef', '$recursiveRef',
+]);
+
+const SUPPORTED_SCHEMA_KEYWORDS = new Set([
+  'type', 'required', 'properties', 'items', 'minItems', 'maxItems', 'minLength', 'maxLength', 'pattern',
+  'enum', 'const', 'minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf',
+  'title', 'description', 'default', 'examples', '$schema', '$id', 'deprecated', 'readOnly', 'writeOnly',
+]);
+
+function sameJsonValue(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function schemaNumber(value, detail, { positive = false, integer = false } = {}) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || (positive && value <= 0) || (integer && (!Number.isInteger(value) || value < 0))) {
+    throw unsupported(detail);
+  }
+  return value;
+}
+
+function schemaTypeMatches(value, type) {
+  if (type === 'string') return typeof value === 'string';
+  if (type === 'number') return typeof value === 'number' && Number.isFinite(value);
+  if (type === 'integer') return typeof value === 'number' && Number.isInteger(value);
+  if (type === 'boolean') return typeof value === 'boolean';
+  if (type === 'null') return value === null;
+  if (type === 'array') return Array.isArray(value);
+  if (type === 'object') return isRecord(value);
+  throw unsupported(`Schema-Typ: ${String(type)}`);
+}
+
+function validateSchemaValue(value, schema, detail) {
+  if (!isRecord(schema)) throw unsupported(detail);
+  for (const key of Object.keys(schema)) {
+    if (UNSUPPORTED_SCHEMA_KEYWORDS.has(key) || !SUPPORTED_SCHEMA_KEYWORDS.has(key)) throw unsupported(detail);
+  }
+
+  if (schema.type !== undefined && typeof schema.type !== 'string') throw unsupported(detail);
+  if (schema.required !== undefined && (!Array.isArray(schema.required) || schema.required.some((key) => typeof key !== 'string'))) {
+    throw unsupported(detail);
+  }
+  if (schema.properties !== undefined && !isRecord(schema.properties)) throw unsupported(detail);
+  if (schema.items !== undefined && !isRecord(schema.items)) throw unsupported(detail);
+  if (schema.enum !== undefined && (!Array.isArray(schema.enum) || schema.enum.length === 0)) throw unsupported(detail);
+  if (schema.minLength !== undefined) schemaNumber(schema.minLength, detail, { integer: true });
+  if (schema.maxLength !== undefined) schemaNumber(schema.maxLength, detail, { integer: true });
+  if (schema.minLength !== undefined && schema.maxLength !== undefined && schema.minLength > schema.maxLength) throw unsupported(detail);
+  if (schema.pattern !== undefined) {
+    if (typeof schema.pattern !== 'string') throw unsupported(detail);
+    try {
+      new RegExp(schema.pattern);
+    } catch (caught) {
+      throw unsupported(detail);
+    }
+  }
+  if (schema.minItems !== undefined) schemaNumber(schema.minItems, detail, { integer: true });
+  if (schema.maxItems !== undefined) schemaNumber(schema.maxItems, detail, { integer: true });
+  if (schema.minItems !== undefined && schema.maxItems !== undefined && schema.minItems > schema.maxItems) throw unsupported(detail);
+  for (const key of ['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum']) {
+    if (schema[key] !== undefined) schemaNumber(schema[key], detail);
+  }
+  if (schema.multipleOf !== undefined) schemaNumber(schema.multipleOf, detail, { positive: true });
+  const lower = Math.max(schema.minimum === undefined ? -Infinity : schema.minimum, schema.exclusiveMinimum === undefined ? -Infinity : schema.exclusiveMinimum);
+  const upper = Math.min(schema.maximum === undefined ? Infinity : schema.maximum, schema.exclusiveMaximum === undefined ? Infinity : schema.exclusiveMaximum);
+  if (lower > upper || (lower === upper && (schema.exclusiveMinimum !== undefined || schema.exclusiveMaximum !== undefined))) throw unsupported(detail);
+
+  if (value === undefined) return;
+  if (schema.type !== undefined && !schemaTypeMatches(value, schema.type)) throw invalidResponse(detail);
+  if (schema.const !== undefined && !sameJsonValue(value, schema.const)) throw invalidResponse(detail);
+  if (schema.enum !== undefined && !schema.enum.some((candidate) => sameJsonValue(value, candidate))) throw invalidResponse(detail);
+
+  if (typeof value === 'string') {
+    if (schema.minLength !== undefined && value.length < schema.minLength) throw invalidResponse(detail);
+    if (schema.maxLength !== undefined && value.length > schema.maxLength) throw invalidResponse(detail);
+    if (schema.pattern !== undefined && !(new RegExp(schema.pattern)).test(value)) throw invalidResponse(detail);
+  }
+  if (typeof value === 'number') {
+    if (schema.minimum !== undefined && value < schema.minimum) throw invalidResponse(detail);
+    if (schema.maximum !== undefined && value > schema.maximum) throw invalidResponse(detail);
+    if (schema.exclusiveMinimum !== undefined && value <= schema.exclusiveMinimum) throw invalidResponse(detail);
+    if (schema.exclusiveMaximum !== undefined && value >= schema.exclusiveMaximum) throw invalidResponse(detail);
+    if (schema.multipleOf !== undefined) {
+      const quotient = value / schema.multipleOf;
+      if (Math.abs(quotient - Math.round(quotient)) > Number.EPSILON * Math.max(1, Math.abs(quotient)) * 8) throw invalidResponse(detail);
+    }
+  }
+  if (Array.isArray(value)) {
+    if (schema.minItems !== undefined && value.length < schema.minItems) throw invalidResponse(detail);
+    if (schema.maxItems !== undefined && value.length > schema.maxItems) throw invalidResponse(detail);
+    if (schema.items !== undefined) value.forEach((item) => validateSchemaValue(item, schema.items, detail));
+  }
+  if (isRecord(value)) {
+    for (const key of schema.required || []) if (!own(value, key)) throw invalidResponse(detail);
+    for (const [key, item] of Object.entries(value)) {
+      if (!schema.properties || !own(schema.properties, key)) throw invalidResponse(detail);
+      validateSchemaValue(item, schema.properties[key], detail);
+    }
+  }
+}
+
+function searchMetadata(tool) {
   const schema = objectSchema(tool);
   const properties = schema.properties;
   const key = schemaKey(properties, ['query', 'searchTerm', 'term', 'text'], 'Suchargument');
   assertRequiredFields(schema, [key], 'Suchargument');
   assertSchemaType(properties[key], ['string'], 'Suchargument');
-  return { [key]: value };
+  validateSchemaValue(undefined, properties[key], 'Suchargument');
+  return { schema, key };
+}
+
+function searchArguments(tool, query) {
+  const value = requiredString(query, 'Suchbegriff');
+  const { schema, key } = searchMetadata(tool);
+  const args = { [key]: value };
+  validateSchemaValue(args, schema, 'Suchargument');
+  return args;
 }
 
 function addMetadata(tool) {
@@ -131,13 +242,17 @@ function addMetadata(tool) {
   assertRequiredFields(itemSchema, [productKey, quantityKey], 'Warenkorbpositionen-Schema');
   assertSchemaType(itemProperties[productKey], ['string'], 'Produktargument');
   assertSchemaType(itemProperties[quantityKey], ['number', 'integer'], 'Mengenargument');
-  return { collectionKey, productKey, quantityKey };
+  validateSchemaValue(undefined, properties[collectionKey], 'Warenkorbargument');
+  validateSchemaValue(undefined, itemSchema, 'Warenkorbpositionen-Schema');
+  validateSchemaValue(undefined, itemProperties[productKey], 'Produktargument');
+  validateSchemaValue(undefined, itemProperties[quantityKey], 'Mengenargument');
+  return { schema, collectionKey, productKey, quantityKey };
 }
 
 function addArguments(tool, items) {
   if (!Array.isArray(items) || items.length === 0) throw invalidResponse('Warenkorbpositionen');
-  const { collectionKey, productKey, quantityKey } = addMetadata(tool);
-  return {
+  const { schema, collectionKey, productKey, quantityKey } = addMetadata(tool);
+  const args = {
     [collectionKey]: items.map((item) => {
       if (!isRecord(item)) throw invalidResponse('Warenkorbposition');
       return {
@@ -146,16 +261,20 @@ function addArguments(tool, items) {
       };
     }),
   };
+  validateSchemaValue(args, schema, 'Warenkorbargument');
+  return args;
 }
 
 function readCartArguments(tool) {
   const schema = objectSchema(tool);
   assertRequiredFields(schema, [], 'Warenkorb-Leseargument');
-  return {};
+  const args = {};
+  validateSchemaValue(args, schema, 'Warenkorb-Leseargument');
+  return args;
 }
 
 function validateCapability(tool, capability) {
-  if (capability === 'searchProducts') searchArguments(tool, 'Probe');
+  if (capability === 'searchProducts') searchMetadata(tool);
   if (capability === 'readCart') readCartArguments(tool);
   if (capability === 'addCartItems') addMetadata(tool);
 }

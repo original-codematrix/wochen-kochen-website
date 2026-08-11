@@ -157,6 +157,99 @@ test('cart mutations reject incompatible item schema types and required unmapped
   assert.deepEqual(client.calls, []);
 });
 
+test('cart mutations reject declared quantity and collection bounds before calling a tool', async () => {
+  const itemSchema = {
+    type: 'object',
+    properties: { productId: { type: 'string' }, quantity: { type: 'number', minimum: 10 } },
+  };
+  const quantityClient = fakeClient([tool('cart_add_items', 'Add product quantities to cart', {
+    type: 'object',
+    properties: { items: { type: 'array', items: itemSchema } },
+  })]);
+  const quantityAdapter = createKnusprAdapter({ client: quantityClient });
+
+  await assert.rejects(quantityAdapter.addCartItems([{ productId: 'potato-1', quantity: 1 }]), (error) => error.code === 'KNUSPR_RESPONSE_INVALID');
+  assert.deepEqual(quantityClient.calls, []);
+
+  const countClient = fakeClient([tool('cart_add_items', 'Add product quantities to cart', {
+    type: 'object',
+    properties: { items: { type: 'array', minItems: 2, maxItems: 3, items: { ...itemSchema, properties: { productId: { type: 'string' }, quantity: { type: 'number' } } } } },
+  })]);
+  const countAdapter = createKnusprAdapter({ client: countClient });
+
+  await assert.rejects(countAdapter.addCartItems([{ productId: 'potato-1', quantity: 2 }]), (error) => error.code === 'KNUSPR_RESPONSE_INVALID');
+  assert.deepEqual(countClient.calls, []);
+});
+
+test('search validates declared string constraints before calling a tool', async () => {
+  const cases = [
+    [{ type: 'string', minLength: 5 }, 'Bio'],
+    [{ type: 'string', maxLength: 3 }, 'Bio Kartoffeln'],
+    [{ type: 'string', pattern: '^Bio ' }, 'Kartoffeln'],
+    [{ type: 'string', enum: ['Bio Kartoffeln'] }, 'Kartoffeln'],
+    [{ type: 'string', const: 'Bio Kartoffeln' }, 'Kartoffeln'],
+  ];
+
+  for (const [querySchema, query] of cases) {
+    const client = fakeClient([tool('catalog_product_search', 'Search available products', {
+      type: 'object',
+      properties: { query: querySchema },
+    })]);
+    const adapter = createKnusprAdapter({ client });
+    await assert.rejects(adapter.searchProducts(query), (error) => error.code === 'KNUSPR_RESPONSE_INVALID');
+    assert.deepEqual(client.calls, []);
+  }
+});
+
+test('cart mutations validate maximum, exclusive bounds, and multipleOf before calling a tool', async () => {
+  const cases = [
+    [{ maximum: 2 }, 3],
+    [{ exclusiveMinimum: 1 }, 1],
+    [{ exclusiveMaximum: 3 }, 3],
+    [{ multipleOf: 2 }, 3],
+  ];
+
+  for (const [constraint, quantity] of cases) {
+    const client = fakeClient([tool('cart_add_items', 'Add product quantities to cart', {
+      type: 'object',
+      properties: {
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { productId: { type: 'string' }, quantity: { type: 'number', ...constraint } },
+          },
+        },
+      },
+    })]);
+    const adapter = createKnusprAdapter({ client });
+    await assert.rejects(adapter.addCartItems([{ productId: 'potato-1', quantity }]), (error) => error.code === 'KNUSPR_RESPONSE_INVALID');
+    assert.deepEqual(client.calls, []);
+  }
+});
+
+test('unsupported schema combinators and blank tool names are unavailable without client calls', async () => {
+  const combinatorClient = fakeClient([tool('catalog_product_search', 'Search available products', {
+    type: 'object',
+    properties: { query: { type: 'string', oneOf: [{ minLength: 3 }] } },
+  })]);
+  const combinatorAdapter = createKnusprAdapter({ client: combinatorClient });
+
+  assert.deepEqual(await combinatorAdapter.capabilities(), { searchProducts: false, readCart: false, addCartItems: false });
+  await assert.rejects(combinatorAdapter.searchProducts('Kartoffeln'), (error) => error.code === 'KNUSPR_TOOLSET_UNSUPPORTED');
+  assert.deepEqual(combinatorClient.calls, []);
+
+  const blankNameClient = fakeClient([tool('   ', 'Search available products', {
+    type: 'object',
+    properties: { query: { type: 'string' } },
+  })]);
+  const blankNameAdapter = createKnusprAdapter({ client: blankNameClient });
+
+  assert.deepEqual(await blankNameAdapter.capabilities(), { searchProducts: false, readCart: false, addCartItems: false });
+  await assert.rejects(blankNameAdapter.searchProducts('Kartoffeln'), (error) => error.code === 'KNUSPR_TOOLSET_UNSUPPORTED');
+  assert.deepEqual(blankNameClient.calls, []);
+});
+
 test('search rejects products that lack a stable id, a valid current price, or known availability', async () => {
   const malformedProducts = [
     { ...rawProduct, product_id: '' },
