@@ -3,8 +3,7 @@
 const { createHash } = require('node:crypto');
 
 const { validatePreview } = require('./contracts');
-
-const applyQueues = new WeakMap();
+const { withRuntimeLock } = require('./runtime-lock');
 
 function domainError(code, message, statusCode = 400) {
   return Object.assign(new Error(message), { code, statusCode });
@@ -119,6 +118,19 @@ function productSafetySnapshot(product) {
   };
 }
 
+function validMutationProduct(product) {
+  return Boolean(
+    isRecord(product)
+    && nonEmptyString(product.id)
+    && product.available === true
+    && isRecord(product.price)
+    && typeof product.price.current === 'number'
+    && Number.isFinite(product.price.current)
+    && product.price.current >= 0
+    && isRecord(product.package),
+  );
+}
+
 function sameSafetySnapshot(left, right) {
   return JSON.stringify(productSafetySnapshot(left)) === JSON.stringify(productSafetySnapshot(right));
 }
@@ -148,12 +160,12 @@ async function revalidatePreview(value, adapter) {
     const selectedId = nonEmptyString(line.product.id) ? line.product.id.trim() : null;
     if (!selectedId) throw invalid('Produkt der Vorschauposition ist ungültig');
     const fresh = products.find(candidate => candidate.id === selectedId) || null;
-    if (fresh && sameSafetySnapshot(line.product, fresh)) return line;
+    if (validMutationProduct(line.product) && validMutationProduct(fresh) && sameSafetySnapshot(line.product, fresh)) return line;
 
     changed = true;
-    const available = Boolean(fresh && fresh.available === true);
+    const available = validMutationProduct(fresh);
     const quantity = line.cartQuantity;
-    const alternatives = products.filter(candidate => candidate.available === true && candidate.id !== selectedId);
+    const alternatives = products.filter(candidate => validMutationProduct(candidate) && candidate.id !== selectedId);
     return {
       ...line,
       status: available ? 'selected' : 'missing',
@@ -201,8 +213,22 @@ function mutationErrorCode(error) {
   return nonEmptyString(error && error.code) ? error.code.trim() : 'KNUSPR_CART_ADD_FAILED';
 }
 
-async function applyDeltaSequentially(delta, adapter, currentCart, previewRevision) {
-  const observed = cartQuantities(currentCart);
+function targetQuantityForLine(previewLines, item) {
+  let target = 0;
+  for (const line of previewLines) {
+    if (line.product && line.product.id === item.productId) target += line.cartQuantity;
+    if (line.id === item.lineId) return target;
+  }
+  throw invalid('Vorschauposition wurde nicht gefunden');
+}
+
+async function previewAtRevision(store, previewRevision) {
+  const preview = validateCartPreview(await store.read('knuspr-preview.json', null));
+  if (preview.revision !== previewRevision) throw conflict('Vorschau ist veraltet');
+  return preview;
+}
+
+async function applyDeltaSequentially({ delta, adapter, previewLines, previewRevision, store }) {
   const receipt = {
     previewRevision,
     attemptedAt: new Date().toISOString(),
@@ -210,49 +236,54 @@ async function applyDeltaSequentially(delta, adapter, currentCart, previewRevisi
   };
 
   for (const item of delta) {
-    const before = observed.get(item.productId) || 0;
+    const currentPreview = await previewAtRevision(store, previewRevision);
+    acceptedLines(currentPreview, [item.lineId]);
+    const refreshed = await revalidatePreview(currentPreview, adapter);
+    if (refreshed.changed) return { receipt, refreshedPreview: refreshed.preview };
+    const currentCart = await adapter.getCart();
+    const before = cartQuantities(currentCart).get(item.productId) || 0;
+    const target = targetQuantityForLine(previewLines, item);
+    const requested = Math.max(0, target - before);
+    if (requested === 0) continue;
+    await previewAtRevision(store, previewRevision);
+    let response;
+    let errorCode = null;
     try {
-      await adapter.addCartItems([{ productId: item.productId, quantity: item.quantity }]);
-      observed.set(item.productId, before + item.quantity);
-      receipt.lines.push({
-        lineId: item.lineId,
-        productId: item.productId,
-        requested: item.quantity,
-        added: item.quantity,
-        status: 'added',
-        errorCode: null,
-      });
+      response = await adapter.addCartItems([{ productId: item.productId, quantity: requested }]);
     } catch (error) {
-      const errorCode = mutationErrorCode(error);
-      let reconciled;
-      try {
-        reconciled = cartQuantities(await adapter.getCart());
-      } catch {
-        receipt.lines.push({
-          lineId: item.lineId,
-          productId: item.productId,
-          requested: item.quantity,
-          added: 0,
-          status: 'failed',
-          errorCode: 'KNUSPR_CART_STATE_UNCERTAIN',
-        });
-        break;
-      }
-      const after = reconciled.get(item.productId) || 0;
-      const added = Math.min(item.quantity, Math.max(0, after - before));
-      observed.clear();
-      for (const [productId, quantity] of reconciled) observed.set(productId, quantity);
+      errorCode = mutationErrorCode(error);
+    }
+    let reconciled;
+    try {
+      reconciled = cartQuantities(await adapter.getCart());
+    } catch {
       receipt.lines.push({
         lineId: item.lineId,
         productId: item.productId,
-        requested: item.quantity,
-        added,
-        status: added === item.quantity ? 'added' : 'failed',
-        errorCode,
+        requested,
+        added: null,
+        status: 'uncertain',
+        errorCode: 'KNUSPR_CART_STATE_UNCERTAIN',
       });
+      break;
     }
+    const after = reconciled.get(item.productId) || 0;
+    const added = Math.min(requested, Math.max(0, after - before));
+    if (!errorCode && added < requested) {
+      errorCode = isRecord(response) && response.accepted === false
+        ? 'KNUSPR_CART_ADD_REJECTED'
+        : 'KNUSPR_CART_ADD_UNCONFIRMED';
+    }
+    receipt.lines.push({
+      lineId: item.lineId,
+      productId: item.productId,
+      requested,
+      added,
+      status: added === requested ? 'added' : 'failed',
+      errorCode,
+    });
   }
-  return receipt;
+  return { receipt, refreshedPreview: null };
 }
 
 async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapter, store }) {
@@ -274,10 +305,25 @@ async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapt
   }
   const currentCart = await adapter.getCart();
   const delta = computeCartDelta(requestedLines, currentCart);
-  const receipt = await applyDeltaSequentially(delta, adapter, currentCart, preview.revision);
+  const outcome = await applyDeltaSequentially({
+    delta,
+    adapter,
+    previewLines: requestedLines,
+    previewRevision: preview.revision,
+    store,
+  });
+  const receipt = outcome.receipt;
   await store.write('knuspr-cart-receipt.json', receipt);
+  if (outcome.refreshedPreview) {
+    await store.write('knuspr-preview.json', outcome.refreshedPreview);
+    return {
+      status: 'reconfirm-required',
+      preview: outcome.refreshedPreview,
+      receipt,
+    };
+  }
   return {
-    status: receipt.lines.some(line => line.status === 'failed') ? 'partial' : 'complete',
+    status: receipt.lines.some(line => line.status !== 'added') ? 'partial' : 'complete',
     receipt,
   };
 }
@@ -287,18 +333,7 @@ async function applyPreview(input = {}) {
   if (!store || typeof store.read !== 'function' || typeof store.write !== 'function') {
     throw invalid('Knuspr-Speicher fehlt');
   }
-  const previous = applyQueues.get(store) || Promise.resolve();
-  const result = previous.then(
-    () => applyPreviewTransaction(input),
-    () => applyPreviewTransaction(input),
-  );
-  const tail = result.catch(() => {});
-  applyQueues.set(store, tail);
-  try {
-    return await result;
-  } finally {
-    if (applyQueues.get(store) === tail) applyQueues.delete(store);
-  }
+  return withRuntimeLock(store, () => applyPreviewTransaction(input));
 }
 
 module.exports = { applyPreview, computeCartDelta, revalidatePreview };

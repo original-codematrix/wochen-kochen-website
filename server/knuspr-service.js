@@ -6,6 +6,7 @@ const { createKnusprAdapter } = require('./knuspr/adapter');
 const { createKnusprClient, DEFAULT_ENDPOINT } = require('./knuspr/client');
 const { validateAdditionalItems, validatePreview } = require('./knuspr/contracts');
 const { chooseProduct } = require('./knuspr/product-selection');
+const { storeIdentity, withRuntimeLock } = require('./knuspr/runtime-lock');
 const { createKnusprStore } = require('./knuspr/store');
 const {
   buildIngredientDemands,
@@ -158,6 +159,7 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     || typeof store.write !== 'function'
     || typeof store.remove !== 'function'
   ) throw new Error('Knuspr-Speicher mit read, write und remove fehlt');
+  storeIdentity(store);
   if (!Array.isArray(recipes)) throw new Error('Rezeptkatalog fehlt');
   const maximumConcurrency = Math.max(1, Math.min(4, Math.floor(Number(concurrency) || 1)));
   const limitSearch = createLimiter(maximumConcurrency);
@@ -208,7 +210,7 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     return validated;
   }
 
-  async function persistPlan(plan) {
+  async function persistPlanTransaction(plan) {
     if (!planValid(plan)) throw new Error('Knuspr-Plan ist ungültig');
     const preview = validatePreview(plan.shoppingPreview);
     if (!Array.isArray(preview.lines)) throw new Error('Knuspr-Vorschau ist ungültig');
@@ -231,6 +233,10 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
       }
       throw error;
     }
+  }
+
+  function persistPlan(plan) {
+    return withRuntimeLock(store, () => persistPlanTransaction(plan));
   }
 
   async function generatePlanTransaction(input = {}) {
@@ -302,7 +308,7 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     return preview === null ? null : validatePreview(preview);
   }
 
-  async function updatePreviewLine(input = {}) {
+  async function updatePreviewLineTransaction(input = {}) {
     const preview = validatePreview(await store.read('knuspr-preview.json', null));
     if (!Array.isArray(preview.lines)) throw new Error('Knuspr-Vorschau ist ungültig');
     const lineIndex = preview.lines.findIndex(line => line.id === input.lineId);
@@ -350,6 +356,10 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     };
     await store.write('knuspr-preview.json', validatePreview(updated));
     return updated;
+  }
+
+  function updatePreviewLine(input = {}) {
+    return withRuntimeLock(store, () => updatePreviewLineTransaction(input));
   }
 
   return {

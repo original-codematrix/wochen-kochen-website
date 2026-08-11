@@ -49,6 +49,18 @@ test('writes are atomic, reads return fallback for missing files, and remove del
   assert.equal(await store.read('knuspr-preview.json', 'fallback'), 'fallback');
 });
 
+test('store identity is immutable and stable for the resolved data directory', async () => {
+  const dataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'knuspr-store-'));
+  const first = createKnusprStore({ dataDir });
+  const second = createKnusprStore({ dataDir: path.join(dataDir, '.') });
+  const different = createKnusprStore({ dataDir: await fs.mkdtemp(path.join(os.tmpdir(), 'knuspr-store-')) });
+
+  assert.equal(first.identity, second.identity);
+  assert.notEqual(first.identity, different.identity);
+  assert.equal(Reflect.set(first, 'identity', 'changed'), false);
+  assert.equal(first.identity, second.identity);
+});
+
 test('store rejects path traversal and unknown persisted names', async () => {
   const store = createKnusprStore({ dataDir: await fs.mkdtemp(path.join(os.tmpdir(), 'knuspr-store-')) });
   await assert.rejects(() => store.read('../outside.json', null), /Dateiname/);

@@ -14,6 +14,7 @@ const {
 } = require('../server/planner');
 const { recipes: realCatalog } = require('../data');
 const { createKnusprService } = require('../server/knuspr-service');
+const { applyPreview } = require('../server/knuspr/cart');
 const { createKnusprStore } = require('../server/knuspr/store');
 
 function recipe(id, {
@@ -51,9 +52,12 @@ function product(id, name, price = 1, amount = 500, unit = 'g') {
   };
 }
 
-function memoryStore(initial = {}) {
+let storeSequence = 0;
+
+function memoryStore(initial = {}, { identity = `planner-test-store:${storeSequence += 1}` } = {}) {
   const files = new Map(Object.entries(structuredClone(initial)));
   return {
+    identity,
     async read(name, fallback) {
       return files.has(name) ? structuredClone(files.get(name)) : fallback;
     },
@@ -515,6 +519,144 @@ test('preview line updates accept a listed product id and quantity alias', async
   assert.equal(changed.totalPrice, alternative.price.current * 2);
 });
 
+test('preview updates and cart applies share a lock so revision R2 prevents mutation from R1', async () => {
+  const lineProduct = product('milk', 'milk', 1.09, 1, 'piece');
+  const savedPreview = {
+    generatedAt: '2026-08-11T10:00:00.000Z',
+    days: [],
+    revision: 'R1',
+    lines: [{
+      id: 'milk-line',
+      demand: { searchTerm: 'milk' },
+      status: 'selected',
+      product: lineProduct,
+      alternatives: [],
+      cartQuantity: 1,
+      totalPrice: 1.09,
+      removed: false,
+    }],
+    estimatedTotal: 1.09,
+    openLineCount: 0,
+  };
+  const base = memoryStore({ 'knuspr-preview.json': savedPreview });
+  const previewWriteStarted = deferred();
+  const releasePreviewWrite = deferred();
+  let pausePreviewWrite = true;
+  const store = {
+    ...base,
+    async write(name, value) {
+      if (name === 'knuspr-preview.json' && pausePreviewWrite) {
+        pausePreviewWrite = false;
+        previewWriteStarted.resolve();
+        await releasePreviewWrite.promise;
+      }
+      return base.write(name, value);
+    },
+  };
+  const cart = [];
+  const addCalls = [];
+  const adapter = {
+    async searchProducts() {
+      return [lineProduct];
+    },
+    async getCart() {
+      return structuredClone(cart);
+    },
+    async addCartItems(items) {
+      addCalls.push(structuredClone(items));
+      cart.push({ productId: items[0].productId, quantity: items[0].quantity });
+      return { accepted: true };
+    },
+  };
+  const service = createKnusprService({ adapter, store, recipes: [], now: () => new Date('2026-08-11T11:00:00.000Z') });
+
+  const update = service.updatePreviewLine({ lineId: 'milk-line', removed: true });
+  await previewWriteStarted.promise;
+  const apply = applyPreview({
+    previewRevision: 'R1',
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+  await new Promise(resolve => setImmediate(resolve));
+  releasePreviewWrite.resolve();
+
+  const updated = await update;
+  await assert.rejects(apply, error => error.code === 'KNUSPR_PREVIEW_CONFLICT');
+  assert.notEqual(updated.revision, 'R1');
+  assert.deepEqual(addCalls, []);
+  assert.deepEqual(cart, []);
+});
+
+test('generated preview replacement and cart apply share the revision lock', async () => {
+  const lineProduct = product('milk', 'milk', 1.09, 1, 'piece');
+  const savedPreview = {
+    generatedAt: '2026-08-11T10:00:00.000Z',
+    days: [],
+    revision: 'R1',
+    lines: [{
+      id: 'milk-line',
+      demand: { searchTerm: 'milk' },
+      status: 'selected',
+      product: lineProduct,
+      alternatives: [],
+      cartQuantity: 1,
+      totalPrice: 1.09,
+      removed: false,
+    }],
+    estimatedTotal: 1.09,
+    openLineCount: 0,
+  };
+  const base = memoryStore({ 'knuspr-preview.json': savedPreview });
+  const previewWriteStarted = deferred();
+  const releasePreviewWrite = deferred();
+  let pausePreviewWrite = true;
+  const store = {
+    ...base,
+    async write(name, value, options) {
+      if (name === 'knuspr-preview.json' && value.revision !== 'R1' && pausePreviewWrite) {
+        pausePreviewWrite = false;
+        previewWriteStarted.resolve();
+        await releasePreviewWrite.promise;
+      }
+      return base.write(name, value, options);
+    },
+  };
+  const cart = [];
+  const addCalls = [];
+  const plannerAdapter = adapterForProducts();
+  const adapter = {
+    async searchProducts(query) {
+      return query === 'milk' ? [lineProduct] : plannerAdapter.searchProducts(query);
+    },
+    async getCart() {
+      return structuredClone(cart);
+    },
+    async addCartItems(items) {
+      addCalls.push(structuredClone(items));
+      cart.push({ productId: items[0].productId, quantity: items[0].quantity });
+      return { accepted: true };
+    },
+  };
+  const service = serviceWithCatalog(catalog(), { store, adapter });
+
+  const generation = service.generatePlan({ variation: 0 });
+  await previewWriteStarted.promise;
+  const apply = applyPreview({
+    previewRevision: 'R1',
+    acceptedLineIds: ['milk-line'],
+    adapter,
+    store,
+  });
+  await new Promise(resolve => setImmediate(resolve));
+  releasePreviewWrite.resolve();
+
+  await generation;
+  await assert.rejects(apply, error => error.code === 'KNUSPR_PREVIEW_CONFLICT');
+  assert.deepEqual(addCalls, []);
+  assert.deepEqual(cart, []);
+});
+
 test('failed MCP refresh leaves the last schema-5 plan and preview untouched', async () => {
   const savedPlan = {
     schemaVersion: 5,
@@ -545,6 +687,7 @@ test('overlapping generation serializes rollback so a failed request cannot over
   const firstCurrentWriteStarted = deferred();
   let secondCurrentWritten = false;
   const store = {
+    identity: 'planner-test-store:overlapping-generation',
     async read(name, fallback) {
       return files.has(name) ? structuredClone(files.get(name)) : fallback;
     },
@@ -605,6 +748,15 @@ test('service requires remove support for transactional rollback', () => {
     store: { read: store.read, write: store.write },
     recipes: catalog(),
   }), /remove|Entfernen/i);
+});
+
+test('service requires a stable store identity for shared runtime transactions', () => {
+  const store = memoryStore();
+  assert.throws(() => createKnusprService({
+    adapter: adapterForProducts(),
+    store: { read: store.read, write: store.write, remove: store.remove },
+    recipes: catalog(),
+  }), /identität/i);
 });
 
 test('buildKnusprPlan rejects incomplete ingredient coverage before persistence', () => {
