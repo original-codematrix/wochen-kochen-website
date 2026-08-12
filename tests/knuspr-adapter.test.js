@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const { createKnusprAdapter, validateSchemaValue } = require('../server/knuspr/adapter');
+const { runReadonlySmoke } = require('../scripts/knuspr-readonly-smoke');
 
 function tool(name, description, inputSchema = { type: 'object', properties: {} }) {
   return { name, description, inputSchema };
@@ -357,4 +358,61 @@ test('adapter rejects malformed JSON text instead of fabricating a response', as
   });
 
   await assert.rejects(adapter.searchProducts('Kartoffeln'), (error) => error.code === 'KNUSPR_RESPONSE_INVALID');
+});
+
+function fakeReadonlySmokeAdapter(calls, capabilities) {
+  return {
+    async capabilities() {
+      calls.push('capabilities');
+      return capabilities;
+    },
+    async searchProducts(query) {
+      calls.push('searchProducts');
+      assert.equal(query, 'Kartoffeln');
+      return [
+        { id: 'potato-1', name: 'Bio Kartoffeln', available: true, price: { current: 2.49 } },
+        { id: 'potato-2', name: 'Frühkartoffeln', available: false, price: { current: 1.99 } },
+      ];
+    },
+    async getCart() {
+      calls.push('getCart');
+      throw new Error('read-only smoke must never call getCart');
+    },
+    async addCartItems() {
+      calls.push('addCartItems');
+      throw new Error('read-only smoke must never call addCartItems');
+    },
+  };
+}
+
+test('read-only smoke script reports capabilities and a harmless search without touching the cart', async () => {
+  const calls = [];
+  const fakeAdapter = fakeReadonlySmokeAdapter(calls, { searchProducts: true, readCart: true, addCartItems: true });
+  let written = null;
+
+  await runReadonlySmoke({ adapter: fakeAdapter, write: (value) => { written = value; } });
+
+  assert.deepEqual(calls, ['capabilities', 'searchProducts']);
+  assert.ok(!calls.includes('getCart'), 'must not call getCart');
+  assert.ok(!calls.includes('addCartItems'), 'must not call addCartItems');
+
+  const summary = JSON.parse(written);
+  assert.deepEqual(summary.capabilities, { searchProducts: true, readCart: true, addCartItems: true });
+  assert.equal(summary.productCount, 2);
+  assert.deepEqual(summary.sample, [
+    { id: 'potato-1', name: 'Bio Kartoffeln', available: true },
+    { id: 'potato-2', name: 'Frühkartoffeln', available: false },
+  ]);
+});
+
+test('read-only smoke script fails closed and never searches when a required capability is missing', async () => {
+  const calls = [];
+  const fakeAdapter = fakeReadonlySmokeAdapter(calls, { searchProducts: true, readCart: false, addCartItems: true });
+
+  await assert.rejects(
+    runReadonlySmoke({ adapter: fakeAdapter, write: () => {} }),
+    (error) => error.message === 'Benötigte Knuspr-Fähigkeiten fehlen',
+  );
+
+  assert.deepEqual(calls, ['capabilities']);
 });

@@ -38,6 +38,16 @@ Auf „Wochenplan erstellen“ klicken: Die Website wählt sieben unterschiedlic
 
 Die Übertragung zu Knuspr ergänzt ausschließlich die geprüften Positionen der aktuellen Vorschau. Bereits im Knuspr-Warenkorb vorhandene Artikel werden nie gelöscht oder verändert. Hat sich der Preis einer Position seit der letzten Prüfung geändert, verlangt die Website eine erneute ausdrückliche Bestätigung, bevor irgendetwas übertragen wird.
 
+### Nur-lese-Verträglichkeitstest
+
+Nach der einmaligen Knuspr-Verbindung lässt sich die MCP-Kompatibilität ohne jedes Risiko prüfen:
+
+```bash
+node scripts/knuspr-readonly-smoke.js
+```
+
+Das Skript liest ausschließlich die gespeicherte Verbindung, ruft die verfügbaren Knuspr-Fähigkeiten ab und führt eine einzige harmlose Produktsuche nach „Kartoffeln“ aus. Es bricht mit einem Fehler ab, falls Produktsuche, Warenkorb-Lesen oder Warenkorb-Hinzufügen nicht als Fähigkeit erkannt werden. **Es ruft niemals eine warenkorbverändernde Funktion auf** – weder `getCart` noch `addCartItems` werden vom Skript ausgeführt; das ist durch einen automatisierten Test in `tests/knuspr-adapter.test.js` gegen einen simulierten Adapter abgesichert.
+
 ## Mit Docker Compose starten
 
 ```bash
