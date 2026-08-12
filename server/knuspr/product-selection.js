@@ -255,6 +255,31 @@ function chooseProduct(demand, products, preferences = {}) {
   const alternatives = rankProducts(demand, products, preferences);
   const calculable = alternatives.filter((choice) => choice.packageKnown);
   if (calculable.length === 0) {
+    // When the recipe gives no orderable amount (e.g. "2 Zwiebeln", "etwas Öl")
+    // the pack count cannot be computed. Rather than block the cart with an
+    // ambiguous line, order a single pack of the cheapest suitable product —
+    // the shopper can still swap it via "Alternative wählen" or remove it.
+    const unquantified = demand.amount === null || demand.amount === undefined;
+    if (unquantified && alternatives.length > 0) {
+      const pick = alternatives.reduce((best, choice) => {
+        const price = currentPrice(choice.product);
+        const bestPrice = currentPrice(best.product);
+        if (price === null) return best;
+        if (bestPrice === null) return choice;
+        return price < bestPrice ? choice : best;
+      });
+      const price = currentPrice(pick.product) || 0;
+      return {
+        selected: pick.product,
+        alternatives: alternatives.filter((choice) => choice.product.id !== pick.product.id),
+        packages: 1,
+        totalAmount: null,
+        wasteAmount: null,
+        totalPrice: roundMoney(price),
+        reason: 'Menge nicht angegeben – eine Packung eingeplant',
+        status: 'selected',
+      };
+    }
     const ambiguous = alternatives.length > 0;
     return {
       selected: null,

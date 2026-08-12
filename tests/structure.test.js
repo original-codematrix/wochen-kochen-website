@@ -52,7 +52,7 @@ if (app.includes('Liveabruf nicht verbunden')) throw new Error('Veraltete Liveab
 if (!app.includes('r.seasoningTip')) throw new Error('Rezeptdialog muss die Gewürzempfehlung aus dem Rezept rendern');
 
 const worker = fs.readFileSync(path.join(root, 'service-worker.js'), 'utf8');
-if (!worker.includes("const CACHE = 'kochbuch-v15';") || !worker.includes("pathname.startsWith('/api/')")) {
+if (!worker.includes("const CACHE = 'kochbuch-v16';") || !worker.includes("pathname.startsWith('/api/')")) {
   throw new Error('Service Worker muss API-Antworten frisch laden und Cache-Version v15 verwenden');
 }
 const workerContext = { self: { addEventListener(){}, skipWaiting(){}, clients: { claim(){} } } };

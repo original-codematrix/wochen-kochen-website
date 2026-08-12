@@ -81,7 +81,9 @@
     const name = product ? escapeHtml(product.name) : 'Kein Produkt ausgewählt';
     const brand = product && product.brand ? ` <small>${escapeHtml(product.brand)}</small>` : '';
     const demand = line.demand || {};
-    const demandLabel = [demand.amount, demand.unit].filter(part => part !== undefined && part !== null && part !== '').map(escapeHtml).join(' ');
+    const unitWords = { mass: 'g', volume: 'ml', piece: 'Stück' };
+    const demandUnit = demand.unit ? (unitWords[demand.unit] || demand.unit) : '';
+    const demandLabel = [demand.amount, demandUnit].filter(part => part !== undefined && part !== null && part !== '').map(escapeHtml).join(' ');
     const packageLabel = product && product.package && product.package.label ? escapeHtml(product.package.label) : '';
     const quantity = Number.isFinite(line.cartQuantity) ? line.cartQuantity : null;
     const orderedLabel = quantity != null ? `${escapeHtml(quantity)} × ${packageLabel}` : '–';

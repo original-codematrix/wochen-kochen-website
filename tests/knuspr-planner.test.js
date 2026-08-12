@@ -769,3 +769,24 @@ test('buildKnusprPlan rejects incomplete ingredient coverage before persistence'
     now: new Date('2026-08-11T10:00:00.000Z'),
   }), /Einkaufsvorschau unvollständig/);
 });
+
+test('buildIngredientDemands drops classic seasonings, keeps orderable staples, and normalizes TK/keyword search terms', () => {
+  const recipe = {
+    id: 'r', servings: 2, ingredients: [
+      '3/4 TL Salz',
+      '1/2 TL schwarzer Pfeffer',
+      '1/2 TL getrockneter Thymian',
+      '1 TL mildes Paprikapulver',
+      '2 Zwiebeln',
+      '2 EL Öl',
+      '300 g TK-Blattspinat',
+    ],
+  };
+  const terms = buildIngredientDemands([recipe], { servings: 2 }).map(demand => demand.searchTerm);
+  for (const seasoning of ['Salz', 'Pfeffer', 'Thymian', 'Paprikapulver']) {
+    assert.ok(!terms.some(term => term.includes(seasoning)), `seasoning "${seasoning}" must not become a cart demand: ${JSON.stringify(terms)}`);
+  }
+  assert.ok(terms.includes('Zwiebeln'), `staple "Zwiebeln" must be ordered: ${JSON.stringify(terms)}`);
+  assert.ok(terms.includes('Öl'), `staple "Öl" must be ordered: ${JSON.stringify(terms)}`);
+  assert.ok(terms.includes('Blattspinat'), `"TK-" prefix must be stripped for search: ${JSON.stringify(terms)}`);
+});

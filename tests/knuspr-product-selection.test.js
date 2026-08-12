@@ -117,3 +117,23 @@ test('optional ingredients are not selected automatically', () => {
   assert.equal(result.status, 'missing');
   assert.equal(result.reason, 'Optionale Zutat');
 });
+
+test('a quantity-less required ingredient auto-selects a single pack of the cheapest suitable product', () => {
+  const demand = demandOf('etwas Öl');
+  assert.equal(demand.amount, null);
+  const result = chooseProduct(demand, [
+    product('sun', 'Sonnenblumenöl', 3.69, 1000, 'ml'),
+    product('rape', 'Bio Rapsöl', 2.49, 500, 'ml'),
+  ], {});
+  assert.equal(result.status, 'selected');
+  assert.equal(result.selected.id, 'rape');
+  assert.equal(result.packages, 1);
+  assert.equal(result.totalPrice, 2.49);
+  assert.match(result.reason, /eine Packung/i);
+});
+
+test('a quantity-less ingredient with no suitable product stays missing, not a phantom selection', () => {
+  const result = chooseProduct(demandOf('etwas Blattspinat'), [product('gone', 'Blattspinat TK', 1.99, 450, 'g', { available: false })], {});
+  assert.equal(result.status, 'missing');
+  assert.equal(result.selected, null);
+});

@@ -756,8 +756,28 @@ function ingredientSearchTerm(ingredient) {
     .replace(/^\s*optional\s*:\s*/i, '')
     .replace(/^\s*(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?)\s*(?:(?:TL|EL|Prise|kg|g|ml|l|Stück|Stueck|Packungen?|Dosen?|Glas|Gläser|Stangen?|Bund|Becher)\b\s*)?/i, '')
     .replace(/^zubereitete\s+/i, '')
+    // Drop frozen-goods and "choose one" qualifiers plus over-specific
+    // adjectives so the Knuspr keyword search still finds the base product
+    // (e.g. "TK-Blattspinat" -> "Blattspinat", "TK-Pizzen nach Wahl" -> "Pizzen").
+    .replace(/^\s*(?:TK[-\s]?|tiefkühl[-\s]?)/i, '')
+    .replace(/\s*\bnach\s+Wahl\b/i, '')
+    .replace(/^\s*(?:mildes?|scharfe?s?|edelsüßes?|gemahlene?r?|frische?r?)\s+/i, '')
     .replace(/\s*\([^)]*\)\s*$/, '')
     .trim();
+}
+
+// Classic pantry seasonings: salt, pepper, dried herbs and ground spices. Per
+// the user's rule these stay in the recipe text but are NOT ordered from Knuspr
+// (they are assumed to be on hand), so they never become a blocking cart line.
+// Everything else — oil, mustard, starch, sesame, eggs, onions, etc. — is
+// ordered normally.
+function isSeasoning(ingredient) {
+  const text = String(ingredient || '').toLocaleLowerCase('de-DE');
+  if (/\bgetrocknete?r?\b/.test(text)
+    && /(kräuter|oregano|thymian|basilikum|rosmarin|majoran|petersilie|schnittlauch|dill|estragon|salbei|bohnenkraut|kerbel)/.test(text)) {
+    return true;
+  }
+  return /\b(salz|pfeffer|paprikapulver|muskat(?:nuss)?|knoblauchpulver|zwiebelpulver|currypulver|kreuzkümmel|kumin|kurkuma|zimt|chiliflocken|chilipulver|cayenne(?:pfeffer)?|lorbeer(?:blatt|blätter)?|piment|kardamom|oregano|thymian|majoran|rosmarin|garam\s*masala|ras\s*el\s*hanout|kräuter\s+der\s+provence|italienische\s+kräuter|gewürzmischung|gewürzsalz)\b/.test(text);
 }
 
 function buildIngredientDemands(recipes, { servings = 2 } = {}) {
@@ -766,7 +786,7 @@ function buildIngredientDemands(recipes, { servings = 2 } = {}) {
     const scale = Number(servings) / (Number(recipe.servings) || 4);
     for (const [ingredientIndex, ingredient] of (recipe.ingredients || []).entries()) {
       const parsed = parseRequiredAmount(ingredient, scale);
-      if (parsed.optional) continue;
+      if (parsed.optional || isSeasoning(ingredient)) continue;
       const searchTerm = ingredientSearchTerm(ingredient);
       if (!searchTerm) continue;
       const key = `${searchTerm.toLocaleLowerCase('de-DE')}|${parsed.unit || 'unknown'}`;

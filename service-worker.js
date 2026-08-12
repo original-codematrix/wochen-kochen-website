@@ -1,5 +1,6 @@
-// Upgrade from kochbuch-v14 to add the Knuspr-only guided flow scripts.
-const CACHE = 'kochbuch-v15';
+// Upgrade to kochbuch-v16: seasonings stay recipe-only, quantity-less staples
+// auto-resolve to a product, and the preview shows human units (g/ml/Stück).
+const CACHE = 'kochbuch-v16';
 const ASSETS = [
   './',
   './index.html',
