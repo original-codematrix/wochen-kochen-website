@@ -155,6 +155,28 @@ test('beginAuthorization reconnects an existing server-side token session withou
   assert.deepEqual(await client.status(), { connected: true, authorizationPending: false });
 });
 
+test('reconnect silently restores a session from stored tokens after a restart', async () => {
+  const store = await createStore();
+  await store.write('knuspr-auth.json', {
+    tokens: { 'https://auth.example': { access_token: 'persisted-token', token_type: 'bearer' } },
+    latestIssuer: 'https://auth.example',
+  }, { sensitive: true });
+  const fakeSdk = createFakeSdk();
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+
+  assert.deepEqual(await client.reconnect(), { connected: true });
+  assert.deepEqual(await client.status(), { connected: true, authorizationPending: false });
+});
+
+test('reconnect reports failure without entering a pending-authorization state when tokens are gone', async () => {
+  const store = await createStore();
+  const fakeSdk = createFakeSdk({ authorizationRedirectThrows: true });
+  const client = createKnusprClient({ store, redirectUrl, sdkLoader: fakeSdk.sdkLoader });
+
+  assert.deepEqual(await client.reconnect(), { connected: false });
+  assert.deepEqual(await client.status(), { connected: false, authorizationPending: false });
+});
+
 test('each explicit authorization start rotates state and replaces stale PKCE and discovery material', async () => {
   const store = await createStore();
   const fakeSdk = createFakeSdk();

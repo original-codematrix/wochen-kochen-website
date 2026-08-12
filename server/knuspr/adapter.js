@@ -4,6 +4,22 @@ const CAPABILITIES = {
   addCartItems: [/add.*cart/i, /cart.*add/i, /warenkorb.*hinzu/i],
 };
 
+// Exact Knuspr MCP tool names observed live against https://mcp.knuspr.de/mcp.
+// These take precedence over the regex heuristics above so capability discovery
+// stays deterministic even though the live toolset has 50+ tools whose
+// descriptions overlap the generic patterns (e.g. `repeat_order` mentions
+// "add … to … cart"). The regex list remains a fallback for any tenant that
+// exposes differently named tools.
+const KNOWN_TOOL_NAMES = {
+  searchProducts: 'batch_search_products',
+  readCart: 'get_cart',
+  addCartItems: 'add_items_to_cart',
+};
+
+function isKnusprTool(tool, capability) {
+  return isRecord(tool) && tool.name === KNOWN_TOOL_NAMES[capability];
+}
+
 function error(code, detail) {
   return Object.assign(new Error(`${code}: ${detail}`), { code });
 }
@@ -69,6 +85,8 @@ function toolLabel(tool) {
 }
 
 function resolveTool(tools, capability) {
+  const known = tools.find((tool) => isKnusprTool(tool, capability));
+  if (known) return known;
   const matches = tools.filter((tool) => isRecord(tool)
     && typeof tool.name === 'string'
     && tool.name.trim()
@@ -284,9 +302,155 @@ function readCartArguments(tool) {
 }
 
 function validateCapability(tool, capability) {
+  // The live Knuspr tools use argument shapes the generic validators do not
+  // model (batch `queries` objects, integer product ids). Resolving them by
+  // their exact name is proof enough that the capability exists.
+  if (isKnusprTool(tool, capability)) return;
   if (capability === 'searchProducts') searchMetadata(tool);
   if (capability === 'readCart') readCartArguments(tool);
   if (capability === 'addCartItems') addMetadata(tool);
+}
+
+// --- Knuspr-specific argument builders and response normalizers ------------
+// Built against the real https://mcp.knuspr.de/mcp contract:
+//   batch_search_products({ queries:[{ keyword }] })
+//     -> { results:[{ query, products:[{ productId, productName, price,
+//          brand, inStock, textualAmount, pricePerUnit:{ full }, badges }] }] }
+//   get_cart({}) -> { data:{ items:{ <id>:{ productId, productName,
+//          quantity, price } } } }
+//   add_items_to_cart({ items:[{ productId:int, quantity }] })
+
+const AMOUNT_UNIT_ALIASES = {
+  g: 'g', gramm: 'g', gr: 'g', kg: 'kg', kilogramm: 'kg',
+  ml: 'ml', l: 'l', liter: 'l',
+  stück: 'stück', stueck: 'stück', stk: 'stück', st: 'stück', 'st.': 'stück', piece: 'stück', pieces: 'stück', pcs: 'stück',
+};
+
+function normalizeAmountUnit(rawUnit) {
+  return AMOUNT_UNIT_ALIASES[String(rawUnit || '').trim().toLowerCase()] || null;
+}
+
+function parseTextualAmount(text) {
+  const label = typeof text === 'string' && text.trim() ? text.trim() : null;
+  const empty = { amount: null, unit: null, label };
+  if (!label) return empty;
+  const unitGroup = 'kg|kilogramm|g|gramm|gr|ml|l|liter|stück|stueck|stk|st\\.?|pcs|pieces?';
+  const multi = label.match(new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*[x×]\\s*(\\d+(?:[.,]\\d+)?)\\s*(${unitGroup})\\b`, 'i'));
+  if (multi) {
+    const unit = normalizeAmountUnit(multi[3]);
+    const amount = Number(multi[1].replace(',', '.')) * Number(multi[2].replace(',', '.'));
+    if (unit && Number.isFinite(amount) && amount > 0) return { amount, unit, label };
+    return empty;
+  }
+  const single = label.match(new RegExp(`(\\d+(?:[.,]\\d+)?)\\s*(${unitGroup})\\b`, 'i'));
+  if (single) {
+    const unit = normalizeAmountUnit(single[2]);
+    const amount = Number(single[1].replace(',', '.'));
+    if (unit && Number.isFinite(amount) && amount > 0) return { amount, unit, label };
+  }
+  return empty;
+}
+
+function finiteNumber(value) {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function normalizeKnusprProduct(raw) {
+  if (!isRecord(raw)) return null;
+  const id = raw.productId === 0 || raw.productId ? String(raw.productId) : null;
+  const name = typeof raw.productName === 'string' && raw.productName.trim() ? raw.productName.trim() : null;
+  const current = finiteNumber(raw.price);
+  if (!id || !name || current === null || current < 0) return null;
+  const unitPrice = raw.pricePerUnit && finiteNumber(raw.pricePerUnit.full);
+  const original = finiteNumber(raw.originalPricePerUnit);
+  const badges = Array.isArray(raw.badges) ? raw.badges.filter((tag) => typeof tag === 'string' && tag.trim()).map((tag) => tag.trim()) : [];
+  return {
+    id,
+    name,
+    brand: typeof raw.brand === 'string' && raw.brand.trim() ? raw.brand.trim() : null,
+    url: null,
+    imageUrl: typeof raw.imgPath === 'string' && raw.imgPath.trim() ? raw.imgPath.trim() : null,
+    available: raw.inStock === true,
+    package: parseTextualAmount(raw.textualAmount),
+    price: {
+      current,
+      regular: original !== null && original > current ? original : null,
+      unit: unitPrice === undefined ? null : unitPrice,
+      unitLabel: null,
+      offer: (typeof raw.salePercents === 'number' && raw.salePercents > 0) || badges.some((tag) => /sale|angebot|aktion/i.test(tag)) ? true : null,
+    },
+    qualityTags: badges,
+  };
+}
+
+function parseKnusprProducts(decoded) {
+  const results = isRecord(decoded) && Array.isArray(decoded.results) ? decoded.results : null;
+  if (!results) throw invalidResponse('Produktliste');
+  const products = [];
+  for (const batch of results) {
+    const list = isRecord(batch) && Array.isArray(batch.products) ? batch.products : [];
+    for (const raw of list) {
+      const normalized = normalizeKnusprProduct(raw);
+      if (normalized) products.push(normalized);
+    }
+  }
+  return products;
+}
+
+function normalizeKnusprCartLine(raw) {
+  if (!isRecord(raw)) return null;
+  const id = raw.productId === 0 || raw.productId ? String(raw.productId) : null;
+  const name = typeof raw.productName === 'string' && raw.productName.trim() ? raw.productName.trim() : null;
+  const quantity = finiteNumber(raw.quantity);
+  const unitPrice = finiteNumber(raw.price);
+  if (!id || !name || quantity === null || quantity <= 0 || unitPrice === null || unitPrice < 0) return null;
+  return {
+    productId: id,
+    name,
+    quantity,
+    unitPrice,
+    totalPrice: Math.round((unitPrice * quantity + Number.EPSILON) * 100) / 100,
+  };
+}
+
+function parseKnusprCart(decoded) {
+  const data = isRecord(decoded) && isRecord(decoded.data) ? decoded.data : (isRecord(decoded) ? decoded : null);
+  if (!data) throw invalidResponse('Warenkorb');
+  const items = isRecord(data.items) ? Object.values(data.items) : (Array.isArray(data.items) ? data.items : []);
+  return items.map(normalizeKnusprCartLine).filter(Boolean);
+}
+
+// Knuspr returns the real payload in the text content part; its
+// `structuredContent` is a wrapped `{ result: … }` envelope with a different
+// shape, so the Knuspr path decodes the text directly rather than deferring to
+// the generic `decodeResponse` (which prefers structuredContent).
+function decodeKnusprText(response) {
+  if (!isRecord(response) || response.isError) throw invalidResponse('Werkzeugantwort');
+  if (!Array.isArray(response.content)) throw invalidResponse('Werkzeugantwortinhalt');
+  const texts = response.content
+    .filter((part) => isRecord(part) && part.type === 'text' && typeof part.text === 'string' && part.text.trim());
+  if (texts.length !== 1) throw invalidResponse('Textantwort');
+  try {
+    const value = JSON.parse(texts[0].text);
+    if (!isRecord(value) && !Array.isArray(value)) throw invalidResponse('JSON-Antwort');
+    return value;
+  } catch (caught) {
+    if (caught && caught.code === 'KNUSPR_RESPONSE_INVALID') throw caught;
+    throw invalidResponse('JSON-Antwort');
+  }
+}
+
+function knusprAddArguments(items) {
+  if (!Array.isArray(items) || items.length === 0) throw invalidResponse('Warenkorbpositionen');
+  return {
+    items: items.map((item) => {
+      if (!isRecord(item)) throw invalidResponse('Warenkorbposition');
+      const productId = Number(readAlias(item, ['productId', 'product_id', 'id']));
+      const quantity = requiredNumber(readAlias(item, ['quantity', 'amount']), 'Menge', { positive: true });
+      if (!Number.isInteger(productId) || productId <= 0) throw invalidResponse('Produkt-ID');
+      return { productId, quantity };
+    }),
+  };
 }
 
 function decodeResponse(response) {
@@ -415,18 +579,29 @@ function createKnusprAdapter({ client }) {
     },
     async searchProducts(query) {
       const tool = await toolFor('searchProducts');
+      if (isKnusprTool(tool, 'searchProducts')) {
+        const keyword = requiredString(query, 'Suchbegriff');
+        const response = decodeKnusprText(await client.callTool(tool.name, { queries: [{ keyword }] }));
+        return parseKnusprProducts(response);
+      }
       const response = decodeResponse(await client.callTool(tool.name, searchArguments(tool, query)));
       return collection(response, [['products'], ['results'], ['data', 'products'], ['data', 'results']], 'Produktliste')
         .map(normalizeProduct);
     },
     async getCart() {
       const tool = await toolFor('readCart');
+      if (isKnusprTool(tool, 'readCart')) {
+        return parseKnusprCart(decodeKnusprText(await client.callTool(tool.name, {})));
+      }
       const response = decodeResponse(await client.callTool(tool.name, readCartArguments(tool)));
       return collection(response, [['items'], ['lines'], ['cart', 'items'], ['cart', 'lines'], ['data', 'items'], ['data', 'lines']], 'Warenkorb')
         .map(normalizeCartLine);
     },
     async addCartItems(items) {
       const tool = await toolFor('addCartItems');
+      if (isKnusprTool(tool, 'addCartItems')) {
+        return decodeKnusprText(await client.callTool(tool.name, knusprAddArguments(items)));
+      }
       return decodeResponse(await client.callTool(tool.name, addArguments(tool, items)));
     },
   };

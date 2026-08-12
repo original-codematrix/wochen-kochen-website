@@ -81,6 +81,24 @@ function createKnusprClient({ store, redirectUrl, endpoint = DEFAULT_ENDPOINT, s
     async status() {
       return { connected: Boolean(activeSession), authorizationPending: Boolean(pendingAuthorizationUrl) };
     },
+    async reconnect() {
+      // Silently restore a session from previously stored tokens (e.g. after a
+      // server restart). No onAuthorizationUrl is passed, so if the tokens are
+      // missing or expired the SDK's auth attempt no-ops and connect() rejects
+      // with UnauthorizedError — we report {connected:false} without leaving the
+      // client in a pending-authorization state or requiring re-login here.
+      if (activeSession) return { connected: true };
+      if (authorizingSession || pendingAuthorizationUrl) return { connected: false };
+      const session = await createUnconnectedSession();
+      try {
+        await session.client.connect(session.transport);
+      } catch (error) {
+        await attemptAll([() => closeSession(session)]);
+        return { connected: false };
+      }
+      activeSession = session;
+      return { connected: true };
+    },
     async beginAuthorization() {
       if (activeSession) throw new Error('Knuspr ist bereits verbunden');
       if (authorizingSession) {

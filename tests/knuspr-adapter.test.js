@@ -416,3 +416,102 @@ test('read-only smoke script fails closed and never searches when a required cap
 
   assert.deepEqual(calls, ['capabilities']);
 });
+
+// --- Real Knuspr MCP contract (observed live against https://mcp.knuspr.de/mcp) ---
+function knusprText(payload) {
+  return {
+    // Knuspr also returns a `structuredContent` envelope with a different
+    // shape; the adapter must decode the text content, not this.
+    content: [{ type: 'text', text: JSON.stringify(payload) }],
+    structuredContent: { result: 'envelope-should-be-ignored' },
+    isError: false,
+  };
+}
+
+const knusprSearchTool = tool('batch_search_products', 'Search products by keyword — up to 4 queries', {
+  type: 'object',
+  properties: { queries: { type: 'array' } },
+  required: ['queries'],
+});
+const knusprCartTool = tool('get_cart', 'View everything currently in the shopping cart');
+const knusprAddTool = tool('add_items_to_cart', 'Add products to the shopping cart', {
+  type: 'object',
+  properties: { items: { type: 'array' } },
+  required: ['items'],
+});
+// Decoy tools whose descriptions would make the regex heuristics ambiguous.
+const decoyRepeatOrder = tool('repeat_order', 'Add all items from previous order to current cart');
+const decoyGetCheckout = tool('get_checkout', 'Get complete checkout form data and totals');
+
+const knusprSearchPayload = {
+  success: true, total_queries: 1, successful: 1, failed: 0,
+  results: [{
+    query: 'Kartoffeln', total_found: 3, success: true,
+    products: [
+      { productId: 13603, productName: "Angermeir's Kartoffeln Drillinge", brand: 'Angermeir', inStock: true, textualAmount: '0,75 kg', price: 2.69, pricePerUnit: { full: 3.59, currency: '€' }, currency: '€', badges: ['local-brand'], salePercents: 0, originalPricePerUnit: 0 },
+      { productId: 40, productName: 'Kartoffel-Snack 6er', brand: null, inStock: false, textualAmount: '6 Stück', price: 1.99, pricePerUnit: { full: 0.33 }, badges: [], salePercents: 10, originalPricePerUnit: 2.49 },
+      { productName: 'Kaputt ohne ID', price: 1.0 },
+    ],
+  }],
+};
+
+const knusprCartPayload = {
+  status: 200, messages: [], success: true,
+  data: {
+    cartId: 1, totalPrice: 5.07,
+    items: {
+      2947: { productId: 2947, productName: 'Kühne Gewürzgurken', quantity: 1, unit: 'kg', price: 2.39, textualAmount: '0,67 kg', brand: 'Kühne' },
+      12192: { productId: 12192, productName: 'Butter', quantity: 2, price: 1.34 },
+    },
+  },
+};
+
+test('adapter discovers the real Knuspr tools by exact name despite regex-ambiguous decoys', async () => {
+  const client = fakeClient([decoyRepeatOrder, knusprSearchTool, knusprCartTool, knusprAddTool, decoyGetCheckout]);
+  const adapter = createKnusprAdapter({ client });
+  assert.deepEqual(await adapter.capabilities(), { searchProducts: true, readCart: true, addCartItems: true });
+});
+
+test('searchProducts parses the real batch_search_products payload from text, not the structuredContent envelope', async () => {
+  const client = fakeClient([knusprSearchTool], { batch_search_products: knusprText(knusprSearchPayload) });
+  const adapter = createKnusprAdapter({ client });
+  const products = await adapter.searchProducts('Kartoffeln');
+  assert.deepEqual(client.calls[client.calls.length - 1].args, { queries: [{ keyword: 'Kartoffeln' }] });
+  assert.equal(products.length, 2);
+  assert.deepEqual(products[0], {
+    id: '13603', name: "Angermeir's Kartoffeln Drillinge", brand: 'Angermeir',
+    url: null, imageUrl: null, available: true,
+    package: { amount: 0.75, unit: 'kg', label: '0,75 kg' },
+    price: { current: 2.69, regular: null, unit: 3.59, unitLabel: null, offer: null },
+    qualityTags: ['local-brand'],
+  });
+  assert.equal(products[1].available, false);
+  assert.deepEqual(products[1].package, { amount: 6, unit: 'stück', label: '6 Stück' });
+  assert.equal(products[1].price.offer, true);
+  assert.equal(products[1].price.regular, 2.49);
+});
+
+test('getCart parses the real get_cart items map into normalized lines', async () => {
+  const client = fakeClient([knusprCartTool], { get_cart: knusprText(knusprCartPayload) });
+  const adapter = createKnusprAdapter({ client });
+  const lines = await adapter.getCart();
+  assert.deepEqual(client.calls[client.calls.length - 1], { name: 'get_cart', args: {} });
+  assert.deepEqual(lines, [
+    { productId: '2947', name: 'Kühne Gewürzgurken', quantity: 1, unitPrice: 2.39, totalPrice: 2.39 },
+    { productId: '12192', name: 'Butter', quantity: 2, unitPrice: 1.34, totalPrice: 2.68 },
+  ]);
+});
+
+test('addCartItems maps string product ids to the integer productId Knuspr requires', async () => {
+  const client = fakeClient([knusprAddTool], { add_items_to_cart: knusprText({ status: 200, success: true }) });
+  const adapter = createKnusprAdapter({ client });
+  await adapter.addCartItems([{ productId: '26531', quantity: 2 }]);
+  assert.deepEqual(client.calls[client.calls.length - 1].args, { items: [{ productId: 26531, quantity: 2 }] });
+});
+
+test('addCartItems rejects a non-integer product id instead of sending it', async () => {
+  const client = fakeClient([knusprAddTool], { add_items_to_cart: knusprText({ status: 200 }) });
+  const adapter = createKnusprAdapter({ client });
+  await assert.rejects(adapter.addCartItems([{ productId: 'abc', quantity: 1 }]), /Produkt-ID/);
+  assert.equal(client.calls.length, 0);
+});

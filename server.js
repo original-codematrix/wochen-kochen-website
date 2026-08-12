@@ -175,6 +175,13 @@ function createServer(options = {}) {
   const knuspr = options.knuspr || {};
   const client = knuspr.client || runtime.client;
   const service = knuspr.service || runtime.service;
+  // Restore a previously authorized Knuspr session on boot so a server restart
+  // does not force the user through OAuth again. Fire-and-forget: a missing or
+  // expired session simply leaves the client disconnected until the user
+  // reconnects via the UI.
+  if (client && typeof client.reconnect === 'function') {
+    Promise.resolve().then(() => client.reconnect()).catch(() => {});
+  }
   const cart = knuspr.cart || {
     applyPreview: input => applyPreview({ ...input, adapter: runtime.adapter, store: runtime.store }),
   };
