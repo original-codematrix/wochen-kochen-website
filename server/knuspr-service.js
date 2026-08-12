@@ -73,6 +73,27 @@ function rotate(values, variation) {
   return values.slice(offset).concat(values.slice(0, offset));
 }
 
+// Deterministic per-variation shuffle (no Math.random, so the same variation
+// always yields the same plan). Each reroll draws a different candidate set;
+// the planner then keeps the most sensible seven of that set by rating and
+// product availability. This gives real variety without ever surfacing only
+// the same top-rated dozen.
+function seededShuffle(values, seed) {
+  let state = ((Number(seed) || 0) >>> 0) + 0x9e3779b9;
+  const random = () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const shuffled = values.slice();
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(random() * (index + 1));
+    [shuffled[index], shuffled[swap]] = [shuffled[swap], shuffled[index]];
+  }
+  return shuffled;
+}
+
 function shortlistRecipes(recipes, exclusions, variation, limit = 14) {
   const eligible = (Array.isArray(recipes) ? recipes : [])
     .filter(recipe => knusprRecipeAllowed(recipe, exclusions))
@@ -81,7 +102,11 @@ function shortlistRecipes(recipes, exclusions, variation, limit = 14) {
       || (Number(left.cost) || 0) - (Number(right.cost) || 0)
       || left.id.localeCompare(right.id)
     ));
-  const ordered = rotate(eligible, variation);
+  // Shuffle the eligible catalogue per variation so each reroll offers a
+  // genuinely different candidate set (the planner then keeps the most sensible
+  // seven — by rating, protein, offers and availability). Variation 0 keeps the
+  // rating order so a first, un-rerolled plan still leads with the best recipes.
+  const ordered = (Number(variation) || 0) === 0 ? eligible : seededShuffle(eligible, variation);
   const target = Math.min(limit, ordered.length);
   const selected = [];
   const add = (recipe, requireNewCategory = false) => {
@@ -251,7 +276,7 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     const requestedAt = nowDate(now);
     const exclusions = input.excludedIngredients || [];
     const variation = Number(input.variation) || 0;
-    const shortlist = shortlistRecipes(recipes, exclusions, variation, 14);
+    const shortlist = shortlistRecipes(recipes, exclusions, variation, 18);
     if (shortlist.length < 7) {
       throw businessError(
         'KNUSPR_PLAN_TOO_FEW_RECIPES',

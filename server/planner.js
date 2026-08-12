@@ -847,7 +847,16 @@ function choiceScore(recipe, productChoices) {
     sum + (Number(item.totalPrice) || 0) / Math.max(1, item.demand.recipeIds.length)
   ), 0);
   const waste = related.reduce((sum, item) => sum + (Number(item.wasteAmount) || 0), 0);
-  return missing * 40 + ambiguous * 15 + allocatedCost + waste / 1000 - (Number(recipe.rating) || 0) * 0.2;
+  // Products that are currently on offer make a recipe better value.
+  const offers = related.filter(item => item.selected && item.selected.price && item.selected.price.offer === true).length;
+  const protein = Number(recipe.protein) || 0;
+  // Lower is better. Unresolvable ingredients dominate (so the week stays
+  // orderable); among sensible recipes we then favour higher protein, products
+  // on offer, better ratings and lower cost/waste.
+  return missing * 40 + ambiguous * 15 + allocatedCost + waste / 1000
+    - (Number(recipe.rating) || 0) * 0.2
+    - protein * 0.05
+    - offers * 0.5;
 }
 
 function selectKnusprWeek({ recipes, productChoices = [], exclusions = [], variation = 0 }) {
