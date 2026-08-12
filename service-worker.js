@@ -1,5 +1,5 @@
-// Upgrade from kochbuch-v13 for the expanded seasoned recipe catalog.
-const CACHE = 'kochbuch-v14';
+// Upgrade from kochbuch-v14 to add the Knuspr-only guided flow scripts.
+const CACHE = 'kochbuch-v15';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,8 @@ const ASSETS = [
   './recipe-seasonings.js',
   './recipe-expansion.js',
   './data.js',
+  './knuspr-api.js',
+  './knuspr-ui.js',
   './app.js',
   './manifest.webmanifest',
   './server/current-plan.json'

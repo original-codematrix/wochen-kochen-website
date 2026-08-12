@@ -5,8 +5,7 @@
   "description": "Selbst gehosteter angebotsbasierter Essens- und Einkaufsplan",
   "scripts": {
     "start": "node server.js",
-    "refresh": "node server/refresh.js",
-    "browser:setup": "node server/browser-setup.js",
+    "refresh": "node server/knuspr-service.js",
     "test": "node tests/structure.test.js && node --test tests/*.test.js"
   },
   "engines": {

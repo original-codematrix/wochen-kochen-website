@@ -155,13 +155,13 @@ test('current-plan shopping views stay identical and interactive in a real brows
       route.fulfill({ status: 503, contentType: 'application/json', body: '' })
     ));
     await failedPage.goto(baseUrl, { timeout: 10_000 });
-    await failedPage.getByText('Sparplan konnte nicht geladen werden.').waitFor();
-    assert.equal(await failedPage.locator('#planShoppingGroups').textContent(), 'Aktueller Sparplan ist nicht verfügbar.');
-    assert.equal(await failedPage.locator('#shoppingGroups').textContent(), 'Aktueller Sparplan ist nicht verfügbar.');
+    await failedPage.getByText('Wochenplan konnte nicht geladen werden.').waitFor();
+    assert.equal(await failedPage.locator('#planShoppingGroups').textContent(), 'Aktueller Wochenplan ist nicht verfügbar.');
+    assert.equal(await failedPage.locator('#shoppingGroups').textContent(), 'Aktueller Wochenplan ist nicht verfügbar.');
     assert.equal(await failedPage.locator('#shoppingWeekLabel').textContent(), '–');
     assert.equal(await failedPage.locator('#shoppingTotal').textContent(), '–');
     assert.equal(await failedPage.locator('#shoppingDone').textContent(), '0 / 0');
-    assert.equal(await failedPage.locator('#priceStatus').textContent(), 'Aktueller Sparplan ist nicht verfügbar.');
+    assert.equal(await failedPage.locator('#priceStatus').textContent(), 'Aktueller Wochenplan ist nicht verfügbar.');
     await failedContext.close();
   } finally {
     if (browser) await browser.close();

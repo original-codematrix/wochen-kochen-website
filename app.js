@@ -4,7 +4,7 @@ const DATA=window.KOCHBUCH_DATA;
 const RECIPES=DATA.recipes, WEEKS=DATA.weeks;
 const ICONS={'Nudeln':'🍝','Reis':'🍚','Rind':'🥩','Kartoffeln':'🥔','TK & Ofen':'🍗','Bowls':'🥙','Fleischklassiker':'🍳','Pfannengerichte':'🥘','Hackfleisch':'🧆','Aufläufe':'🫕'};
 const STORE_KEY='feierabend-kochbuch-v3';
-const defaults={week:0,favorites:[],checked:{},prep:{},prices:{},priceMeta:{source:'REWE-Richtwerte',updated:null},settings:{postalCode:'85386',marketId:'440303',endpoint:'/api/rewe-prices',refreshToken:'',excludedIngredients:''},dark:false};
+const defaults={week:0,favorites:[],checked:{},prep:{},prices:{},priceMeta:{source:'',updated:null},settings:{refreshToken:'',excludedIngredients:''},dark:false};
 let state=loadState(); let deferredInstall; let activePlan=null; let knusprHandle=null;
 function loadState(){try{return {...defaults,...JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}}catch{return structuredClone(defaults)}}
 function saveState(){localStorage.setItem(STORE_KEY,JSON.stringify(state))}
@@ -29,22 +29,19 @@ function updateProgress(){const items=aggregateShopping(),wk='week'+state.week,c
 const fallbackPrep={title:'Meal-Prep-Vorlage',summary:'Sobald ein Angebotsplan geladen ist, wird diese Liste automatisch ersetzt.',steps:[{time:'0–15 Min.',title:'Grundlagen vorbereiten',instruction:'Reis oder Kartoffeln aufsetzen und den Backofen bei Bedarf vorheizen.'},{time:'15–35 Min.',title:'Gemüse & Protein',instruction:'Gemüse schneiden und Fleisch getrennt portionieren.'},{time:'35–50 Min.',title:'Portionieren & beschriften',instruction:'Behälter mit Gericht und Esstag beschriften.'}]};
 function renderPrep(plan=activePlan){const prep=plan?.mealPrep||fallbackPrep;const revision=plan?.planRevision??'template';$('#prepTitle').textContent=prep.title||'Meal-Prep für euren Plan';$('#prepSummary').textContent=prep.summary||'';$('#prepTimeline').innerHTML=prep.steps.map((step,i)=>{const key=`${revision}-${i}`;return `<label class="prep-step"><span class="prep-time">${step.time}</span><span><strong>${step.title}</strong><small>${step.instruction}</small>${step.storage?`<span class="chip">${step.storage}</span>`:''}</span><input type="checkbox" data-prep="${key}" ${state.prep[key]?'checked':''}></label>`}).join('');$$('[data-prep]').forEach(x=>x.onchange=()=>{state.prep[x.dataset.prep]=x.checked;saveState()})}
 function sourceStatusLabel(sources){return 'Wochenlauf: '+sources.map(source=>{const offers=source.offerCount?`${source.offerCount} Angebote${source.status==='browser-cached'?' (Chrome-Import)':''}`:source.status==='error'?'blockiert':'eingeschränkt';const regular=Number.isFinite(source.regularPriceCount)?` · ${source.regularPriceCount} Normalpreise`:'';return `${source.market} ${offers}${regular}`}).join(' · ')}
-async function refreshPrices(){const status=$('#priceStatus');status.textContent='Quellenstatus wird geprüft …';try{const res=await fetch('/api/status');if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=await res.json();state.priceMeta={source:sourceStatusLabel(data.sources||[]),updated:data.generatedAt||new Date().toISOString()};saveState();renderShopping();toast('Quellenstatus aktualisiert')}catch(e){state.priceMeta={source:'Wochenlauf nicht erreichbar – aktueller Sparplan bleibt unverändert',updated:new Date().toISOString()};saveState();renderShopping();toast('Wochenlauf nicht erreichbar')}}
+async function refreshPrices(){const status=$('#priceStatus');status.textContent='Quellenstatus wird geprüft …';try{const res=await fetch('/api/status');if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=await res.json();state.priceMeta={source:sourceStatusLabel(data.sources||[]),updated:data.generatedAt||new Date().toISOString()};saveState();renderShopping();toast('Quellenstatus aktualisiert')}catch(e){state.priceMeta={source:'Wochenlauf nicht erreichbar – aktueller Wochenplan bleibt unverändert',updated:new Date().toISOString()};saveState();renderShopping();toast('Wochenlauf nicht erreichbar')}}
 function importJson(file,handler){const reader=new FileReader();reader.onload=()=>{try{handler(JSON.parse(reader.result));toast('Datei importiert')}catch{toast('Ungültige JSON-Datei')}};reader.readAsText(file)}
 $('#refreshPrices').onclick=refreshPrices;
-$('#copyShopping').onclick=async()=>{if(!activePlan){toast('Kein aktueller Sparplan geladen');return}try{await navigator.clipboard.writeText(shoppingClipboardText(activePlan));toast('Einkaufsliste kopiert')}catch{toast('Kopieren im lokalen Dateimodus blockiert')}};
+$('#copyShopping').onclick=async()=>{if(!activePlan){toast('Kein aktueller Wochenplan geladen');return}try{await navigator.clipboard.writeText(shoppingClipboardText(activePlan));toast('Einkaufsliste kopiert')}catch{toast('Kopieren im lokalen Dateimodus blockiert')}};
 $('#printShopping').onclick=()=>window.print();
 $('#resetShopping').onclick=()=>{state.checked.plan={};saveState();renderPlanShoppingViews()};
 $('#resetPrep').onclick=()=>{state.prep={};saveState();renderPrep()};
 $('#themeToggle').onclick=()=>{state.dark=!state.dark;document.body.classList.toggle('dark',state.dark);saveState()};
-function excludedIngredients(){return $('#dietaryExclusions').value.split(/[,;\n]/).map(value=>value.trim()).filter(Boolean)}
-function planningBody(extra={}){return JSON.stringify({...extra,excludedIngredients:excludedIngredients()})}
 $('#dietaryExclusions').onchange=()=>{state.settings.excludedIngredients=$('#dietaryExclusions').value.trim();saveState()};
-$('#saveSettings').onclick=()=>{state.settings={postalCode:$('#postalCode').value.trim(),marketId:$('#marketId').value.trim(),endpoint:$('#priceEndpoint').value.trim(),refreshToken:$('#refreshToken').value.trim(),excludedIngredients:$('#dietaryExclusions').value.trim()};saveState();toast('Einstellungen gespeichert')};
+$('#saveSettings').onclick=()=>{state.settings={...state.settings,refreshToken:$('#refreshToken').value.trim()};saveState();toast('Einstellungen gespeichert')};
 $('#exportData').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}));a.download='feierabend-kochbuch-daten.json';a.click()};$('#importData').onclick=()=>$('#dataFile').click();$('#dataFile').onchange=e=>importJson(e.target.files[0],d=>{state={...defaults,...d};saveState();location.reload()});$('#clearData').onclick=()=>{if(confirm('Alle lokalen Daten wirklich löschen?')){localStorage.removeItem(STORE_KEY);location.reload()}};
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;$('#installBtn').hidden=false});$('#installBtn').onclick=async()=>{if(deferredInstall){deferredInstall.prompt();await deferredInstall.userChoice;deferredInstall=null;$('#installBtn').hidden=true}};
 function planDayCard(item){const r=byId(item.recipeId),name=r?.name||item.name||'Gericht';return `<article class="plan-day"><span class="day-label">${item.day}</span><div><h4>${name}</h4><p>${item.reason}</p></div>${r?`<button class="text-btn" data-open="${r.id}">Rezept →</button>`:''}</article>`}
-function sourceVisual(source){if(source.status==='current')return {className:'ok',label:'● aktuell'};if(source.status==='browser-cached')return {className:'ok',label:'● Chrome-Import'};if(source.status==='error')return {className:'error',label:'× blockiert'};return {className:'limited',label:'◐ eingeschränkt'}}
 function priceTypeLabel(item){if(item.status==='regular')return 'Normalpreis · öffentlich geprüft';if(item.status==='stale-regular')return `Normalpreis · zuletzt gesehen${item.capturedAt?' '+new Date(item.capturedAt).toLocaleDateString('de-DE'):''}`;if(item.status==='app-offer')return 'App-Angebot';if(item.status==='offer')return 'Angebot';if(item.status==='estimated')return 'geschätzt';return item.status==='pantry'?'Vorrat':'Preis offen'}
 function shoppingItemId(group,item){return group.department+'-'+item.name}
 function planShoppingItems(plan){return (plan?.shopping||[]).flatMap(group=>group.items.map(item=>({group,item,id:shoppingItemId(group,item)})))}
@@ -60,8 +57,8 @@ function renderPlanShoppingInto(selector,plan){
 function renderPlanShoppingViews(){
   state.checked.plan=state.checked.plan||{};
   if(!activePlan){
-    $('#planShoppingGroups').innerHTML='<article class="info-card">Aktueller Sparplan ist nicht verfügbar.</article>';
-    $('#shoppingGroups').innerHTML='<article class="info-card">Aktueller Sparplan ist nicht verfügbar.</article>';
+    $('#planShoppingGroups').innerHTML='<article class="info-card">Aktueller Wochenplan ist nicht verfügbar.</article>';
+    $('#shoppingGroups').innerHTML='<article class="info-card">Aktueller Wochenplan ist nicht verfügbar.</article>';
     $('#shoppingWeekLabel').textContent='–';
     $('#shoppingTotal').textContent='–';
     $('#shoppingDone').textContent='0 / 0';
@@ -84,7 +81,7 @@ function renderShopping(){
   renderPlanShoppingViews();
   const meta=state.priceMeta;
   $('#priceStatus').className='status '+(activePlan?'success':'');
-  $('#priceStatus').textContent=activePlan?`Preisquelle: ${meta.source}${meta.updated?' · aktualisiert '+new Date(meta.updated).toLocaleString('de-DE'):''}`:'Aktueller Sparplan ist nicht verfügbar.';
+  $('#priceStatus').textContent=activePlan?`Preisquelle: ${meta.source}${meta.updated?' · aktualisiert '+new Date(meta.updated).toLocaleString('de-DE'):''}`:'Aktueller Wochenplan ist nicht verfügbar.';
 }
 function shoppingClipboardText(plan){
   return planShoppingItems(plan).map(({item})=>{
@@ -98,15 +95,6 @@ function renderCurrentPlan(plan){
   $('#dietaryExclusions').value=savedExclusions;
   state.settings.excludedIngredients=savedExclusions;
   $('#planNotice').textContent=plan.notice||`Erstellt ${new Date(plan.generatedAt).toLocaleString('de-DE')}`;
-  $('#sourceStatus').innerHTML=(plan.sources||[]).map(source=>{
-    const visual=sourceVisual(source);
-    const regular=Number.isFinite(source.regularPriceCount)?` · ${source.regularPriceCount} benötigte Normalpreise`:'';
-    return `<a class="source-card ${visual.className}" href="${source.url}" target="_blank" rel="noreferrer"><span>${visual.label}</span><strong>${source.market}</strong><small>gültig bis ${new Date(source.validUntil+'T12:00:00').toLocaleDateString('de-DE')} · ${source.coverage}${regular}</small></a>`
-  }).join('');
-  const rec=plan.recommendation;
-  const comparison=rec.publishedNormalPriceTotal>0?`<br>${euro(rec.publishedSavings)} Ersparnis bei ${rec.normalPriceCoverage}% preislich vergleichbaren Angebotspositionen`:'';
-  const checkedRegular=Number(rec.confirmedRegularTotal)||0;
-  $('#marketRecommendation').innerHTML=`<div><span class="eyebrow">HEUTIGE EMPFEHLUNG</span><h3>${rec.market}</h3><p>${rec.summary}</p><small>${rec.qualityNote}</small></div><div class="recommendation-price"><strong>${euro(rec.estimatedTotal)}</strong><span>davon ${euro(rec.confirmedOfferTotal)} bestätigte Angebote<br>${euro(checkedRegular)} öffentlich geprüfte Normalpreise<br>${euro(rec.estimatedNormalPriceTotal)} noch geschätzt${comparison}</span></div>`;
   $('#weekendPlan').innerHTML=plan.weekend.map(planDayCard).join('');
   $('#nextWeekPlan').innerHTML=plan.nextWeek.map(planDayCard).join('');
   state.priceMeta={source:sourceStatusLabel(plan.sources||[]),updated:plan.generatedAt};
@@ -116,16 +104,8 @@ function renderCurrentPlan(plan){
   bindRecipeOpen()
 }
 function renderCurrentPlanBySchema(plan){if(plan&&plan.schemaVersion===5){if(knusprHandle&&knusprHandle.renderPlan)knusprHandle.renderPlan(plan);return}renderCurrentPlan(plan)}
-async function loadCurrentPlan(){try{let response=await fetch('/api/current-plan');if(!response.ok)throw new Error();renderCurrentPlanBySchema(await response.json())}catch{try{const response=await fetch('./server/current-plan.json');renderCurrentPlanBySchema(await response.json())}catch{$('#planNotice').textContent='Sparplan konnte nicht geladen werden.'}}}
-$('#runWeeklyPlan').onclick=async()=>{const button=$('#runWeeklyPlan');button.disabled=true;button.textContent='Angebote werden geprüft …';try{const response=await fetch('/api/refresh',{method:'POST',headers:authHeaders({'content-type':'application/json'}),body:planningBody()});const result=await response.json();if(!response.ok)throw new Error(result.error||'Aktualisierung fehlgeschlagen');renderCurrentPlan(result);toast('Sparplan aktualisiert')}catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='Angebote neu laden'}};
-$('#rerollPlan').onclick=async()=>{const button=$('#rerollPlan');button.disabled=true;button.textContent='Würfelt …';try{const response=await fetch('/api/regenerate',{method:'POST',headers:authHeaders({'content-type':'application/json'}),body:planningBody()});const result=await response.json();if(!response.ok)throw new Error(result.error||'Neuberechnung fehlgeschlagen');renderCurrentPlan(result);toast('Neue Rezepte mit euren Vorgaben ausgewählt')}catch(error){toast(error.message)}finally{button.disabled=false;button.textContent='Rezepte neu würfeln'}};
-$('#applyExclusions').onclick=()=>$('#rerollPlan').click();
-let retailerImportMarket='';
+async function loadCurrentPlan(){try{let response=await fetch('/api/current-plan');if(!response.ok)throw new Error();renderCurrentPlanBySchema(await response.json())}catch{try{const response=await fetch('./server/current-plan.json');renderCurrentPlanBySchema(await response.json())}catch{$('#planNotice').textContent='Wochenplan konnte nicht geladen werden.'}}}
+$('#applyExclusions').onclick=()=>$('#generateKnusprPlan').click();
 function authHeaders(extra={}){const headers={...extra};if(state.settings.refreshToken)headers.authorization='Bearer '+state.settings.refreshToken;return headers}
-function chooseRetailerHtml(market){retailerImportMarket=market;$('#retailerHtmlFile').value='';$('#retailerHtmlFile').click()}
-$('#importReweHtml').onclick=()=>chooseRetailerHtml('REWE Eching');
-$('#importEdekaHtml').onclick=()=>chooseRetailerHtml('EDEKA Morsestraße');
-$('#importKauflandHtml').onclick=()=>chooseRetailerHtml('Kaufland Lohhof');
-$('#retailerHtmlFile').onchange=async event=>{const file=event.target.files[0];if(!file||!retailerImportMarket)return;const buttons=[$('#importReweHtml'),$('#importEdekaHtml'),$('#importKauflandHtml')];buttons.forEach(button=>button.disabled=true);$('#planNotice').textContent=`${retailerImportMarket}: gespeicherte Chrome-Seite wird ausgewertet und der Plan neu berechnet …`;try{const response=await fetch('/api/import-offers',{method:'POST',headers:authHeaders({'content-type':'application/json'}),body:planningBody({market:retailerImportMarket,html:await file.text()})});const imported=await response.json();if(!response.ok)throw new Error(imported.error||'Import fehlgeschlagen');if(!imported.plan)throw new Error('Server hat keinen neuen Sparplan geliefert');renderCurrentPlan(imported.plan);toast(`${imported.count} Angebote übernommen und neu geplant`)}catch(error){$('#planNotice').textContent=`Import fehlgeschlagen: ${error.message}`;toast(error.message)}finally{buttons.forEach(button=>button.disabled=false);event.target.value='';retailerImportMarket=''}};
-function init(){document.body.classList.toggle('dark',state.dark);$('#heroRecipeCount').textContent=RECIPES.length;$('#postalCode').value=state.settings.postalCode;$('#marketId').value=state.settings.marketId;$('#priceEndpoint').value=state.settings.endpoint;$('#refreshToken').value=state.settings.refreshToken||'';$('#dietaryExclusions').value=state.settings.excludedIngredients||'';const cats=[...new Set(RECIPES.map(r=>r.cat))].sort();$('#categoryFilter').innerHTML+cats.map(c=>`<option value="${c}">${c}</option>`).join('');$('#recipeSearch').oninput=renderRecipes;$('#categoryFilter').onchange=renderRecipes;$('#favoritesOnly').onchange=renderRecipes;renderWeek();renderRecipes();renderShopping();renderPrep();if(window.KNUSPR_API&&window.KNUSPR_UI)knusprHandle=window.KNUSPR_UI.init({api:window.KNUSPR_API.createKnusprApi({authHeaders}),document});loadCurrentPlan();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js')}
+function init(){document.body.classList.toggle('dark',state.dark);$('#refreshToken').value=state.settings.refreshToken||'';$('#dietaryExclusions').value=state.settings.excludedIngredients||'';const cats=[...new Set(RECIPES.map(r=>r.cat))].sort();$('#categoryFilter').innerHTML+cats.map(c=>`<option value="${c}">${c}</option>`).join('');$('#recipeSearch').oninput=renderRecipes;$('#categoryFilter').onchange=renderRecipes;$('#favoritesOnly').onchange=renderRecipes;renderWeek();renderRecipes();renderShopping();renderPrep();if(window.KNUSPR_API&&window.KNUSPR_UI)knusprHandle=window.KNUSPR_UI.init({api:window.KNUSPR_API.createKnusprApi({authHeaders}),document});loadCurrentPlan();if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js')}
 init();

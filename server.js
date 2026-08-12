@@ -157,9 +157,6 @@ function readDefaultPlan() {
 
 function createServer(options = {}) {
   const loadPlan = options.loadPlan || readDefaultPlan;
-  const refresh = options.refresh || (async params => require('./server/refresh').refreshPlan(params));
-  const regenerate = options.regenerate || (async params => require('./server/refresh').regeneratePlan(params));
-  const importOffers = options.importOffers || (payload => require('./server/refresh').importOfferHtml(payload));
   const refreshToken = options.refreshToken ?? process.env.REFRESH_TOKEN ?? '';
   const appOrigin = options.appOrigin || process.env.APP_ORIGIN || 'http://localhost:8080';
   const runtime = options.runtime || createRuntime({
@@ -302,37 +299,6 @@ function createServer(options = {}) {
       try {
         const plan = await currentPlan();
         return sendJson(res, 200, { generatedAt: plan.generatedAt, sources: plan.sources || [] });
-      } catch (error) {
-        return sendDomainError(res, error);
-      }
-    }
-    if (req.method === 'POST' && url.pathname === '/api/refresh') {
-      if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Aktualisierung nicht erlaubt');
-      try {
-        return sendJson(res, 200, await refresh(await requestJson(req, res)));
-      } catch (error) {
-        return sendDomainError(res, error);
-      }
-    }
-    if (req.method === 'POST' && url.pathname === '/api/import-offers') {
-      if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Import nicht erlaubt');
-      try {
-        const payload = await requestJson(req, res);
-        const imported = await importOffers(payload);
-        const current = loadPlan();
-        const plan = await refresh({
-          variation: (Number(current.planRevision) || 0) + 1,
-          excludedIngredients: payload.excludedIngredients
-        });
-        return sendJson(res, 200, { ...imported, plan });
-      } catch (error) {
-        return sendDomainError(res, error);
-      }
-    }
-    if (req.method === 'POST' && url.pathname === '/api/regenerate') {
-      if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Neuberechnung nicht erlaubt');
-      try {
-        return sendJson(res, 200, await regenerate(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }

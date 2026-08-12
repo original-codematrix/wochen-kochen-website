@@ -18,13 +18,16 @@ test('self-hosting files expose persistent data and required settings', () => {
   assert.match(dockerfile, /^FROM mcr\.microsoft\.com\/playwright:v1\.61\.0-noble$/m);
   assert.match(dockerfile, /npm ci --omit=dev/);
   assert.match(dockerfile, /^USER pwuser$/m);
-  assert.equal(pkg.scripts['browser:setup'], 'node server/browser-setup.js');
+  assert.equal(pkg.scripts.refresh, 'node server/knuspr-service.js');
+  assert.equal(pkg.scripts['browser:setup'], undefined);
 });
 
-test('README documents direct start and Friday/Saturday refresh jobs', () => {
+test('README documents direct start and Knuspr operator setup', () => {
   const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
   assert.match(readme, /npm start/);
-  assert.match(readme, /Freitagabend/);
-  assert.match(readme, /Samstagfrüh/);
-  assert.match(readme, /api\/refresh/);
+  assert.match(readme, /APP_ORIGIN/);
+  assert.match(readme, /KNUSPR_MCP_URL/);
+  assert.match(readme, /DATA_DIR/);
+  assert.match(readme, /REFRESH_TOKEN/);
+  assert.match(readme, /runtime-data/);
 });

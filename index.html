@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="description" content="Digitales Feierabend-Kochbuch mit 4-Wochen-Plan, Rezepten, Einkaufsliste, Meal-Prep und REWE-Preisimport für Eching.">
+  <meta name="description" content="Digitales Feierabend-Kochbuch mit 4-Wochen-Plan, Rezepten, Einkaufsliste, Meal-Prep und Knuspr-Wocheneinkauf für Eching.">
   <meta name="theme-color" content="#173b2c">
   <title>Unser Feierabend-Kochbuch</title>
   <link rel="manifest" href="manifest.webmanifest">
@@ -22,33 +22,18 @@
   <p>Gute Produkte, aktuelle Angebote und möglichst wenig Überschuss.</p>
   <button id="generateKnusprPlan" class="btn primary touch-target">Wochenplan erstellen</button>
 </section>
-<nav class="mobile-nav" aria-label="Hauptnavigation"><button class="active" data-mobile-view="plan">Sparplan</button><button data-mobile-view="week">Vorlagen</button><button data-mobile-view="recipes">Kochbuch</button><button data-mobile-view="shopping">Einkauf</button><button data-mobile-view="prep">Meal-Prep</button><button data-mobile-view="settings">Einstellungen</button></nav>
+<nav class="mobile-nav" aria-label="Hauptnavigation"><button class="active" data-mobile-view="plan">Wochenplan</button><button data-mobile-view="week">Vorlagen</button><button data-mobile-view="recipes">Kochbuch</button><button data-mobile-view="shopping">Einkauf</button><button data-mobile-view="prep">Meal-Prep</button><button data-mobile-view="settings">Einstellungen</button></nav>
 <div id="knusprFlow" class="knuspr-flow" aria-live="polite"></div>
 <div id="cartActionBar" class="cart-action-bar" hidden></div>
-<section class="hero">
-  <div class="hero-copy"><span class="eyebrow">3 MÄRKTE · WOCHENANGEBOTE · 100 REZEPTE</span><h1>Lecker essen.<br><em>Günstiger einkaufen.</em></h1><p>Eine Seite für aktuelle Angebote, Essensplan, Vorräte und Einkaufsliste – optimiert für REWE Eching, EDEKA Morsestraße und Kaufland Lohhof.</p><div class="hero-actions"><button class="btn primary" data-view-target="plan">Aktuellen Sparplan öffnen</button><button class="btn ghost" data-view-target="recipes">Kochbuch ansehen</button></div></div>
-  <div class="hero-panel"><div class="market-pill">REWE · EDEKA · KAUFLAND</div><div class="hero-stats"><div><strong>3</strong><span>Märkte</span></div><div><strong id="heroRecipeCount">35</strong><span>Rezepte</span></div><div><strong>1</strong><span>Einkaufsstopp bevorzugt</span></div></div><p>Kein Fisch und keine Meeresfrüchte. Tomaten und Champignons getrennt, Brokkoli weich. Mehrere Märkte nur, wenn die Ersparnis den Umweg rechtfertigt.</p></div>
-</section>
-<nav class="main-nav" aria-label="Hauptnavigation"><button class="active" data-view="plan">Sparplan</button><button data-view="week">Vorlagen</button><button data-view="recipes">Kochbuch</button><button data-view="shopping">Einkauf</button><button data-view="prep">Meal-Prep</button><button data-view="settings">Einstellungen</button></nav>
+<nav class="main-nav" aria-label="Hauptnavigation"><button class="active" data-view="plan">Wochenplan</button><button data-view="week">Vorlagen</button><button data-view="recipes">Kochbuch</button><button data-view="shopping">Einkauf</button><button data-view="prep">Meal-Prep</button><button data-view="settings">Einstellungen</button></nav>
 <main id="main">
 <section id="planView" class="view active">
-  <div class="section-head"><div><span class="eyebrow">HEUTE EINKAUFEN</span><h2>Aktueller Angebots-Sparplan</h2><p id="planNotice">Plan und Marktpreise werden geladen …</p></div><div class="button-row"><button id="rerollPlan" class="btn ghost">Rezepte neu würfeln</button><button id="runWeeklyPlan" class="btn primary">Angebote neu laden</button></div></div>
+  <div class="section-head"><div><span class="eyebrow">HEUTE EINKAUFEN</span><h2>Aktueller Wochenplan</h2><p id="planNotice">Plan wird geladen …</p></div></div>
   <aside class="preference-bar">
     <label for="dietaryExclusions"><strong>Was soll nicht in den Plan?</strong><span>Kommagetrennt, zum Beispiel Milch, Pilze oder Schwein. „Milch“ schließt alle Milchprodukte ein.</span></label>
     <input id="dietaryExclusions" type="text" placeholder="z. B. Milch, Pilze">
     <button id="applyExclusions" class="btn primary">Vorgaben anwenden</button>
   </aside>
-  <aside class="browser-import">
-    <div><strong>Wenn der Händler den Server blockiert:</strong><span>Angebotsseite im normalen Chrome öffnen, vollständig laden und mit Strg/⌘+S als „Webseite, nur HTML“ speichern. Die Datei hier auswählen.</span></div>
-    <div class="button-row">
-      <button id="importReweHtml" class="btn ghost">REWE-HTML</button>
-      <button id="importEdekaHtml" class="btn ghost">EDEKA-HTML</button>
-      <button id="importKauflandHtml" class="btn ghost">Kaufland-HTML</button>
-      <input id="retailerHtmlFile" type="file" accept=".html,.htm,text/html" hidden>
-    </div>
-  </aside>
-  <div id="sourceStatus" class="source-grid" aria-live="polite"></div>
-  <article id="marketRecommendation" class="market-recommendation"><p>Empfehlung wird geladen …</p></article>
   <div class="plan-columns">
     <section><div class="mini-head"><span class="eyebrow">KURZPLAN</span><h3>Heute bis Sonntag</h3></div><div id="weekendPlan" class="compact-plan"></div></section>
     <section><div class="mini-head"><span class="eyebrow">FOLGEWOCHE</span><h3>Nächste Woche</h3></div><div id="nextWeekPlan" class="compact-plan"></div></section>
@@ -60,9 +45,9 @@
 <section id="shoppingView" class="view">
   <div class="section-head">
     <div>
-      <span class="eyebrow">AKTUELLER SPARPLAN</span>
+      <span class="eyebrow">AKTUELLER WOCHENPLAN</span>
       <h2>Einkaufsliste</h2>
-      <p>Identisch mit dem aktuellen Angebots-Sparplan – vollständig mit Mengen, Preisstatus und Ladenempfehlung.</p>
+      <p>Identisch mit dem aktuellen Wochenplan – vollständig mit Mengen, Preisstatus und Ladenempfehlung.</p>
     </div>
     <div class="button-row">
       <button id="refreshPrices" class="btn primary">Quellenstatus prüfen</button>
@@ -70,20 +55,20 @@
       <button id="printShopping" class="btn subtle">Drucken</button>
     </div>
   </div>
-  <div id="priceStatus" class="status">Aktueller Sparplan wird geladen …</div>
+  <div id="priceStatus" class="status">Aktueller Wochenplan wird geladen …</div>
   <div class="shopping-summary">
     <div><span>Empfohlener Einkauf</span><strong id="shoppingWeekLabel">–</strong></div>
     <div><span>Geschätzte Summe</span><strong id="shoppingTotal">–</strong></div>
     <div><span>Abgehakt</span><strong id="shoppingDone">0 / 0</strong></div>
     <button id="resetShopping" class="link danger">Zurücksetzen</button>
   </div>
-  <div id="shoppingGroups" class="shopping-groups"><article class="info-card">Aktueller Sparplan wird geladen …</article></div>
+  <div id="shoppingGroups" class="shopping-groups"><article class="info-card">Aktueller Wochenplan wird geladen …</article></div>
   <p class="fineprint">Angebot = veröffentlichter Preis. Schätzung = öffentlich nicht vollständig verfügbarer Normalpreis; bitte am Regal beziehungsweise an der Frischetheke prüfen. Vorräte vorher abziehen.</p>
 </section>
 <section id="prepView" class="view"><div class="section-head"><div><span class="eyebrow">DYNAMISCHE SAMSTAGSROUTINE</span><h2 id="prepTitle">Meal-Prep für euren Plan</h2><p id="prepSummary">Wird passend zum aktuellen Angebotsplan berechnet.</p></div><button id="resetPrep" class="btn subtle">Zurücksetzen</button></div><div class="prep-layout"><div id="prepTimeline" class="timeline"></div><aside class="aside-stack"><article class="info-card"><h3>Eure Küchenregeln</h3><ul><li>Tomaten separat für deine Freundin.</li><li>Champignons nur in einer Extra-Pfanne.</li><li>Brokkoli bewusst weich garen.</li><li>Low Carb: weniger Beilage, mehr Protein und Gemüse.</li><li>Maximal zwei Tage dasselbe Gericht.</li></ul></article><article class="info-card"><h3>Richtig einfrieren</h3><p>Gerichte vollständig abkühlen lassen, portionsweise beschriften und möglichst innerhalb von drei Monaten verbrauchen.</p></article></aside></div></section>
-<section id="settingsView" class="view"><div class="section-head"><div><span class="eyebrow">LOKALE EINSTELLUNGEN</span><h2>Einstellungen & Datensicherung</h2><p>Favoriten, Häkchen und Preisimporte bleiben in eurem Browser.</p></div></div><div class="settings-grid"><article class="info-card"><h3>Server & REWE-Markt</h3><label>Postleitzahl<input id="postalCode" value="85386"></label><label>Markt-ID<input id="marketId" value="440303"></label><label>Preis-Endpunkt<input id="priceEndpoint" value="/api/rewe-prices"></label><label>Aktualisierungs-Token<input id="refreshToken" type="password" autocomplete="off" placeholder="wie REFRESH_TOKEN auf dem Server"></label><button id="saveSettings" class="btn primary">Speichern</button></article><article class="info-card"><h3>Daten sichern</h3><p>Favoriten, Einkaufsstände und importierte Preise als JSON sichern.</p><div class="stack"><button id="exportData" class="btn ghost">Daten exportieren</button><button id="importData" class="btn subtle">Daten importieren</button><input id="dataFile" type="file" accept="application/json" hidden><button id="clearData" class="link danger">Alle lokalen Daten löschen</button></div></article><article class="info-card"><h3>Wochenlauf</h3><p>Der private Node-Server prüft REWE Eching, EDEKA Morsestraße und Kaufland Lohhof. Freitagabend und Samstagfrüh kann derselbe geschützte Aktualisierungslauf automatisch gestartet werden.</p></article><article class="info-card"><h3>Knuspr-Verbindung</h3><p>Verbindet euren Knuspr-Account per OAuth, um Wochenangebote zu laden und den Warenkorb zu befüllen.</p><div id="knusprConnectionStatus" class="status">Verbindungsstatus wird geladen …</div><div class="button-row"><button id="connectKnuspr" class="btn primary">Mit Knuspr verbinden</button><button id="disconnectKnuspr" class="btn subtle" hidden>Verbindung trennen</button></div></article><article class="info-card"><h3>Zusätzliche Artikel</h3><p>Wiederkehrende Artikel wie Getränke, Vorrat oder Haushaltsware, die bei jedem Knuspr-Einkauf automatisch ergänzt werden.</p><form id="additionalItemForm" class="additional-form"><label>Bezeichnung<input id="additionalItemLabel" type="text" required placeholder="z. B. Mineralwasser"></label><label>Suchbegriff<input id="additionalItemSearchTerm" type="text" required placeholder="Suchbegriff bei Knuspr"></label><label>Menge<input id="additionalItemQuantity" type="number" min="0.01" step="0.01" value="1" required></label><label>Kategorie<select id="additionalItemCategory"><option value="getraenke">Getränke</option><option value="vorrat">Vorrat</option><option value="haushalt">Haushalt</option></select></label><button type="submit" id="saveAdditionalItems" class="btn primary">Hinzufügen</button></form><ul id="additionalItems" class="additional-items"></ul></article></div></section>
+<section id="settingsView" class="view"><div class="section-head"><div><span class="eyebrow">LOKALE EINSTELLUNGEN</span><h2>Einstellungen & Datensicherung</h2><p>Favoriten, Häkchen und Preisimporte bleiben in eurem Browser.</p></div></div><div class="settings-grid"><article class="info-card"><h3>Server-Verbindung</h3><label>Aktualisierungs-Token<input id="refreshToken" type="password" autocomplete="off" placeholder="wie REFRESH_TOKEN auf dem Server"></label><button id="saveSettings" class="btn primary">Speichern</button></article><article class="info-card"><h3>Daten sichern</h3><p>Favoriten, Einkaufsstände und importierte Preise als JSON sichern.</p><div class="stack"><button id="exportData" class="btn ghost">Daten exportieren</button><button id="importData" class="btn subtle">Daten importieren</button><input id="dataFile" type="file" accept="application/json" hidden><button id="clearData" class="link danger">Alle lokalen Daten löschen</button></div></article><article class="info-card"><h3>Knuspr-Verbindung</h3><p>Verbindet euren Knuspr-Account per OAuth, um Wochenangebote zu laden und den Warenkorb zu befüllen.</p><div id="knusprConnectionStatus" class="status">Verbindungsstatus wird geladen …</div><div class="button-row"><button id="connectKnuspr" class="btn primary">Mit Knuspr verbinden</button><button id="disconnectKnuspr" class="btn subtle" hidden>Verbindung trennen</button></div></article><article class="info-card"><h3>Zusätzliche Artikel</h3><p>Wiederkehrende Artikel wie Getränke, Vorrat oder Haushaltsware, die bei jedem Knuspr-Einkauf automatisch ergänzt werden.</p><form id="additionalItemForm" class="additional-form"><label>Bezeichnung<input id="additionalItemLabel" type="text" required placeholder="z. B. Mineralwasser"></label><label>Suchbegriff<input id="additionalItemSearchTerm" type="text" required placeholder="Suchbegriff bei Knuspr"></label><label>Menge<input id="additionalItemQuantity" type="number" min="0.01" step="0.01" value="1" required></label><label>Kategorie<select id="additionalItemCategory"><option value="getraenke">Getränke</option><option value="vorrat">Vorrat</option><option value="haushalt">Haushalt</option></select></label><button type="submit" id="saveAdditionalItems" class="btn primary">Hinzufügen</button></form><ul id="additionalItems" class="additional-items"></ul></article></div></section>
 </main>
 <dialog id="recipeDialog"><button id="closeDialog" class="dialog-close" aria-label="Schließen">×</button><div id="dialogContent"></div></dialog><dialog id="knusprAlternativesDialog" aria-labelledby="knusprAltTitle"></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
-<footer><div><strong>Unser Feierabend-Kochbuch</strong><span>Offline nutzbar · hostbar · lokal gespeichert</span></div><small>Angebote, Chrome-Importe und Schätzpreise werden eindeutig gekennzeichnet.</small></footer>
+<footer><div><strong>Unser Feierabend-Kochbuch</strong><span>Offline nutzbar · hostbar · lokal gespeichert</span></div><small>Angebote und Schätzpreise werden eindeutig gekennzeichnet.</small></footer>
 <script src="recipe-seasonings.js"></script><script src="recipe-expansion.js"></script><script src="data.js"></script><script src="knuspr-api.js"></script><script src="knuspr-ui.js"></script><script src="app.js"></script>
 </body></html>
