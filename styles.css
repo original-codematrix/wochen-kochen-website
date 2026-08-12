@@ -5,3 +5,14 @@
 .preference-bar{display:grid;grid-template-columns:minmax(250px,1fr) minmax(220px,420px) auto;gap:14px;align-items:center;margin-bottom:16px;padding:17px 19px;border:1px solid var(--line);border-radius:20px;background:var(--surface)}.preference-bar label strong,.preference-bar label span{display:block}.preference-bar label span{color:var(--muted);font-size:.85rem}.preference-bar input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink)}@media(max-width:760px){.preference-bar{grid-template-columns:1fr}.preference-bar .btn{width:100%}}
 .price-tag .reference-price{display:block;margin-top:2px;color:var(--muted);font-weight:600;font-size:.68rem}.price-tag .reference-price::first-line{text-decoration:none}
 .seasoning-tip{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface2);margin-top:18px}.seasoning-tip strong{color:var(--green2)}.seasoning-tip p{margin:6px 0 0}
+/* Knuspr-Verbindung & zusätzliche Artikel */
+.status.pending{border:1px solid var(--accent)}
+.info-card select{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:13px;outline:none;font:inherit}
+.additional-form{display:flex;flex-direction:column}
+.additional-items{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.additional-item{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
+.additional-item.paused{opacity:.6}
+.additional-item small{display:block;color:var(--muted)}
+.additional-items .empty{color:var(--muted);padding:6px 0}
+.item-actions{display:flex;gap:6px;flex-wrap:wrap}
+.item-actions button{padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:.78rem;cursor:pointer}
