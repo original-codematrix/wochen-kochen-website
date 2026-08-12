@@ -1,6 +1,6 @@
-// Upgrade to kochbuch-v16: seasonings stay recipe-only, quantity-less staples
-// auto-resolve to a product, and the preview shows human units (g/ml/Stück).
-const CACHE = 'kochbuch-v16';
+// Upgrade to kochbuch-v17: the weekly-plan dinner cards open the full recipe
+// (ingredients incl. seasonings) on tap.
+const CACHE = 'kochbuch-v17';
 const ASSETS = [
   './',
   './index.html',

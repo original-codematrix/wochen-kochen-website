@@ -121,3 +121,11 @@ test('getAdditionalItems still accepts a defensive { items: [...] } wrapped succ
   });
   assert.deepEqual(await api.getAdditionalItems(), wrapped);
 });
+
+test('weekly-plan dinner cards open the full recipe (ingredients + seasonings) on tap', () => {
+  // Each plan day chip renders a button carrying its recipe id ...
+  assert.match(uiSource, /data-recipe-open="\$\{escapeAttribute\(day\.recipeId\)\}"/);
+  // ... and tapping it delegates to app.js's page-global openRecipe.
+  assert.match(uiSource, /\[data-recipe-open\]/);
+  assert.match(uiSource, /window\.openRecipe/);
+});

@@ -116,7 +116,9 @@
     const planDays = (plan && plan.days) || [];
     const openCount = preview ? preview.lines.filter(line => !line.removed && line.status !== 'selected').length : 0;
     return `<div class="plan-summary"><span class="eyebrow">EUER WOCHENPLAN</span><h2>Sieben Abende, ein Warenkorb</h2><ul class="plan-days">${planDays.map(day => (
-      `<li class="plan-day-chip"><span class="day-label">${escapeHtml(day.day)}</span><strong>${escapeHtml(day.name)}</strong></li>`
+      day.recipeId
+        ? `<li class="plan-day-chip"><button type="button" class="plan-day-open touch-target" data-recipe-open="${escapeAttribute(day.recipeId)}"><span class="day-label">${escapeHtml(day.day)}</span><strong>${escapeHtml(day.name)}</strong><span class="plan-day-cta">Rezept &amp; Gewürze →</span></button></li>`
+        : `<li class="plan-day-chip"><span class="day-label">${escapeHtml(day.day)}</span><strong>${escapeHtml(day.name)}</strong></li>`
     )).join('')}</ul><div class="summary-grid"><div><span>Abende</span><strong>${escapeHtml(planDays.length)}</strong></div><div><span>Portionen</span><strong>${escapeHtml((plan && plan.servings) || 2)}</strong></div><div><span>Voraussichtlicher Warenwert</span><strong>${preview ? euro(preview.estimatedTotal) : '–'}</strong></div><div><span>Offene Positionen</span><strong>${openCount}</strong></div></div><button type="button" id="reviewKnusprCart" class="btn primary touch-target">Warenkorb prüfen</button></div>`;
   }
 
@@ -371,6 +373,14 @@
     function bindFlowEvents() {
       const reviewBtn = $('#reviewKnusprCart');
       if (reviewBtn) reviewBtn.onclick = () => { flow.view = 'cart'; renderFlow(); };
+      // Open the full recipe (ingredients incl. seasonings + steps) for a plan
+      // dinner. openRecipe lives in app.js and is a page-global function.
+      $$('[data-recipe-open]').forEach((btn) => {
+        btn.onclick = () => {
+          const recipeId = btn.dataset.recipeOpen;
+          if (recipeId && typeof window.openRecipe === 'function') window.openRecipe(recipeId);
+        };
+      });
       const backBtn = $('#backToSummary');
       if (backBtn) backBtn.onclick = () => { flow.view = 'summary'; renderFlow(); };
       const applyBtn = $('#applyKnusprCart');
