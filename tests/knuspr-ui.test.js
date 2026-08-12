@@ -122,6 +122,11 @@ test('getAdditionalItems still accepts a defensive { items: [...] } wrapped succ
   assert.deepEqual(await api.getAdditionalItems(), wrapped);
 });
 
+test('each "Wochenplan erstellen" click rerolls to a different week via an incrementing variation', () => {
+  assert.match(uiSource, /planVariation \+= 1/);
+  assert.match(uiSource, /generatePlan\(\{\s*excludedIngredients,\s*variation: planVariation\s*\}\)/);
+});
+
 test('weekly-plan dinner cards open the full recipe (ingredients + seasonings) on tap', () => {
   // Each plan day chip renders a button carrying its recipe id ...
   assert.match(uiSource, /data-recipe-open="\$\{escapeAttribute\(day\.recipeId\)\}"/);

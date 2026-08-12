@@ -185,6 +185,7 @@
     // partial, complete, offline. `view` toggles between the plan-ready
     // summary and the cart preview within the same container.
     const flow = { state: 'idle', view: 'summary', plan: null, preview: null, receipt: null, applying: false, priceUpdated: false };
+    let planVariation = 0;
     let applyInFlight = false;
     let lastAlternativesLineId = null;
 
@@ -475,13 +476,17 @@
     async function generatePlanHandler() {
       const btn = $('#generateKnusprPlan');
       if (btn) btn.disabled = true;
+      // Each click should reroll to a different week. The planner rotates its
+      // recipe selection by `variation`, so bump it every time instead of
+      // regenerating the identical (variation 0) plan.
+      planVariation += 1;
       flow.state = 'loading';
       renderFlow();
       try {
         const exclusionsField = $('#dietaryExclusions');
         const excludedIngredients = (exclusionsField ? exclusionsField.value : '')
           .split(/[,;\n]/).map(value => value.trim()).filter(Boolean);
-        const plan = await api.generatePlan({ excludedIngredients });
+        const plan = await api.generatePlan({ excludedIngredients, variation: planVariation });
         flow.plan = plan;
         flow.preview = plan.shoppingPreview;
         flow.receipt = null;
