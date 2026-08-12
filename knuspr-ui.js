@@ -100,10 +100,11 @@
     // Persists the full next state to the server and only ever stores the
     // server's validated echo back into local view state (never the
     // optimistic client-side array), per the "save only validated server
-    // responses" contract.
+    // responses" contract. api.saveAdditionalItems() itself throws if the
+    // response isn't a validated array, so there is no fallback here to the
+    // caller-supplied nextItems.
     async function persist(nextItems) {
-      const saved = await api.saveAdditionalItems(nextItems);
-      items = Array.isArray(saved) ? saved : nextItems;
+      items = await api.saveAdditionalItems(nextItems);
       renderItems();
       return items;
     }

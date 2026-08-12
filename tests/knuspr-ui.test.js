@@ -85,3 +85,39 @@ test('index.html loads the new Knuspr scripts', () => {
   assert.match(html, /src="knuspr-api\.js"/);
   assert.match(html, /src="knuspr-ui\.js"/);
 });
+
+function loadKnusprApi() {
+  delete require.cache[require.resolve('../knuspr-api.js')];
+  require('../knuspr-api.js');
+  return global.KNUSPR_API;
+}
+
+test('getAdditionalItems and saveAdditionalItems throw on a 200 response with a non-array body instead of falling back to optimistic client data', async () => {
+  const { createKnusprApi } = loadKnusprApi();
+  const okEmptyBody = async () => ({ ok: true, status: 200, json: async () => ({}) });
+
+  const readApi = createKnusprApi({ authHeaders: extra => extra, fetchImpl: okEmptyBody });
+  await assert.rejects(() => readApi.getAdditionalItems());
+
+  const optimistic = [{
+    id: 'local-only', label: 'Wasser', searchTerm: 'Mineralwasser',
+    quantity: 2, category: 'getraenke', enabled: true, pinnedProductId: null,
+  }];
+  const writeApi = createKnusprApi({ authHeaders: extra => extra, fetchImpl: okEmptyBody });
+  const rejection = await writeApi.saveAdditionalItems(optimistic).then(
+    value => ({ resolved: true, value }),
+    error => ({ resolved: false, error }),
+  );
+  assert.equal(rejection.resolved, false, 'must reject instead of resolving with the caller-supplied optimistic array');
+  assert.match(String(rejection.error && rejection.error.message), /ungültig/i);
+});
+
+test('getAdditionalItems still accepts a defensive { items: [...] } wrapped success body', async () => {
+  const { createKnusprApi } = loadKnusprApi();
+  const wrapped = [{ id: 'a', label: 'Kaffee', searchTerm: 'Kaffee', quantity: 1, category: 'vorrat', enabled: true, pinnedProductId: null }];
+  const api = createKnusprApi({
+    authHeaders: extra => extra,
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({ items: wrapped }) }),
+  });
+  assert.deepEqual(await api.getAdditionalItems(), wrapped);
+});
