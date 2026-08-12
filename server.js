@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const { applyPreview } = require('./server/knuspr/cart');
+const { validateAdditionalItems } = require('./server/knuspr/contracts');
 const { createRuntime } = require('./server/knuspr-service');
 
 const ROOT = __dirname;
@@ -16,6 +17,18 @@ const TYPES = {
   '.json': 'application/json; charset=utf-8',
   '.webmanifest': 'application/manifest+json; charset=utf-8'
 };
+const TRUSTED_DOMAIN_ERRORS = {
+  KNUSPR_CART_INPUT_INVALID: { status: 400, message: 'Warenkorbanfrage ist ungültig' },
+  KNUSPR_PREVIEW_CONFLICT: { status: 409, message: 'Vorschau ist veraltet' },
+};
+
+class TrustedHttpError extends Error {
+  constructor(code, message, statusCode = 400) {
+    super(message);
+    this.code = code;
+    this.statusCode = statusCode;
+  }
+}
 
 function sendJson(res, status, value) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });
@@ -28,50 +41,80 @@ function sendRedirect(res, location) {
 }
 
 function mutationAllowed(req, refreshToken, appOrigin = 'http://localhost:8080') {
-  const supplied = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  if (refreshToken) return supplied === refreshToken;
+  const authorization = String(req.headers.authorization || '');
+  const bearer = authorization.match(/^Bearer ([^\s]+)$/i);
+  const originAllowed = () => {
+    if (!req.headers.origin) return true;
+    try {
+      return req.headers.origin === new URL(appOrigin).origin;
+    } catch {
+      return false;
+    }
+  };
+  if (refreshToken) return Boolean(bearer && bearer[1] === refreshToken && originAllowed());
   if (!['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress)) return false;
-  if (!req.headers.origin) return true;
-  try {
-    return req.headers.origin === new URL(appOrigin).origin;
-  } catch {
-    return false;
-  }
+  return originAllowed();
 }
 
 function sendDomainError(res, error) {
-  const status = Number.isInteger(error && error.statusCode) && error.statusCode >= 400 && error.statusCode <= 599
-    ? error.statusCode
-    : 502;
-  const code = typeof (error && error.code) === 'string' && error.code.startsWith('KNUSPR_')
-    ? error.code
-    : null;
-  const message = status < 500 && error && typeof error.message === 'string' && error.message
-    ? error.message
-    : 'Knuspr-Anfrage fehlgeschlagen';
-  return sendJson(res, status, { error: message, ...(code ? { code } : {}) });
+  if (error instanceof TrustedHttpError) {
+    return sendJson(res, error.statusCode, { error: error.message, code: error.code });
+  }
+  const trusted = TRUSTED_DOMAIN_ERRORS[error && error.code];
+  if (trusted) return sendJson(res, trusted.status, { error: trusted.message, code: error.code });
+  return sendJson(res, 502, { error: 'Knuspr-Anfrage fehlgeschlagen' });
 }
 
 function readJson(req, limit = 20 * 1024 * 1024) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let size = 0;
+    let settled = false;
+    const fail = error => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    };
     req.on('data', chunk => {
+      if (settled) return;
       size += chunk.length;
       if (size > limit) {
-        reject(new Error('Datei ist zu groß'));
-        req.destroy();
+        fail(new TrustedHttpError('HTTP_BODY_TOO_LARGE', 'Anfrage ist zu groß'));
       } else chunks.push(chunk);
     });
     req.on('end', () => {
+      if (settled) return;
       try {
         const body = Buffer.concat(chunks).toString('utf8').trim();
         resolve(body ? JSON.parse(body) : {});
       }
-      catch { reject(new Error('Ungültiges JSON')); }
+      catch { fail(new TrustedHttpError('HTTP_INVALID_JSON', 'Ungültiges JSON')); }
     });
-    req.on('error', reject);
+    req.on('error', error => fail(error));
   });
+}
+
+function trustedAdditionalItems(value) {
+  try {
+    return validateAdditionalItems(value);
+  } catch (error) {
+    throw new TrustedHttpError('KNUSPR_INPUT_INVALID', error.message);
+  }
+}
+
+function authorizationUrl(value) {
+  try {
+    if (typeof value !== 'string' || !value.trim()) throw new Error('missing URL');
+    const url = new URL(value);
+    if (url.protocol !== 'https:' || !url.hostname || url.username || url.password) throw new Error('unsafe URL');
+    return url.toString();
+  } catch {
+    throw new TrustedHttpError(
+      'KNUSPR_AUTHORIZATION_URL_INVALID',
+      'Knuspr-Autorisierungsadresse ist ungültig',
+      502,
+    );
+  }
 }
 
 function resolvePlanFile(options = {}) {
@@ -112,6 +155,11 @@ function createServer(options = {}) {
   const cart = knuspr.cart || {
     applyPreview: input => applyPreview({ ...input, adapter: runtime.adapter, store: runtime.store }),
   };
+  const jsonLimit = options.jsonLimit ?? 20 * 1024 * 1024;
+
+  function requestJson(req) {
+    return readJson(req, jsonLimit);
+  }
 
   async function currentPlan() {
     const saved = await service.getPlan();
@@ -139,8 +187,8 @@ function createServer(options = {}) {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Knuspr-Verbindung nicht erlaubt');
       try {
         const result = await client.beginAuthorization();
-        return sendJson(res, 200, typeof result.authorizationUrl === 'string'
-          ? { authorizationUrl: result.authorizationUrl }
+        return sendJson(res, 200, result && result.authorizationUrl !== undefined
+          ? { authorizationUrl: authorizationUrl(result.authorizationUrl) }
           : { connected: result && result.connected === true });
       } catch (error) {
         return sendDomainError(res, error);
@@ -173,7 +221,7 @@ function createServer(options = {}) {
     if (req.method === 'PUT' && url.pathname === '/api/additional-items') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Zusatzliste nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.saveAdditionalItems(await readJson(req)));
+        return sendJson(res, 200, await service.saveAdditionalItems(trustedAdditionalItems(await requestJson(req))));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -181,7 +229,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/plan/generate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Planerstellung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.generatePlan(await readJson(req)));
+        return sendJson(res, 200, await service.generatePlan(await requestJson(req)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -189,7 +237,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/plan/regenerate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Planerstellung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.regeneratePlan(await readJson(req)));
+        return sendJson(res, 200, await service.regeneratePlan(await requestJson(req)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -211,7 +259,7 @@ function createServer(options = {}) {
     if (req.method === 'PATCH' && url.pathname === '/api/preview') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Vorschauänderung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.updatePreviewLine(await readJson(req)));
+        return sendJson(res, 200, await service.updatePreviewLine(await requestJson(req)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -219,7 +267,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/knuspr/cart/apply') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Warenkorbänderung nicht erlaubt');
       try {
-        return sendJson(res, 200, await cart.applyPreview(await readJson(req)));
+        return sendJson(res, 200, await cart.applyPreview(await requestJson(req)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -235,15 +283,15 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/refresh') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Aktualisierung nicht erlaubt');
       try {
-        return sendJson(res, 200, await refresh(await readJson(req)));
+        return sendJson(res, 200, await refresh(await requestJson(req)));
       } catch (error) {
-        return sendJson(res, 502, { error: error.message });
+        return sendDomainError(res, error);
       }
     }
     if (req.method === 'POST' && url.pathname === '/api/import-offers') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Import nicht erlaubt');
       try {
-        const payload = await readJson(req);
+        const payload = await requestJson(req);
         const imported = await importOffers(payload);
         const current = loadPlan();
         const plan = await refresh({
@@ -252,15 +300,15 @@ function createServer(options = {}) {
         });
         return sendJson(res, 200, { ...imported, plan });
       } catch (error) {
-        return sendJson(res, 400, { error: error.message });
+        return sendDomainError(res, error);
       }
     }
     if (req.method === 'POST' && url.pathname === '/api/regenerate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Neuberechnung nicht erlaubt');
       try {
-        return sendJson(res, 200, await regenerate(await readJson(req)));
+        return sendJson(res, 200, await regenerate(await requestJson(req)));
       } catch (error) {
-        return sendJson(res, 502, { error: error.message });
+        return sendDomainError(res, error);
       }
     }
     if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -293,4 +341,12 @@ if (require.main === module) {
   });
 }
 
-module.exports = { createServer, mutationAllowed, resolvePlanFile, sendDomainError };
+module.exports = {
+  TrustedHttpError,
+  authorizationUrl,
+  createServer,
+  mutationAllowed,
+  readJson,
+  resolvePlanFile,
+  sendDomainError,
+};

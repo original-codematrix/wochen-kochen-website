@@ -174,6 +174,93 @@ test('tokenless local mutations reject cross-site browser origins', async () => 
   }, { refreshToken: '' });
 });
 
+test('configured mutation authorization requires an exact bearer token and trusted browser origin', async () => {
+  await withServer(async (base, calls) => {
+    for (const authorization of ['secret', 'Basic secret', 'Bearer secret trailing']) {
+      const response = await fetch(`${base}/api/knuspr/connect`, {
+        method: 'POST',
+        headers: { authorization },
+      });
+      assert.equal(response.status, 403, authorization);
+    }
+
+    const foreign = await fetch(`${base}/api/knuspr/connect`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer secret', origin: 'https://evil.example' },
+    });
+    assert.equal(foreign.status, 403);
+
+    const sameOrigin = await json(base, '/api/knuspr/connect', {
+      method: 'POST',
+      headers: { authorization: 'Bearer secret', origin: 'http://localhost:8080' },
+    });
+    assert.equal(sameOrigin.response.status, 200);
+    assert.equal(calls.filter(call => call[0] === 'connect').length, 1);
+  });
+});
+
+test('malformed and oversized request bodies plus local validation errors return safe client errors', async () => {
+  await withServer(async (base) => {
+    const malformed = await json(base, '/api/plan/generate', {
+      method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: '{',
+    });
+    assert.equal(malformed.response.status, 400);
+    assert.deepEqual(malformed.body, { error: 'Ungültiges JSON', code: 'HTTP_INVALID_JSON' });
+
+    const invalidItems = await json(base, '/api/additional-items', {
+      method: 'PUT', headers: { ...auth, 'content-type': 'application/json' },
+      body: JSON.stringify([{ ...ADDITIONAL_ITEMS[0], category: 'sonstiges' }]),
+    });
+    assert.equal(invalidItems.response.status, 400);
+    assert.deepEqual(invalidItems.body, { error: 'Ungültige Kategorie', code: 'KNUSPR_INPUT_INVALID' });
+  });
+
+  await withServer(async (base) => {
+    const oversized = await json(base, '/api/plan/generate', {
+      method: 'POST', headers: { ...auth, 'content-type': 'application/json' },
+      body: JSON.stringify({ excludedIngredients: ['zu-langer-Testwert'] }),
+    });
+    assert.equal(oversized.response.status, 400);
+    assert.deepEqual(oversized.body, { error: 'Anfrage ist zu groß', code: 'HTTP_BODY_TOO_LARGE' });
+  }, { jsonLimit: 10 });
+});
+
+test('untrusted provider errors never disclose their raw 4xx messages', async () => {
+  await withServer(async (base) => {
+    const response = await json(base, '/api/knuspr/status');
+    assert.equal(response.response.status, 502);
+    assert.deepEqual(response.body, { error: 'Knuspr-Anfrage fehlgeschlagen' });
+    assert.doesNotMatch(JSON.stringify(response.body), /mcp provider secret/i);
+  }, {
+    knuspr: {
+      client: {
+        async status() {
+          throw Object.assign(new Error('MCP provider secret'), { statusCode: 401, code: 'MCP_UNAUTHORIZED' });
+        },
+      },
+    },
+  });
+});
+
+test('connect rejects a non-HTTPS authorization URL from the upstream client', async () => {
+  await withServer(async (base) => {
+    const response = await json(base, '/api/knuspr/connect', { method: 'POST', headers: auth });
+    assert.equal(response.response.status, 502);
+    assert.deepEqual(response.body, {
+      error: 'Knuspr-Autorisierungsadresse ist ungültig',
+      code: 'KNUSPR_AUTHORIZATION_URL_INVALID',
+    });
+  }, {
+    knuspr: {
+      client: {
+        async beginAuthorization() {
+          return { authorizationUrl: 'http://auth.knuspr.example/authorize?state=state-1' };
+        },
+      },
+    },
+  });
+});
+
 test('Knuspr runtime configuration names the local origin and fixed MCP endpoint', () => {
   const config = fs.readFileSync(path.join(root, 'config.example.json'), 'utf8');
   const compose = fs.readFileSync(path.join(root, 'compose.yaml'), 'utf8');
