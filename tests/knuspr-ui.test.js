@@ -122,6 +122,11 @@ test('getAdditionalItems still accepts a defensive { items: [...] } wrapped succ
   assert.deepEqual(await api.getAdditionalItems(), wrapped);
 });
 
+test('a generated plan notifies the host so the meal-prep view follows the current week', () => {
+  assert.match(uiSource, /notifyPlan\s*=\s*typeof onPlan === 'function'/);
+  assert.match(uiSource, /notifyPlan\(plan\)/);
+});
+
 test('each "Wochenplan erstellen" click rerolls to a different week via an incrementing variation', () => {
   assert.match(uiSource, /planVariation \+= 1/);
   assert.match(uiSource, /generatePlan\(\{\s*excludedIngredients,\s*variation: planVariation\s*\}\)/);

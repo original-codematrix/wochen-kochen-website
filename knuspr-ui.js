@@ -169,7 +169,8 @@
     return `item-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   }
 
-  function init({ api, document: doc } = {}) {
+  function init({ api, document: doc, onPlan } = {}) {
+    const notifyPlan = typeof onPlan === 'function' ? onPlan : () => {};
     if (!api) throw new Error('KNUSPR_UI.init benötigt eine api-Instanz');
     const activeDocument = doc || window.document;
     if (!activeDocument) throw new Error('KNUSPR_UI.init benötigt ein document');
@@ -488,6 +489,7 @@
           .split(/[,;\n]/).map(value => value.trim()).filter(Boolean);
         const plan = await api.generatePlan({ excludedIngredients, variation: planVariation });
         flow.plan = plan;
+        notifyPlan(plan);
         flow.preview = plan.shoppingPreview;
         flow.receipt = null;
         flow.priceUpdated = false;
