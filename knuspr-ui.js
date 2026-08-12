@@ -135,7 +135,10 @@
       return offlineBanner + planSummaryMarkup(flow.plan, flow.preview);
     }
     const sections = groupLines((flow.preview && flow.preview.lines) || []);
-    const reconfirmBanner = flow.state === 'reconfirm-required'
+    // Shown whenever the last apply attempt came back changed, independent of
+    // whether the refreshed preview also reintroduced an unresolved line (in
+    // which case needs-review still wins for the apply button below).
+    const reconfirmBanner = flow.priceUpdated
       ? '<p class="status pending" role="status">Preis wurde aktualisiert. Bitte prüfen und erneut bestätigen.</p>'
       : '';
     const needsReviewBanner = flow.state === 'needs-review'
@@ -147,7 +150,9 @@
 
   function cartActionBarView(flow) {
     if (flow.view !== 'cart' || !flow.preview) return { hidden: true, html: '' };
-    const disabled = flow.applying || flow.state === 'needs-review';
+    // Terminal once complete: nothing left to submit, so the button must not
+    // invite a resend of an already-applied cart.
+    const disabled = flow.applying || flow.state === 'needs-review' || flow.state === 'complete';
     const label = flow.applying ? 'Wird übertragen …' : 'Zu Knuspr übertragen';
     return {
       hidden: false,
@@ -175,7 +180,7 @@
     // idle, loading, ready, needs-review, reconfirm-required, applying,
     // partial, complete, offline. `view` toggles between the plan-ready
     // summary and the cart preview within the same container.
-    const flow = { state: 'idle', view: 'summary', plan: null, preview: null, receipt: null, applying: false };
+    const flow = { state: 'idle', view: 'summary', plan: null, preview: null, receipt: null, applying: false, priceUpdated: false };
     let applyInFlight = false;
     let lastAlternativesLineId = null;
 
@@ -391,6 +396,7 @@
         const updated = await api.patchPreview({ lineId, changes: { removed: !line.removed } });
         flow.preview = updated;
         flow.state = computeFlowState(updated);
+        flow.priceUpdated = false;
         renderFlow();
       } catch (error) {
         toast(error.message || 'Aktualisierung fehlgeschlagen');
@@ -416,6 +422,7 @@
             const updated = await api.patchPreview({ lineId, changes: { productId: btn.dataset.productId } });
             flow.preview = updated;
             flow.state = computeFlowState(updated);
+            flow.priceUpdated = false;
             if (dialog) dialog.close();
           } catch (error) {
             toast(error.message || 'Auswahl fehlgeschlagen');
@@ -466,6 +473,7 @@
         flow.plan = plan;
         flow.preview = plan.shoppingPreview;
         flow.receipt = null;
+        flow.priceUpdated = false;
         flow.view = 'summary';
         flow.state = computeFlowState(flow.preview);
       } catch (error) {
@@ -477,24 +485,50 @@
       }
     }
 
+    // A refreshed preview (from either a reconfirm-required or a partial
+    // response that also had to re-validate mid-delta) may reintroduce an
+    // ambiguous or missing line. needs-review must always win over whatever
+    // status the server reported, so the apply button stays disabled until
+    // every line is resolved again.
+    function stateAfterPreviewRefresh(preview, fallbackState) {
+      return computeFlowState(preview) === 'needs-review' ? 'needs-review' : fallbackState;
+    }
+
+    function acceptedLineIdsForApply() {
+      // A retry after a partial apply must only resend the lines that are
+      // still outstanding - lines the last receipt already marked "added"
+      // are excluded so a resubmit can never duplicate a successful add.
+      const alreadyAdded = new Set((flow.receipt && flow.receipt.lines || [])
+        .filter(entry => entry.status === 'added')
+        .map(entry => entry.lineId));
+      return flow.preview.lines
+        .filter(line => !line.removed && line.status === 'selected' && !alreadyAdded.has(line.id))
+        .map(line => line.id);
+    }
+
     async function applyCartHandler() {
-      if (applyInFlight || !flow.preview || flow.state === 'needs-review') return;
+      if (applyInFlight || !flow.preview || flow.state === 'needs-review' || flow.state === 'complete') return;
       applyInFlight = true;
       flow.applying = true;
       flow.state = 'applying';
+      flow.priceUpdated = false;
       renderFlow();
       try {
-        const acceptedLineIds = flow.preview.lines
-          .filter(line => !line.removed && line.status === 'selected')
-          .map(line => line.id);
+        const acceptedLineIds = acceptedLineIdsForApply();
         const result = await api.applyCart({ previewRevision: flow.preview.revision, acceptedLineIds });
         if (result && result.status === 'reconfirm-required') {
           flow.preview = result.preview;
-          flow.state = 'reconfirm-required';
+          flow.priceUpdated = true;
+          flow.state = stateAfterPreviewRefresh(result.preview, 'reconfirm-required');
         } else if (result && result.status === 'partial') {
           flow.receipt = result.receipt;
-          if (result.preview) flow.preview = result.preview;
-          flow.state = 'partial';
+          if (result.preview) {
+            flow.preview = result.preview;
+            flow.priceUpdated = true;
+            flow.state = stateAfterPreviewRefresh(result.preview, 'partial');
+          } else {
+            flow.state = 'partial';
+          }
         } else if (result && result.status === 'complete') {
           flow.receipt = result.receipt;
           flow.state = 'complete';
@@ -505,9 +539,12 @@
         toast(error.message || 'Übertragung fehlgeschlagen');
         try {
           const fresh = await api.getPreview();
-          if (fresh) { flow.preview = fresh; flow.state = computeFlowState(fresh); }
+          if (fresh) flow.preview = fresh;
+          flow.state = computeFlowState(flow.preview);
         } catch {
-          // Keep the last known preview visible if the resync also fails.
+          // Resync also failed: fall back to the last known preview so the
+          // state never gets stuck on the transient "applying" value.
+          flow.state = computeFlowState(flow.preview);
         }
       } finally {
         applyInFlight = false;
@@ -519,6 +556,8 @@
     function renderPlan(plan) {
       flow.plan = plan;
       flow.preview = plan && plan.shoppingPreview;
+      flow.receipt = null;
+      flow.priceUpdated = false;
       flow.state = flow.preview ? computeFlowState(flow.preview) : 'idle';
       renderFlow();
     }

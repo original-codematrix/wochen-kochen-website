@@ -266,6 +266,132 @@ test('changed price requires a second confirmation and does not call checkout', 
   );
 });
 
+test('a reconfirm-required response that reintroduces an ambiguous line keeps the apply button disabled and still shows the price-updated banner', { timeout: 30_000 }, async () => {
+  const revision = 'preview-reconfirm-needs-review';
+  const refreshedWithAmbiguity = needsReviewPreview('preview-reconfirm-needs-review-2');
+  await withPage(
+    {
+      generatePlan: () => planFor(readyPreview(revision)),
+      applyPreview: () => ({ status: 'reconfirm-required', preview: refreshedWithAmbiguity })
+    },
+    async ({ page, baseUrl, calls }) => {
+      await openReadyPreview(page, baseUrl);
+      const applyButton = page.getByRole('button', { name: /Zu Knuspr übertragen/ });
+      await applyButton.click();
+      await page.getByText(/Preis wurde aktualisiert/).waitFor({ state: 'visible' });
+      await page.getByText(/Bitte offene Positionen klären/).waitFor({ state: 'visible' });
+      assert.equal(await applyButton.isDisabled(), true, 'apply must stay disabled when the refreshed preview still has an unresolved line');
+      assert.equal(calls.applyPreview.length, 1);
+    }
+  );
+});
+
+test('apply button is disabled after a complete response so the cart cannot be resubmitted', { timeout: 30_000 }, async () => {
+  const revision = 'preview-terminal-complete';
+  await withPage(
+    {
+      generatePlan: () => planFor(readyPreview(revision)),
+      applyPreview: input => ({
+        status: 'complete',
+        receipt: {
+          previewRevision: input.previewRevision,
+          attemptedAt: '2026-08-10T09:05:00.000Z',
+          lines: input.acceptedLineIds.map(lineId => ({ lineId, productId: 'p', requested: 1, added: 1, status: 'added', errorCode: null }))
+        }
+      })
+    },
+    async ({ page, baseUrl, calls }) => {
+      await openReadyPreview(page, baseUrl);
+      const applyButton = page.getByRole('button', { name: /Zu Knuspr übertragen/ });
+      await applyButton.click();
+      await page.getByText('Warenkorb aktualisiert').waitFor({ state: 'visible' });
+      assert.equal(await applyButton.isDisabled(), true, 'apply must not stay clickable once the transfer completed');
+
+      // Defense in depth: even a forced click must not fire a second request.
+      await applyButton.click({ force: true }).catch(() => {});
+      assert.equal(calls.applyPreview.length, 1);
+    }
+  );
+});
+
+test('a retry after a partial apply only resends the still-failed lines, never the already-added ones', { timeout: 30_000 }, async () => {
+  const revision = 'preview-partial-retry';
+  let attempt = 0;
+  await withPage(
+    {
+      generatePlan: () => planFor(readyPreview(revision)),
+      applyPreview: input => {
+        attempt += 1;
+        if (attempt === 1) {
+          return {
+            status: 'partial',
+            receipt: {
+              previewRevision: input.previewRevision,
+              attemptedAt: '2026-08-10T09:05:00.000Z',
+              lines: input.acceptedLineIds.map((lineId, index) => (
+                index === 0
+                  ? { lineId, productId: 'p', requested: 1, added: 1, status: 'added', errorCode: null }
+                  : { lineId, productId: 'p', requested: 1, added: 0, status: 'failed', errorCode: 'KNUSPR_CART_ADD_REJECTED' }
+              ))
+            }
+          };
+        }
+        return {
+          status: 'complete',
+          receipt: {
+            previewRevision: input.previewRevision,
+            attemptedAt: '2026-08-10T09:06:00.000Z',
+            lines: input.acceptedLineIds.map(lineId => ({ lineId, productId: 'p', requested: 1, added: 1, status: 'added', errorCode: null }))
+          }
+        };
+      }
+    },
+    async ({ page, baseUrl, calls }) => {
+      await openReadyPreview(page, baseUrl);
+      const applyButton = page.getByRole('button', { name: /Zu Knuspr übertragen/ });
+      await applyButton.click();
+      await page.getByText('Teilweise übertragen').waitFor({ state: 'visible' });
+      assert.equal(await applyButton.isDisabled(), false, 'a partial result must still allow an explicit retry');
+
+      const firstAcceptedLineIds = calls.applyPreview[0].acceptedLineIds;
+      const alreadyAddedLineId = firstAcceptedLineIds[0];
+
+      await applyButton.click();
+      await page.getByText('Warenkorb aktualisiert').waitFor({ state: 'visible' });
+
+      assert.equal(calls.applyPreview.length, 2);
+      assert.equal(
+        calls.applyPreview[1].acceptedLineIds.includes(alreadyAddedLineId),
+        false,
+        'a retry must exclude lines the previous receipt already marked as added'
+      );
+    }
+  );
+});
+
+test('a failed apply whose preview resync also fails leaves the apply button clickable again (not stuck applying)', { timeout: 30_000 }, async () => {
+  const revision = 'preview-double-failure';
+  await withPage(
+    {
+      generatePlan: () => planFor(readyPreview(revision)),
+      applyPreview: () => { throw Object.assign(new Error('Vorschau ist veraltet'), { status: 409 }); },
+      getPreview: () => { throw new Error('Vorschau konnte nicht geladen werden'); }
+    },
+    async ({ page, baseUrl }) => {
+      await openReadyPreview(page, baseUrl);
+      const applyButton = page.getByRole('button', { name: /Zu Knuspr übertragen/ });
+      await applyButton.click();
+      // Neither apply nor the resync succeeded; the button must recover to a
+      // clickable state instead of staying disabled forever on "applying".
+      await page.waitForFunction(() => {
+        const button = document.querySelector('#applyKnusprCart');
+        return button && !button.disabled;
+      });
+      assert.equal(await applyButton.isDisabled(), false);
+    }
+  );
+});
+
 test('ambiguous lines block the apply button until resolved via the alternatives dialog', { timeout: 30_000 }, async () => {
   const revision = 'preview-needs-review';
   const resolved = readyPreview('preview-needs-review-resolved');
