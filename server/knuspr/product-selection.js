@@ -54,21 +54,23 @@ function parseRequiredAmount(ingredient, servingScale = 1) {
   const optional = /\boptional\b/i.test(text);
   const match = text.match(/(\d+(?:[.,]\d+)?)\s*(?:TK[- ]*)?(kg|g|ml|l|stück|stueck|packungen?|pcs?|pieces?)\b/i);
   if (!match) {
-    const pieceMatch = text.match(/^(\d+(?:[.,]\d+)?)/);
-    if (pieceMatch && defaultPieceIngredient(text)) {
+    // A leading count with no weight/volume unit is a countable quantity, e.g.
+    // "2 TK-Pizzen", "2 Eier", "4 Knoblauchzehen" — order that many. Spoon/pinch
+    // measures (TL, EL, Prise, Msp, Schuss, Spritzer) are seasoning amounts, not
+    // orderable counts, so they are excluded.
+    const countMatch = text.match(/^(\d+(?:[.,]\d+)?)\s+(?!(?:TL|EL|Prise|Msp|Messerspitze|Schuss|Spritzer)\b)\S/i);
+    if (countMatch) {
       return {
         ingredient: text,
-        amount: scaledAmount(Number(pieceMatch[1].replace(',', '.')), multiplier),
+        amount: Math.max(1, Math.ceil(Number(countMatch[1].replace(',', '.')) * multiplier)),
         unit: 'piece',
         optional,
       };
     }
-    return {
-      ingredient: text,
-      amount: defaultPieceIngredient(text) ? scaledAmount(1, multiplier) : null,
-      unit: defaultPieceIngredient(text) ? 'piece' : null,
-      optional,
-    };
+    if (defaultPieceIngredient(text)) {
+      return { ingredient: text, amount: scaledAmount(1, multiplier), unit: 'piece', optional };
+    }
+    return { ingredient: text, amount: null, unit: null, optional };
   }
   const rawAmount = Number(match[1].replace(',', '.'));
   const rawUnit = match[2].toLowerCase();
@@ -119,7 +121,27 @@ function calculatePackChoice(demand, product) {
     missingAmount: demand && Number.isFinite(demand.amount) ? demand.amount : null,
     packageKnown: false,
   };
-  if (!demand || !Number.isFinite(demand.amount) || demand.amount <= 0 || !demand.unit || !packageSize || price === null) return choice;
+  if (!demand || !Number.isFinite(demand.amount) || demand.amount <= 0 || !demand.unit || price === null) return choice;
+
+  // Countable items ("2 TK-Pizzen", "2 Eier"): order one package per needed
+  // unit — unless the product is itself a multi-pack of pieces (e.g. a 6-pack
+  // of eggs), where a single pack covers several.
+  if (demand.unit === 'piece') {
+    const perPack = packageSize && packageSize.unit === 'piece' && packageSize.amount > 0 ? packageSize.amount : 1;
+    const packages = Math.max(1, Math.ceil(demand.amount / perPack));
+    return {
+      ...choice,
+      packages,
+      totalAmount: perPack > 1 ? packages * perPack : null,
+      wasteAmount: 0,
+      totalPrice: roundMoney(packages * price),
+      wasteRatio: 0,
+      missingAmount: 0,
+      packageKnown: true,
+    };
+  }
+
+  if (!packageSize) return choice;
   if (packageSize.unit !== demand.unit) return choice;
   const packages = Math.max(1, Math.ceil(demand.amount / packageSize.amount));
   const totalAmount = packages * packageSize.amount;

@@ -227,7 +227,7 @@ const KOCHBUCH_DATA = {
       ],
       "desc": "Einfach, ehrlich und ohne Kochstress.",
       "ingredients": [
-        "2 TK-Pizzen nach Wahl",
+        "4 TK-Pizzen nach Wahl",
         "1 Gurke",
         "Dressing nach Wahl"
       ],

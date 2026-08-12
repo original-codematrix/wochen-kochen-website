@@ -137,3 +137,21 @@ test('a quantity-less ingredient with no suitable product stays missing, not a p
   assert.equal(result.status, 'missing');
   assert.equal(result.selected, null);
 });
+
+test('a leading count on a countable ingredient orders that many units; spoon measures are not counts', () => {
+  const pizza = demandOf('2 TK-Pizzen nach Wahl');
+  assert.deepEqual({ amount: pizza.amount, unit: pizza.unit }, { amount: 2, unit: 'piece' });
+  const oil = demandOf('2 EL Öl');
+  assert.deepEqual({ amount: oil.amount, unit: oil.unit }, { amount: null, unit: null });
+
+  // 2 pizzas -> two packs of the chosen (weight-priced) pizza.
+  const twoPizzas = chooseProduct(demandOf('2 TK-Pizzen nach Wahl'), [product('p', 'Steinofen Pizza', 3.49, 320, 'g')], {});
+  assert.equal(twoPizzas.status, 'selected');
+  assert.equal(twoPizzas.packages, 2);
+  assert.equal(twoPizzas.totalPrice, 6.98);
+
+  // 2 eggs, sold as a 6-pack -> a single pack covers it.
+  const eggs = chooseProduct(demandOf('2 Eier'), [product('e', 'Eier 6er', 1.99, 6, 'stück')], {});
+  assert.equal(eggs.status, 'selected');
+  assert.equal(eggs.packages, 1);
+});
