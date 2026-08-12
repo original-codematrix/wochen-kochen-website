@@ -1,12 +1,13 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const { once } = require('node:events');
+const { EventEmitter, once } = require('node:events');
 const fs = require('node:fs');
+const http = require('node:http');
 const path = require('node:path');
 const test = require('node:test');
 
-const { createServer } = require('../server');
+const { createServer, readJson, TrustedHttpError } = require('../server');
 
 const root = path.resolve(__dirname, '..');
 const auth = { authorization: 'Bearer secret' };
@@ -225,6 +226,74 @@ test('malformed and oversized request bodies plus local validation errors return
   }, { jsonLimit: 10 });
 });
 
+test('readJson destroys the request socket instead of continuing to drain an oversized body', async () => {
+  const req = new EventEmitter();
+  let destroyed = false;
+  req.destroy = () => {
+    destroyed = true;
+    req.emit('close');
+  };
+
+  const pending = readJson(req, 10);
+
+  req.emit('data', Buffer.from('a'.repeat(5)));
+  assert.equal(destroyed, false, 'should not destroy while within the limit');
+
+  req.emit('data', Buffer.from('b'.repeat(20)));
+  assert.equal(destroyed, true, 'should destroy the socket once the limit is exceeded');
+
+  await assert.rejects(pending, error => {
+    assert.ok(error instanceof TrustedHttpError);
+    assert.equal(error.code, 'HTTP_BODY_TOO_LARGE');
+    assert.equal(error.statusCode, 400);
+    return true;
+  });
+
+  // Further chunks and a late 'end' must be ignored once settled/destroyed.
+  req.emit('data', Buffer.from('more-data-after-teardown'));
+  req.emit('end');
+});
+
+test('a real oversized request is torn down mid-stream, not merely rejected after it finishes', async () => {
+  await withServer(async base => {
+    const url = new URL(`${base}/api/plan/generate`);
+    const outcome = await new Promise((resolve) => {
+      const request = http.request({
+        hostname: url.hostname,
+        port: url.port,
+        path: url.pathname,
+        method: 'POST',
+        headers: { ...auth, 'content-type': 'application/json' },
+      });
+      let status = null;
+      request.on('response', response => {
+        status = response.statusCode;
+        response.resume();
+      });
+      request.on('error', () => {
+        // Writing to a socket the server already destroyed surfaces as a
+        // client-side error (e.g. ECONNRESET/EPIPE) rather than hanging.
+        resolve({ status, torndown: true });
+      });
+      request.on('close', () => resolve({ status, torndown: request.destroyed }));
+      request.write(Buffer.alloc(64, 'a'));
+      const keepWriting = setInterval(() => {
+        if (request.destroyed || request.writableEnded) {
+          clearInterval(keepWriting);
+          return;
+        }
+        request.write(Buffer.alloc(64, 'a'), () => {});
+      }, 5);
+      setTimeout(() => {
+        clearInterval(keepWriting);
+        if (!request.destroyed) request.end();
+      }, 500);
+    });
+    assert.equal(outcome.status, 400);
+    assert.equal(outcome.torndown, true);
+  }, { jsonLimit: 10 });
+});
+
 test('untrusted provider errors never disclose their raw 4xx messages', async () => {
   await withServer(async (base) => {
     const response = await json(base, '/api/knuspr/status');
@@ -236,6 +305,62 @@ test('untrusted provider errors never disclose their raw 4xx messages', async ()
       client: {
         async status() {
           throw Object.assign(new Error('MCP provider secret'), { statusCode: 401, code: 'MCP_UNAUTHORIZED' });
+        },
+      },
+    },
+  });
+});
+
+test('service-thrown business-validation errors surface their real German message with a 4xx status', async () => {
+  await withServer(async (base) => {
+    const generateFailure = await json(base, '/api/plan/generate', {
+      method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: JSON.stringify({}),
+    });
+    assert.equal(generateFailure.response.status, 400);
+    assert.deepEqual(generateFailure.body, {
+      error: 'Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt',
+      code: 'KNUSPR_PLAN_TOO_FEW_RECIPES',
+    });
+
+    const previewFailure = await json(base, '/api/preview', {
+      method: 'PATCH', headers: { ...auth, 'content-type': 'application/json' },
+      body: JSON.stringify({ lineId: 'missing-line', changes: { removed: true } }),
+    });
+    assert.equal(previewFailure.response.status, 404);
+    assert.deepEqual(previewFailure.body, {
+      error: 'Vorschauposition nicht gefunden',
+      code: 'KNUSPR_PREVIEW_LINE_NOT_FOUND',
+    });
+  }, {
+    knuspr: {
+      service: {
+        async generatePlan() {
+          throw Object.assign(
+            new Error('Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt'),
+            { code: 'KNUSPR_PLAN_TOO_FEW_RECIPES' },
+          );
+        },
+        async updatePreviewLine() {
+          throw Object.assign(new Error('Vorschauposition nicht gefunden'), { code: 'KNUSPR_PREVIEW_LINE_NOT_FOUND' });
+        },
+      },
+    },
+  });
+});
+
+test('a simulated upstream MCP failure during plan generation still returns the generic 502, never the raw provider text', async () => {
+  await withServer(async (base) => {
+    const response = await json(base, '/api/plan/generate', {
+      method: 'POST', headers: { ...auth, 'content-type': 'application/json' }, body: JSON.stringify({}),
+    });
+    assert.equal(response.response.status, 502);
+    assert.deepEqual(response.body, { error: 'Knuspr-Anfrage fehlgeschlagen' });
+    assert.doesNotMatch(JSON.stringify(response.body), /mcp connection reset/i);
+  }, {
+    knuspr: {
+      service: {
+        async generatePlan() {
+          throw new Error('MCP connection reset by provider');
         },
       },
     },

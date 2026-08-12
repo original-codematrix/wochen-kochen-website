@@ -17,6 +17,14 @@ const {
 
 const CACHE_TTL_MS = 10 * 60 * 1000;
 
+// Business-validation errors: the app's own German messages for bad request
+// input (not upstream/provider failures). Tagging them with a stable code
+// lets server.js surface the real message with an appropriate 4xx status
+// instead of collapsing them into the generic upstream-failure response.
+function businessError(code, message) {
+  return Object.assign(new Error(message), { code });
+}
+
 async function mapConcurrent(values, limit, mapper) {
   const result = new Array(values.length);
   let cursor = 0;
@@ -245,7 +253,10 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     const variation = Number(input.variation) || 0;
     const shortlist = shortlistRecipes(recipes, exclusions, variation, 14);
     if (shortlist.length < 7) {
-      throw new Error('Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt');
+      throw businessError(
+        'KNUSPR_PLAN_TOO_FEW_RECIPES',
+        'Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt',
+      );
     }
     const demands = buildIngredientDemands(shortlist, { servings: 2 });
     const additionalItems = await getAdditionalItems();
@@ -312,13 +323,13 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     const preview = validatePreview(await store.read('knuspr-preview.json', null));
     if (!Array.isArray(preview.lines)) throw new Error('Knuspr-Vorschau ist ungültig');
     const lineIndex = preview.lines.findIndex(line => line.id === input.lineId);
-    if (lineIndex < 0) throw new Error('Vorschauposition nicht gefunden');
+    if (lineIndex < 0) throw businessError('KNUSPR_PREVIEW_LINE_NOT_FOUND', 'Vorschauposition nicht gefunden');
     const changes = input.changes && typeof input.changes === 'object' ? input.changes : input;
     const line = { ...preview.lines[lineIndex] };
     if ('removed' in changes) line.removed = Boolean(changes.removed);
     if ('product' in changes) {
       if (changes.product !== null && (!changes.product || !String(changes.product.id || '').trim())) {
-        throw new Error('Produktalternative ist ungültig');
+        throw businessError('KNUSPR_PREVIEW_PRODUCT_INVALID', 'Produktalternative ist ungültig');
       }
       line.product = changes.product;
       line.status = changes.product ? 'selected' : 'missing';
@@ -326,13 +337,15 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
     if ('productId' in changes) {
       const candidate = [line.product, ...(line.alternatives || [])]
         .find(product => product && product.id === changes.productId);
-      if (!candidate) throw new Error('Produktalternative ist nicht verfügbar');
+      if (!candidate) throw businessError('KNUSPR_PREVIEW_PRODUCT_UNAVAILABLE', 'Produktalternative ist nicht verfügbar');
       line.product = candidate;
       line.status = 'selected';
     }
     if ('productPackages' in changes || 'cartQuantity' in changes || 'quantity' in changes) {
       const quantity = Number(changes.productPackages ?? changes.cartQuantity ?? changes.quantity);
-      if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isInteger(quantity)) throw new Error('Packungsmenge ist ungültig');
+      if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isInteger(quantity)) {
+        throw businessError('KNUSPR_PREVIEW_QUANTITY_INVALID', 'Packungsmenge ist ungültig');
+      }
       line.productPackages = quantity;
       line.cartQuantity = quantity;
     }

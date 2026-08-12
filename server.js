@@ -20,6 +20,18 @@ const TYPES = {
 const TRUSTED_DOMAIN_ERRORS = {
   KNUSPR_CART_INPUT_INVALID: { status: 400, message: 'Warenkorbanfrage ist ungültig' },
   KNUSPR_PREVIEW_CONFLICT: { status: 409, message: 'Vorschau ist veraltet' },
+  // Business-validation errors thrown by server/knuspr-service.js for plan
+  // generation and preview editing. These are the app's own German
+  // validation messages (not upstream/provider text), so they are safe to
+  // surface verbatim to the guided-flow UI.
+  KNUSPR_PLAN_TOO_FEW_RECIPES: {
+    status: 400,
+    message: 'Für den Knuspr-Wochenplan werden sieben unterschiedliche Gerichte benötigt',
+  },
+  KNUSPR_PREVIEW_LINE_NOT_FOUND: { status: 404, message: 'Vorschauposition nicht gefunden' },
+  KNUSPR_PREVIEW_PRODUCT_INVALID: { status: 400, message: 'Produktalternative ist ungültig' },
+  KNUSPR_PREVIEW_PRODUCT_UNAVAILABLE: { status: 400, message: 'Produktalternative ist nicht verfügbar' },
+  KNUSPR_PREVIEW_QUANTITY_INVALID: { status: 400, message: 'Packungsmenge ist ungültig' },
 };
 
 class TrustedHttpError extends Error {
@@ -65,7 +77,7 @@ function sendDomainError(res, error) {
   return sendJson(res, 502, { error: 'Knuspr-Anfrage fehlgeschlagen' });
 }
 
-function readJson(req, limit = 20 * 1024 * 1024) {
+function readJson(req, limit = 20 * 1024 * 1024, res) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let size = 0;
@@ -75,11 +87,25 @@ function readJson(req, limit = 20 * 1024 * 1024) {
       settled = true;
       reject(error);
     };
+    // Oversized bodies must not just stop being buffered: the socket has to
+    // be torn down, otherwise a client can keep streaming data the server
+    // silently discards forever (resource exhaustion / slow-drip attack).
+    // When a response object is available we still owe the caller its 4xx
+    // JSON error, so the teardown is deferred until that response finishes
+    // writing; without one (e.g. direct/unit usage) the socket is cut
+    // immediately.
+    const teardown = () => {
+      if (typeof req.pause === 'function') req.pause();
+      if (typeof req.destroy !== 'function') return;
+      if (res && typeof res.once === 'function') res.once('finish', () => req.destroy());
+      else req.destroy();
+    };
     req.on('data', chunk => {
       if (settled) return;
       size += chunk.length;
       if (size > limit) {
         fail(new TrustedHttpError('HTTP_BODY_TOO_LARGE', 'Anfrage ist zu groß'));
+        teardown();
       } else chunks.push(chunk);
     });
     req.on('end', () => {
@@ -157,8 +183,8 @@ function createServer(options = {}) {
   };
   const jsonLimit = options.jsonLimit ?? 20 * 1024 * 1024;
 
-  function requestJson(req) {
-    return readJson(req, jsonLimit);
+  function requestJson(req, res) {
+    return readJson(req, jsonLimit, res);
   }
 
   async function currentPlan() {
@@ -221,7 +247,7 @@ function createServer(options = {}) {
     if (req.method === 'PUT' && url.pathname === '/api/additional-items') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Zusatzliste nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.saveAdditionalItems(trustedAdditionalItems(await requestJson(req))));
+        return sendJson(res, 200, await service.saveAdditionalItems(trustedAdditionalItems(await requestJson(req, res))));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -229,7 +255,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/plan/generate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Planerstellung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.generatePlan(await requestJson(req)));
+        return sendJson(res, 200, await service.generatePlan(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -237,7 +263,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/plan/regenerate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Planerstellung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.regeneratePlan(await requestJson(req)));
+        return sendJson(res, 200, await service.regeneratePlan(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -259,7 +285,7 @@ function createServer(options = {}) {
     if (req.method === 'PATCH' && url.pathname === '/api/preview') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Vorschauänderung nicht erlaubt');
       try {
-        return sendJson(res, 200, await service.updatePreviewLine(await requestJson(req)));
+        return sendJson(res, 200, await service.updatePreviewLine(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -267,7 +293,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/knuspr/cart/apply') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Warenkorbänderung nicht erlaubt');
       try {
-        return sendJson(res, 200, await cart.applyPreview(await requestJson(req)));
+        return sendJson(res, 200, await cart.applyPreview(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -283,7 +309,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/refresh') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Aktualisierung nicht erlaubt');
       try {
-        return sendJson(res, 200, await refresh(await requestJson(req)));
+        return sendJson(res, 200, await refresh(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
@@ -291,7 +317,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/import-offers') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Import nicht erlaubt');
       try {
-        const payload = await requestJson(req);
+        const payload = await requestJson(req, res);
         const imported = await importOffers(payload);
         const current = loadPlan();
         const plan = await refresh({
@@ -306,7 +332,7 @@ function createServer(options = {}) {
     if (req.method === 'POST' && url.pathname === '/api/regenerate') {
       if (!mutationAllowed(req, refreshToken, appOrigin)) return mutationDenied(res, 'Neuberechnung nicht erlaubt');
       try {
-        return sendJson(res, 200, await regenerate(await requestJson(req)));
+        return sendJson(res, 200, await regenerate(await requestJson(req, res)));
       } catch (error) {
         return sendDomainError(res, error);
       }
