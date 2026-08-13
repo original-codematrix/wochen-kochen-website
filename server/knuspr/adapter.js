@@ -588,6 +588,34 @@ function createKnusprAdapter({ client }) {
       return collection(response, [['products'], ['results'], ['data', 'products'], ['data', 'results']], 'Produktliste')
         .map(normalizeProduct);
     },
+    // Knuspr keeps current deals in a separate discounted-items list (product
+    // search does not flag sales). Return the on-offer products so the planner
+    // can prefer them. Best-effort and paginated; the exact tool name is fixed.
+    async getDiscountedItems({ limit = 300 } = {}) {
+      const offers = [];
+      const seen = new Set();
+      for (let page = 1; offers.length < limit && page <= 8; page += 1) {
+        let decoded;
+        try {
+          decoded = decodeKnusprText(await client.callTool('get_discounted_items', { page }));
+        } catch (caught) {
+          break;
+        }
+        const products = isRecord(decoded) && Array.isArray(decoded.products) ? decoded.products : [];
+        if (products.length === 0) break;
+        for (const raw of products) {
+          if (!isRecord(raw)) continue;
+          const id = raw.productId === 0 || raw.productId ? String(raw.productId) : null;
+          const prices = isRecord(raw.prices) ? raw.prices : null;
+          const current = prices ? finiteNumber(prices.salePrice) : null;
+          const regular = prices ? finiteNumber(prices.originalPrice) : null;
+          if (!id || seen.has(id) || current === null || current < 0) continue;
+          seen.add(id);
+          offers.push({ id, current, regular, saleId: prices && (typeof prices.saleId === 'number' ? prices.saleId : null) });
+        }
+      }
+      return offers;
+    },
     async getCart() {
       const tool = await toolFor('readCart');
       if (isKnusprTool(tool, 'readCart')) {

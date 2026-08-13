@@ -290,6 +290,30 @@ function createKnusprService({ adapter, store, recipes, now = () => new Date(), 
       limitSearch(() => cachedSearch(query, requestedAt))
     )));
     const productsByQuery = new Map(queries.map((query, index) => [query, searchResults[index]]));
+    // Mark products that are currently on offer (Knuspr keeps deals in a
+    // separate discounted-items list) so product and recipe selection can favour
+    // them. Best-effort: a failure or a fake adapter must never block planning.
+    if (typeof adapter.getDiscountedItems === 'function') {
+      try {
+        const offers = await adapter.getDiscountedItems({ limit: 300 });
+        const offerById = new Map((offers || []).map(offer => [offer.id, offer]));
+        if (offerById.size) {
+          for (const products of productsByQuery.values()) {
+            for (const product of (products || [])) {
+              const offer = product && product.id ? offerById.get(product.id) : null;
+              if (offer && product.price && typeof product.price.current === 'number') {
+                product.price.offer = true;
+                if (typeof offer.regular === 'number' && offer.regular > product.price.current) {
+                  product.price.regular = offer.regular;
+                }
+              }
+            }
+          }
+        }
+      } catch (offerError) {
+        // ignore; offers are an optional enhancement
+      }
+    }
     const productChoices = demands.map(demand => {
       const products = productsByQuery.get(demand.searchTerm) || [];
       const preferences = input.pinnedProducts && input.pinnedProducts[demand.searchTerm]

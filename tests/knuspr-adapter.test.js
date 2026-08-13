@@ -502,6 +502,21 @@ test('getCart parses the real get_cart items map into normalized lines', async (
   ]);
 });
 
+test('getDiscountedItems normalizes the discounted-items payload (sale vs original price)', async () => {
+  const discountTool = tool('get_discounted_items', 'Get currently discounted items');
+  const payload = {
+    success: true, sale_type: 'sales', page: 1,
+    products: [
+      { productId: 32746, name: 'Freilandeier 10er', prices: { originalPrice: 3.99, salePrice: 3.39, saleId: 20309124, currency: 'EUR' } },
+      { productId: 500, name: 'Ohne gültigen Preis', prices: { salePrice: null } },
+    ],
+  };
+  const client = fakeClient([discountTool], { get_discounted_items: knusprText(payload) });
+  const adapter = createKnusprAdapter({ client });
+  const offers = await adapter.getDiscountedItems({ limit: 5 });
+  assert.deepEqual(offers, [{ id: '32746', current: 3.39, regular: 3.99, saleId: 20309124 }]);
+});
+
 test('addCartItems maps string product ids to the integer productId Knuspr requires', async () => {
   const client = fakeClient([knusprAddTool], { add_items_to_cart: knusprText({ status: 200, success: true }) });
   const adapter = createKnusprAdapter({ client });
