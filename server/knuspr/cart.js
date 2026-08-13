@@ -160,10 +160,19 @@ async function revalidatePreview(value, adapter) {
     const selectedId = nonEmptyString(line.product.id) ? line.product.id.trim() : null;
     if (!selectedId) throw invalid('Produkt der Vorschauposition ist ungültig');
     const fresh = products.find(candidate => candidate.id === selectedId) || null;
-    if (validMutationProduct(line.product) && validMutationProduct(fresh) && sameSafetySnapshot(line.product, fresh)) return line;
+    const freshValid = validMutationProduct(fresh);
+    const oldPrice = line.product.price && line.product.price.current;
+    const priceJumped = freshValid && typeof oldPrice === 'number' && Number.isFinite(oldPrice)
+      && fresh.price.current > oldPrice * 1.15 + 0.01;
+    // Variable-weight fresh produce ("Wiegeware") reports a slightly different
+    // price/weight on every search. As long as the product is still available
+    // and its price has not risen meaningfully (> 15 %), keep the line as-is
+    // instead of forcing a re-confirm on that normal jitter — an unavailable
+    // product or a real price jump still triggers re-confirmation.
+    if (validMutationProduct(line.product) && freshValid && !priceJumped) return line;
 
     changed = true;
-    const available = validMutationProduct(fresh);
+    const available = freshValid;
     const quantity = line.cartQuantity;
     const alternatives = products.filter(candidate => validMutationProduct(candidate) && candidate.id !== selectedId);
     return {
@@ -174,7 +183,7 @@ async function revalidatePreview(value, adapter) {
       totalPrice: fresh && positiveQuantity(quantity)
         ? Math.round((fresh.price.current * quantity + Number.EPSILON) * 100) / 100
         : null,
-      reason: available ? line.reason : 'Produkt ist aktuell nicht lieferbar',
+      reason: available ? 'Preis wurde aktualisiert' : 'Produkt ist aktuell nicht lieferbar',
     };
   });
 
@@ -323,6 +332,21 @@ async function applyDeltaSequentially({ delta, adapter, previewLines, previewRev
   return { receipt, refreshedPreview: null, partial: false };
 }
 
+// A single transfer re-validates the preview before every line. Searching each
+// term once for the whole transfer (instead of once per line) turns an
+// O(lines x lines) storm of live searches into O(lines). Only searches are
+// shared; the cart read and add stay fresh per mutation, so the safety gate is
+// unchanged.
+function withMemoizedSearch(adapter) {
+  const cache = new Map();
+  return Object.assign(Object.create(adapter), {
+    searchProducts(term) {
+      if (!cache.has(term)) cache.set(term, Promise.resolve(adapter.searchProducts(term)));
+      return cache.get(term);
+    },
+  });
+}
+
 async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapter, store }) {
   if (!adapter
     || typeof adapter.searchProducts !== 'function'
@@ -330,21 +354,22 @@ async function applyPreviewTransaction({ previewRevision, acceptedLineIds, adapt
     || typeof adapter.addCartItems !== 'function') {
     throw invalid('Knuspr-Warenkorbadapter fehlt');
   }
+  const freshAdapter = withMemoizedSearch(adapter);
   const preview = validateCartPreview(await store.read('knuspr-preview.json', null));
   if (!nonEmptyString(previewRevision) || preview.revision !== previewRevision.trim()) {
     throw conflict('Vorschau ist veraltet');
   }
   const requestedLines = acceptedLines(preview, acceptedLineIds);
-  const refreshed = await revalidatePreview(preview, adapter);
+  const refreshed = await revalidatePreview(preview, freshAdapter);
   if (refreshed.changed) {
     await store.write('knuspr-preview.json', refreshed.preview);
     return { status: 'reconfirm-required', preview: refreshed.preview };
   }
-  const currentCart = await adapter.getCart();
+  const currentCart = await freshAdapter.getCart();
   const delta = computeCartDelta(requestedLines, currentCart);
   const outcome = await applyDeltaSequentially({
     delta,
-    adapter,
+    adapter: freshAdapter,
     previewLines: requestedLines,
     previewRevision: preview.revision,
     store,

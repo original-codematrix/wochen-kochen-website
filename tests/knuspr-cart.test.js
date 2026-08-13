@@ -280,61 +280,34 @@ test('partial mutation writes a per-line receipt and retry adds only the still-m
   ]);
 });
 
-test('later search failure preserves prior receipt progress and retry attempts only the failed SKU', async () => {
+test('a failing product search aborts the whole transfer before any cart mutation', async () => {
   const saved = preview([
     previewLine('milk-line', 'milk'),
     previewLine('bread-line', 'bread'),
   ]);
   const store = memoryStore(saved);
-  let breadSearches = 0;
   const adapter = fakeAdapter({
     products(query) {
       if (query === 'bread') {
-        breadSearches += 1;
-        if (breadSearches === 3) {
-          throw Object.assign(new Error('search unavailable'), { code: 'KNUSPR_SEARCH_DOWN' });
-        }
+        throw Object.assign(new Error('search unavailable'), { code: 'KNUSPR_SEARCH_DOWN' });
       }
       return [product(query)];
     },
   });
 
-  const first = await applyPreview({
-    previewRevision: saved.revision,
-    acceptedLineIds: ['milk-line', 'bread-line'],
-    adapter,
-    store,
-  });
-
-  assert.equal(first.status, 'partial');
-  assert.deepEqual(first.receipt.lines, [
-    {
-      lineId: 'milk-line', productId: 'milk', requested: 1, added: 1, status: 'added', errorCode: null,
-    },
-    {
-      lineId: 'bread-line', productId: 'bread', requested: 1, added: 0, status: 'failed', errorCode: 'KNUSPR_SEARCH_DOWN',
-    },
-  ]);
-  const firstReceiptWrites = store.writes.filter(write => write.name === 'knuspr-cart-receipt.json');
-  assert.equal(firstReceiptWrites.length, 2);
-  assert.deepEqual(firstReceiptWrites[0].value.lines.map(line => line.productId), ['milk']);
-  assert.deepEqual(firstReceiptWrites[1].value, first.receipt);
-  assert.deepEqual(await store.read('knuspr-cart-receipt.json', null), first.receipt);
-
-  const callsBeforeRetry = adapter.addCalls.length;
-  const retry = await applyPreview({
-    previewRevision: saved.revision,
-    acceptedLineIds: ['milk-line', 'bread-line'],
-    adapter,
-    store,
-  });
-
-  assert.equal(retry.status, 'complete');
-  assert.deepEqual(adapter.addCalls.slice(callsBeforeRetry).flat().map(item => item.productId), ['bread']);
-  assert.deepEqual(adapter.currentCart, [
-    { productId: 'milk', quantity: 1 },
-    { productId: 'bread', quantity: 1 },
-  ]);
+  // Searches run once up front; if one fails, the transfer rejects atomically
+  // rather than mutating the cart part-way through.
+  await assert.rejects(
+    applyPreview({
+      previewRevision: saved.revision,
+      acceptedLineIds: ['milk-line', 'bread-line'],
+      adapter,
+      store,
+    }),
+    error => error.code === 'KNUSPR_SEARCH_DOWN',
+  );
+  assert.deepEqual(adapter.addCalls, []);
+  assert.equal(adapter.cartReads, 0);
 });
 
 test('later pre-mutation cart failure preserves the reconciled first line as partial', async () => {
@@ -401,17 +374,15 @@ test('first-line pre-mutation cart failure rejects without fabricating a receipt
   assert.deepEqual(adapter.addCalls, []);
 });
 
-test('later product change persists prior success and an explicit failed current line', async () => {
+test('a product that is unavailable at transfer time is caught up front and re-confirmed without mutating', async () => {
   const saved = preview([
     previewLine('milk-line', 'milk'),
     previewLine('bread-line', 'bread'),
   ]);
   const store = memoryStore(saved);
-  let breadSearches = 0;
   const adapter = fakeAdapter({
     products(query) {
-      if (query === 'bread') breadSearches += 1;
-      return [product(query, 1.09, query !== 'bread' || breadSearches < 3)];
+      return [product(query, 1.09, query !== 'bread')];
     },
   });
 
@@ -422,19 +393,13 @@ test('later product change persists prior success and an explicit failed current
     store,
   });
 
-  assert.equal(result.status, 'partial');
+  // The up-front revalidation flags the unavailable line and re-confirms before
+  // touching the cart — nothing (not even the still-available milk) is added.
+  assert.equal(result.status, 'reconfirm-required');
   assert.notEqual(result.preview.revision, saved.revision);
   assert.equal(result.preview.lines.find(line => line.id === 'bread-line').status, 'missing');
-  assert.deepEqual(adapter.addCalls.flat().map(item => item.productId), ['milk']);
-  assert.deepEqual(result.receipt.lines, [
-    {
-      lineId: 'milk-line', productId: 'milk', requested: 1, added: 1, status: 'added', errorCode: null,
-    },
-    {
-      lineId: 'bread-line', productId: 'bread', requested: 1, added: 0, status: 'failed', errorCode: 'KNUSPR_RECONFIRM_REQUIRED',
-    },
-  ]);
-  assert.deepEqual(await store.read('knuspr-cart-receipt.json', null), result.receipt);
+  assert.deepEqual(adapter.addCalls, []);
+  assert.equal(adapter.cartReads, 0);
 });
 
 test('later product refresh checkpoint failure propagates without retrying a duplicate receipt line', async () => {
@@ -514,28 +479,31 @@ test('each later line rereads the cart and skips a quantity another client alrea
   assert.deepEqual(result.receipt.lines.map(line => line.productId), ['milk']);
 });
 
-test('selected product is searched again at the inner mutation gate', async () => {
-  const saved = preview([previewLine('milk-line', 'milk')]);
+test('product searches are memoised per transfer instead of re-run at every line', async () => {
+  const saved = preview([
+    previewLine('milk-line', 'milk'),
+    previewLine('bread-line', 'bread'),
+  ]);
   const store = memoryStore(saved);
   let searches = 0;
   const adapter = fakeAdapter({
-    products() {
+    products(query) {
       searches += 1;
-      return [product('milk', 1.09, searches === 1)];
+      return [product(query)];
     },
   });
 
   const result = await applyPreview({
     previewRevision: saved.revision,
-    acceptedLineIds: ['milk-line'],
+    acceptedLineIds: ['milk-line', 'bread-line'],
     adapter,
     store,
   });
 
-  assert.equal(result.status, 'reconfirm-required');
+  assert.equal(result.status, 'complete');
+  // One live search per unique term for the whole transfer (milk + bread),
+  // not one per term per line. The per-line cart read/add stays fresh.
   assert.equal(searches, 2);
-  assert.equal(adapter.cartReads, 1);
-  assert.deepEqual(adapter.addCalls, []);
 });
 
 test('revision changed during the final cart read prevents the pending add', async () => {
