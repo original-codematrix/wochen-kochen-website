@@ -103,7 +103,7 @@ function renderCurrentPlan(plan){
   renderPrep(plan);
   bindRecipeOpen()
 }
-function renderCurrentPlanBySchema(plan){if(plan&&plan.schemaVersion===5){if(knusprHandle&&knusprHandle.renderPlan)knusprHandle.renderPlan(plan);renderPrep(plan);return}renderCurrentPlan(plan)}
+function renderCurrentPlanBySchema(plan){const legacyPanels=[document.querySelector('.plan-columns'),document.querySelector('.plan-shopping')];if(plan&&plan.schemaVersion===5){legacyPanels.forEach(el=>{if(el)el.hidden=true});if(knusprHandle&&knusprHandle.renderPlan)knusprHandle.renderPlan(plan);renderPrep(plan);return}legacyPanels.forEach(el=>{if(el)el.hidden=false});renderCurrentPlan(plan)}
 async function loadCurrentPlan(){try{let response=await fetch('/api/current-plan');if(!response.ok)throw new Error();renderCurrentPlanBySchema(await response.json())}catch{try{const response=await fetch('./server/current-plan.json');renderCurrentPlanBySchema(await response.json())}catch{$('#planNotice').textContent='Wochenplan konnte nicht geladen werden.'}}}
 $('#applyExclusions').onclick=()=>$('#generateKnusprPlan').click();
 function authHeaders(extra={}){const headers={...extra};if(state.settings.refreshToken)headers.authorization='Bearer '+state.settings.refreshToken;return headers}

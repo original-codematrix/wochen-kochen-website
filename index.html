@@ -22,10 +22,10 @@
   <p>Gute Produkte, aktuelle Angebote und möglichst wenig Überschuss.</p>
   <button id="generateKnusprPlan" class="btn primary touch-target">Wochenplan erstellen</button>
 </section>
-<nav class="mobile-nav" aria-label="Hauptnavigation"><button class="active" data-mobile-view="plan">Wochenplan</button><button data-mobile-view="week">Vorlagen</button><button data-mobile-view="recipes">Kochbuch</button><button data-mobile-view="shopping">Einkauf</button><button data-mobile-view="prep">Meal-Prep</button><button data-mobile-view="settings">Einstellungen</button></nav>
+<nav class="mobile-nav" aria-label="Hauptnavigation"><button class="active" data-mobile-view="plan">Wochenplan</button><button data-mobile-view="recipes">Kochbuch</button><button data-mobile-view="shopping">Einkauf</button><button data-mobile-view="prep">Meal-Prep</button><button data-mobile-view="settings">Einstellungen</button></nav>
 <div id="knusprFlow" class="knuspr-flow" aria-live="polite"></div>
 <div id="cartActionBar" class="cart-action-bar" hidden></div>
-<nav class="main-nav" aria-label="Hauptnavigation"><button class="active" data-view="plan">Wochenplan</button><button data-view="week">Vorlagen</button><button data-view="recipes">Kochbuch</button><button data-view="shopping">Einkauf</button><button data-view="prep">Meal-Prep</button><button data-view="settings">Einstellungen</button></nav>
+<nav class="main-nav" aria-label="Hauptnavigation"><button class="active" data-view="plan">Wochenplan</button><button data-view="recipes">Kochbuch</button><button data-view="shopping">Einkauf</button><button data-view="prep">Meal-Prep</button><button data-view="settings">Einstellungen</button></nav>
 <main id="main">
 <section id="planView" class="view active">
   <div class="section-head"><div><span class="eyebrow">HEUTE EINKAUFEN</span><h2>Aktueller Wochenplan</h2><p id="planNotice">Plan wird geladen …</p></div></div>
@@ -34,6 +34,9 @@
     <input id="dietaryExclusions" type="text" placeholder="z. B. Milch, Pilze">
     <button id="applyExclusions" class="btn primary">Vorgaben anwenden</button>
   </aside>
+  <!-- Legacy pre-Knuspr plan panels; hidden by app.js whenever a schema-5
+       Knuspr plan is active (the live plan + Warenkorbvorschau above replaces
+       them). Shown only for the legacy plan schema. -->
   <div class="plan-columns">
     <section><div class="mini-head"><span class="eyebrow">KURZPLAN</span><h3>Heute bis Sonntag</h3></div><div id="weekendPlan" class="compact-plan"></div></section>
     <section><div class="mini-head"><span class="eyebrow">FOLGEWOCHE</span><h3>Nächste Woche</h3></div><div id="nextWeekPlan" class="compact-plan"></div></section>

@@ -1,6 +1,6 @@
 // Upgrade to kochbuch-v17: the weekly-plan dinner cards open the full recipe
 // (ingredients incl. seasonings) on tap.
-const CACHE = 'kochbuch-v20';
+const CACHE = 'kochbuch-v21';
 const ASSETS = [
   './',
   './index.html',
