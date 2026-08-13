@@ -82,7 +82,14 @@ const EXPANSION_IDS = [
   'cheese-leek-soup',
   'curry-schmand-potatoes',
   'chicken-cheese-broccoli-pasta',
-  'chicken-mushroom-cream-pasta'
+  'chicken-mushroom-cream-pasta',
+  'hackfleisch-nudel-auflauf',
+  'mince-potato-cheese-bake',
+  'chicken-rice-cheese-bake',
+  'zucchini-mince-bake',
+  'potato-leek-ham-bake',
+  'tortellini-bake',
+  'spinach-cream-cheese-pasta-bake'
 ];
 
 const EXPANSION_MATRIX = [
@@ -139,7 +146,14 @@ const EXPANSION_MATRIX = [
   ['cheese-leek-soup', 'Käse-Lauch-Suppe mit Hackfleisch', 'Suppen'],
   ['curry-schmand-potatoes', 'Curry-Schmand-Kartoffeln mit Hähnchen', 'Kartoffeln'],
   ['chicken-cheese-broccoli-pasta', 'Hähnchen-Brokkoli-Käse-Pasta', 'Nudeln'],
-  ['chicken-mushroom-cream-pasta', 'Hähnchen-Champignon-Rahm-Pasta', 'Nudeln']
+  ['chicken-mushroom-cream-pasta', 'Hähnchen-Champignon-Rahm-Pasta', 'Nudeln'],
+  ['hackfleisch-nudel-auflauf', 'Hack-Nudel-Auflauf', 'Aufläufe'],
+  ['mince-potato-cheese-bake', 'Kartoffel-Hackfleisch-Auflauf', 'Aufläufe'],
+  ['chicken-rice-cheese-bake', 'Hähnchen-Brokkoli-Reis-Auflauf', 'Aufläufe'],
+  ['zucchini-mince-bake', 'Überbackener Zucchini-Hackfleisch-Auflauf', 'Aufläufe'],
+  ['potato-leek-ham-bake', 'Kartoffel-Lauch-Auflauf mit Kochschinken', 'Aufläufe'],
+  ['tortellini-bake', 'Überbackener Tortellini-Auflauf', 'Aufläufe'],
+  ['spinach-cream-cheese-pasta-bake', 'Spinat-Frischkäse-Nudelauflauf', 'Aufläufe']
 ];
 
 test('recipe data can be consumed by the weekly Node.js planner', () => {
@@ -161,8 +175,8 @@ test('recipe data can be consumed by the weekly Node.js planner', () => {
 test('catalog exposes the exact 25-recipe expansion contract with valid metrics', () => {
   const { recipes } = require('../data');
   const additions = recipes.filter(recipe => EXPANSION_IDS.includes(recipe.id));
-  assert.equal(recipes.length, 129);
-  assert.equal(additions.length, 54);
+  assert.equal(recipes.length, 136);
+  assert.equal(additions.length, 61);
   assert.equal(new Set(recipes.map(recipe => recipe.id)).size, recipes.length);
   assert.deepEqual(
     additions.map(recipe => [recipe.id, recipe.name, recipe.cat]),

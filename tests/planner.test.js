@@ -1194,7 +1194,7 @@ test('generateOfferPlan still prices a real paprika powder offer as pantry seaso
 });
 
 test('generateOfferPlan catalog audit leaves no required ingredient in Weitere Zutaten', () => {
-  assert.equal(catalogRecipes.length, 129);
+  assert.equal(catalogRecipes.length, 136);
   const audit = {
     unplannedRecipes: [],
     incompleteRecipes: [],
@@ -1262,6 +1262,33 @@ test('generateOfferPlan uses ten different recipes across today-to-Sunday and ne
   assert.equal(timeline.length, 10);
   assert.equal(new Set(timeline.map(day => day.recipeId)).size, 10);
   assert.equal(timeline.some(day => /Restetag/i.test(day.reason)), false);
+});
+
+test('generateOfferPlan keeps enough protein-rich dinners in every week', () => {
+  const isProteinRich = recipe => (
+    (Array.isArray(recipe.tags) && recipe.tags.includes('proteinreich'))
+    || (Number(recipe.protein) || 0) >= 30
+  );
+  const byId = new Map(catalogRecipes.map(recipe => [recipe.id, recipe]));
+  const offers = [
+    { market: 'M', name: 'Tafelsalz', package: '500 g', price: 0.49, status: 'offer' },
+    { market: 'M', name: 'Penne', package: '500 g', price: 0.79, status: 'offer' },
+    { market: 'M', name: 'Hähnchen', package: '600 g', price: 3.99, status: 'offer' }
+  ];
+  // A Friday: the current week keeps three remaining days (weekend block) plus
+  // the full next week, so both blocks are large enough to check the floor.
+  const plan = generateOfferPlan({
+    recipes: catalogRecipes,
+    offers,
+    basePlan: {},
+    now: new Date('2026-07-24T12:00:00+02:00')
+  });
+  assert.equal(plan.computedFromOffers, true);
+  const distinctRich = days => [...new Set(days.map(day => day.recipeId))]
+    .map(id => byId.get(id))
+    .filter(recipe => recipe && isProteinRich(recipe)).length;
+  assert.ok(distinctRich(plan.nextWeek) >= 3, `next week protein-rich: ${distinctRich(plan.nextWeek)}`);
+  assert.ok(distinctRich(plan.weekend) >= 2, `weekend protein-rich: ${distinctRich(plan.weekend)}`);
 });
 
 test('generateOfferPlan scales ingredient quantities to two portions for unique daily meals', () => {

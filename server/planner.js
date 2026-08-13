@@ -258,6 +258,38 @@ function evaluateRecipe(recipe, marketOffers, marketRegularPrices = []) {
   };
 }
 
+const PROTEIN_RICH_MIN = 30;
+
+function isProteinRichRecipe(recipe) {
+  if (!recipe) return false;
+  if (Array.isArray(recipe.tags) && recipe.tags.includes('proteinreich')) return true;
+  return (Number(recipe.protein) || 0) >= PROTEIN_RICH_MIN;
+}
+
+// Deal the protein-rich dinners at an even rate across the whole timeline so
+// that every contiguous week (this week's remaining days and next week) keeps
+// its share instead of all the high-protein meals clustering in one block.
+function spreadProteinRich(items) {
+  const rich = items.filter(item => isProteinRichRecipe(item.recipe));
+  const lean = items.filter(item => !isProteinRichRecipe(item.recipe));
+  if (rich.length < 2 || lean.length === 0) return items;
+  const total = items.length;
+  const ordered = [];
+  let richIndex = 0;
+  let leanIndex = 0;
+  for (let position = 0; position < total; position++) {
+    const richTarget = Math.round(((position + 1) * rich.length) / total);
+    if (richIndex < richTarget && richIndex < rich.length) {
+      ordered.push(rich[richIndex++]);
+    } else if (leanIndex < lean.length) {
+      ordered.push(lean[leanIndex++]);
+    } else {
+      ordered.push(rich[richIndex++]);
+    }
+  }
+  return ordered;
+}
+
 function rotatedSelection(evaluations, variation, limit = 4) {
   const sorted = evaluations.slice().sort((a, b) => a.rank - b.rank || a.recipe.id.localeCompare(b.recipe.id));
   const pool = sorted.slice(0, Math.min(8, sorted.length));
@@ -300,7 +332,31 @@ function rotatedSelection(evaluations, variation, limit = 4) {
     if (selected.length === target) break;
     add(candidate, true);
   }
-  return selected;
+  // Guarantee a floor of high-protein dinners (aiming for at least two to three
+  // per week once the plan is split into weekend + next week). Swaps a lean
+  // recipe for a protein-rich one of the same meat/meat-free kind so the
+  // vegetarian minimum and meat ceiling stay intact.
+  const availableRich = ordered.filter(candidate => isProteinRichRecipe(candidate.recipe)).length;
+  const richWanted = Math.min(availableRich, Math.max(4, Math.ceil(target / 2)));
+  const richCount = () => selected.filter(item => isProteinRichRecipe(item.recipe)).length;
+  for (const candidate of ordered) {
+    if (richCount() >= richWanted) break;
+    if (!isProteinRichRecipe(candidate.recipe)) continue;
+    if (selected.some(item => item.recipe.id === candidate.recipe.id)) continue;
+    const candidateIsMeat = isMeat(candidate);
+    // Swap out the lowest-priority lean recipe of the same meat/meat-free kind
+    // so the vegetarian minimum and meat ceiling are preserved.
+    let victimIndex = -1;
+    for (let index = selected.length - 1; index >= 0; index--) {
+      const item = selected[index];
+      if (!isProteinRichRecipe(item.recipe) && isMeat(item) === candidateIsMeat) {
+        victimIndex = index;
+        break;
+      }
+    }
+    if (victimIndex !== -1) selected[victimIndex] = candidate;
+  }
+  return spreadProteinRich(selected);
 }
 
 function dateLabel(date, prefix) {
