@@ -53,7 +53,18 @@ const EXPANSION_IDS = [
   'bratwurst-apple-onion-pan',
   'bacon-pea-gnocchi',
   'chicken-fajita-tray',
-  'ham-cheese-potato-bake'
+  'ham-cheese-potato-bake',
+  'teriyaki-chicken-noodles',
+  'peanut-sesame-noodles',
+  'red-coconut-chicken-curry',
+  'sweet-sour-chicken-rice',
+  'cashew-veggie-noodles',
+  'mushroom-cream-penne',
+  'tomato-cream-mozzarella-penne',
+  'tomato-cream-chicken-pasta',
+  'gnocchi-tomato-cream',
+  'tortellini-tomato-cream',
+  'tortellini-cream-spinach'
 ];
 
 const EXPANSION_MATRIX = [
@@ -81,7 +92,18 @@ const EXPANSION_MATRIX = [
   ['bratwurst-apple-onion-pan', 'Bratwurst-Apfel-Zwiebel-Pfanne', 'Kartoffeln'],
   ['bacon-pea-gnocchi', 'Speck-Erbsen-Gnocchi', 'Nudeln'],
   ['chicken-fajita-tray', 'Hähnchen-Fajita-Blech', 'TK & Ofen'],
-  ['ham-cheese-potato-bake', 'Schinken-Käse-Kartoffelauflauf', 'TK & Ofen']
+  ['ham-cheese-potato-bake', 'Schinken-Käse-Kartoffelauflauf', 'TK & Ofen'],
+  ['teriyaki-chicken-noodles', 'Teriyaki-Hähnchen-Nudeln', 'Asiatisch'],
+  ['peanut-sesame-noodles', 'Erdnuss-Sesam-Nudeln mit Gemüse', 'Asiatisch'],
+  ['red-coconut-chicken-curry', 'Rotes Kokos-Curry mit Hähnchen und Reis', 'Asiatisch'],
+  ['sweet-sour-chicken-rice', 'Süß-saures Hähnchen mit Reis', 'Asiatisch'],
+  ['cashew-veggie-noodles', 'Cashew-Gemüse-Nudeln', 'Asiatisch'],
+  ['mushroom-cream-penne', 'Champignon-Rahm-Penne', 'Nudeln'],
+  ['tomato-cream-mozzarella-penne', 'Tomatensahne-Penne mit Mozzarella', 'Nudeln'],
+  ['tomato-cream-chicken-pasta', 'Tomaten-Sahne-Hähnchen-Pasta', 'Nudeln'],
+  ['gnocchi-tomato-cream', 'Gnocchi in Tomatensahne', 'Nudeln'],
+  ['tortellini-tomato-cream', 'Tortellini in Tomatensahnesoße', 'Nudeln'],
+  ['tortellini-cream-spinach', 'Tortellini-Sahne mit Spinat', 'Nudeln']
 ];
 
 test('recipe data can be consumed by the weekly Node.js planner', () => {
@@ -103,8 +125,8 @@ test('recipe data can be consumed by the weekly Node.js planner', () => {
 test('catalog exposes the exact 25-recipe expansion contract with valid metrics', () => {
   const { recipes } = require('../data');
   const additions = recipes.filter(recipe => EXPANSION_IDS.includes(recipe.id));
-  assert.equal(recipes.length, 100);
-  assert.equal(additions.length, 25);
+  assert.equal(recipes.length, 111);
+  assert.equal(additions.length, 36);
   assert.equal(new Set(recipes.map(recipe => recipe.id)).size, recipes.length);
   assert.deepEqual(
     additions.map(recipe => [recipe.id, recipe.name, recipe.cat]),

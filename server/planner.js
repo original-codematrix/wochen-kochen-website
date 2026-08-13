@@ -408,7 +408,7 @@ function shoppingDepartment(item) {
     return 'Obst & Gemüse';
   }
   if (
-    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|getrocknete[rs]?\s+(?:petersilie|basilikum|schnittlauch|salbei|dill)|kreuzkümmel|gemahlene[rs]?\s+ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel)(?!\p{L})/iu.test(name)
+    /(?:brühe|fond|öl|senf|stärke|soße|sauce|dip|dressing|gewürze?|paprikapulver|curry(?:pulver)?|pfeffer|kräuter?|rosmarin|hoisin|pesto|honig|sesam|salz|muskat|knoblauchpulver|kurkuma|chiliflocken|chili|oregano|thymian|majoran|getrocknete[rs]?\s+(?:petersilie|basilikum|schnittlauch|salbei|dill)|kreuzkümmel|gemahlene[rs]?\s+ingwer|kümmel|bohnen|mais|haferflocken|semmelbrösel|erdnussmus|currypaste|cashew(?:kerne)?|ingwerpulver|teriyaki)(?!\p{L})/iu.test(name)
   ) {
     return 'Soßen, Gewürze & Vorrat';
   }
@@ -418,20 +418,20 @@ function shoppingDepartment(item) {
   if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
   if (
     ['pizza', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)
-    || /\b(?:milch|butter|quark|ei(?:er)?|joghurt|gouda|emmentaler|cheddar|käsetortellini|frosta|fertiggericht)\b/i.test(name)
+    || /\b(?:milch|butter|quark|ei(?:er)?|joghurt|gouda|emmentaler|cheddar|käsetortellini|tortellini|frosta|fertiggericht)\b/i.test(name)
     || /(?:magerquark|kräuterquark|naturjoghurt)/i.test(name)
   ) {
     return 'Kühlregal & Tiefkühl';
   }
   if (
     ['cucumber', 'tomatoes', 'onions', 'broccoli', 'spinach', 'carrots', 'peppers'].includes(category)
-    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|limette|paprika|brokkoli|blumenkohl(?:röschen)?|spinat|kürbis|lauch|karotten?|möhren?|salat|asia-gemüse|champignons?)\b/i.test(name)
+    || /\b(?:gurke|zwiebeln?|knoblauch(?:zehen?)?|zucchini|zitrone|limette|paprika|brokkoli|blumenkohl(?:röschen)?|spinat|kürbis|lauch|karotten?|möhren?|salat|asia-gemüse|champignons?|ananas)\b/i.test(name)
     || /^(?:frische[rs]?\s+)?(?:petersilie|basilikum|schnittlauch|salbei|dill)$|^(?:frischer\s+)?ingwer$/i.test(name)
     || /(?:hokkaidokürbis|äpfel?)/i.test(name)
   ) return 'Obst & Gemüse';
   if (
     ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas', 'wraps'].includes(category)
-    || /\b(?:couscous|paniermehl|basmatireis|langkornreis|bandnudeln|tagliatelle|orzo|bulgur|weizentortillas?|wraps?)\b/i.test(name)
+    || /\b(?:couscous|paniermehl|basmatireis|langkornreis|reisnudeln|bandnudeln|tagliatelle|orzo|bulgur|weizentortillas?|wraps?)\b/i.test(name)
   ) return 'Nudeln, Reis & Beilagen';
   if (/\b(?:salsiccia|speckwürfel)\b/i.test(name)) return 'Fleisch & Frischetheke';
   if (category === 'coconut') return 'Soßen, Gewürze & Vorrat';
@@ -777,7 +777,7 @@ function isSeasoning(ingredient) {
     && /(kräuter|oregano|thymian|basilikum|rosmarin|majoran|petersilie|schnittlauch|dill|estragon|salbei|bohnenkraut|kerbel)/.test(text)) {
     return true;
   }
-  return /\b(salz|pfeffer|paprikapulver|muskat(?:nuss)?|knoblauchpulver|zwiebelpulver|currypulver|kreuzkümmel|kumin|kurkuma|zimt|chiliflocken|chilipulver|cayenne(?:pfeffer)?|lorbeer(?:blatt|blätter)?|piment|kardamom|oregano|thymian|majoran|rosmarin|garam\s*masala|ras\s*el\s*hanout|kräuter\s+der\s+provence|italienische\s+kräuter|gewürzmischung|gewürzsalz)\b/.test(text);
+  return /\b(salz|pfeffer|paprikapulver|muskat(?:nuss)?|knoblauchpulver|zwiebelpulver|ingwerpulver|currypulver|kreuzkümmel|kumin|kurkuma|zimt|chiliflocken|chilipulver|cayenne(?:pfeffer)?|lorbeer(?:blatt|blätter)?|piment|kardamom|oregano|thymian|majoran|rosmarin|garam\s*masala|ras\s*el\s*hanout|kräuter\s+der\s+provence|italienische\s+kräuter|gewürzmischung|gewürzsalz)\b/.test(text);
 }
 
 function buildIngredientDemands(recipes, { servings = 2 } = {}) {
