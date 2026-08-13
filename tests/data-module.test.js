@@ -64,7 +64,25 @@ const EXPANSION_IDS = [
   'tomato-cream-chicken-pasta',
   'gnocchi-tomato-cream',
   'tortellini-tomato-cream',
-  'tortellini-cream-spinach'
+  'tortellini-cream-spinach',
+  'mac-and-cheese',
+  'cheese-spaetzle',
+  'four-cheese-pasta',
+  'broccoli-cheese-bake',
+  'cauliflower-cheese-gratin',
+  'gorgonzola-gnocchi',
+  'cheese-leek-mince-pasta',
+  'ham-cheese-pasta',
+  'cheesy-mince-pasta',
+  'cream-cheese-spinach-pasta',
+  'mushroom-gorgonzola-pasta',
+  'carbonara-style',
+  'nasi-goreng-veggie',
+  'chow-mein-chicken',
+  'cheese-leek-soup',
+  'curry-schmand-potatoes',
+  'chicken-cheese-broccoli-pasta',
+  'chicken-mushroom-cream-pasta'
 ];
 
 const EXPANSION_MATRIX = [
@@ -103,7 +121,25 @@ const EXPANSION_MATRIX = [
   ['tomato-cream-chicken-pasta', 'Tomaten-Sahne-Hähnchen-Pasta', 'Nudeln'],
   ['gnocchi-tomato-cream', 'Gnocchi in Tomatensahne', 'Nudeln'],
   ['tortellini-tomato-cream', 'Tortellini in Tomatensahnesoße', 'Nudeln'],
-  ['tortellini-cream-spinach', 'Tortellini-Sahne mit Spinat', 'Nudeln']
+  ['tortellini-cream-spinach', 'Tortellini-Sahne mit Spinat', 'Nudeln'],
+  ['mac-and-cheese', 'Käse-Makkaroni (Mac & Cheese)', 'Nudeln'],
+  ['cheese-spaetzle', 'Käsespätzle mit Röstzwiebeln', 'Nudeln'],
+  ['four-cheese-pasta', 'Vier-Käse-Pasta', 'Nudeln'],
+  ['broccoli-cheese-bake', 'Brokkoli-Käse-Nudelauflauf', 'Aufläufe'],
+  ['cauliflower-cheese-gratin', 'Blumenkohl-Käse-Gratin', 'Aufläufe'],
+  ['gorgonzola-gnocchi', 'Gorgonzola-Gnocchi', 'Nudeln'],
+  ['cheese-leek-mince-pasta', 'Käse-Lauch-Nudeln mit Hackfleisch', 'Nudeln'],
+  ['ham-cheese-pasta', 'Schinken-Käse-Nudeln', 'Nudeln'],
+  ['cheesy-mince-pasta', 'Käse-Hack-Nudeln', 'Nudeln'],
+  ['cream-cheese-spinach-pasta', 'Frischkäse-Spinat-Pasta', 'Nudeln'],
+  ['mushroom-gorgonzola-pasta', 'Champignon-Gorgonzola-Pasta', 'Nudeln'],
+  ['carbonara-style', 'Sahne-Speck-Spaghetti', 'Nudeln'],
+  ['nasi-goreng-veggie', 'Nasi Goreng mit Ei und Gemüse', 'Asiatisch'],
+  ['chow-mein-chicken', 'Chow Mein mit Hähnchen', 'Asiatisch'],
+  ['cheese-leek-soup', 'Käse-Lauch-Suppe mit Hackfleisch', 'Suppen'],
+  ['curry-schmand-potatoes', 'Curry-Schmand-Kartoffeln mit Hähnchen', 'Kartoffeln'],
+  ['chicken-cheese-broccoli-pasta', 'Hähnchen-Brokkoli-Käse-Pasta', 'Nudeln'],
+  ['chicken-mushroom-cream-pasta', 'Hähnchen-Champignon-Rahm-Pasta', 'Nudeln']
 ];
 
 test('recipe data can be consumed by the weekly Node.js planner', () => {
@@ -125,8 +161,8 @@ test('recipe data can be consumed by the weekly Node.js planner', () => {
 test('catalog exposes the exact 25-recipe expansion contract with valid metrics', () => {
   const { recipes } = require('../data');
   const additions = recipes.filter(recipe => EXPANSION_IDS.includes(recipe.id));
-  assert.equal(recipes.length, 111);
-  assert.equal(additions.length, 36);
+  assert.equal(recipes.length, 129);
+  assert.equal(additions.length, 54);
   assert.equal(new Set(recipes.map(recipe => recipe.id)).size, recipes.length);
   assert.deepEqual(
     additions.map(recipe => [recipe.id, recipe.name, recipe.cat]),

@@ -418,7 +418,7 @@ function shoppingDepartment(item) {
   if (/\b(?:tk|tiefkühl)/i.test(name)) return 'Kühlregal & Tiefkühl';
   if (
     ['pizza', 'cheese', 'eggs', 'yogurt', 'cream'].includes(category)
-    || /\b(?:milch|butter|quark|ei(?:er)?|joghurt|gouda|emmentaler|cheddar|käsetortellini|tortellini|frosta|fertiggericht)\b/i.test(name)
+    || /\b(?:milch|butter|quark|ei(?:er)?|joghurt|gouda|emmentaler|cheddar|gorgonzola|schmelzkäse|schmand|käsetortellini|tortellini|frosta|fertiggericht)\b/i.test(name)
     || /(?:magerquark|kräuterquark|naturjoghurt)/i.test(name)
   ) {
     return 'Kühlregal & Tiefkühl';
@@ -431,7 +431,7 @@ function shoppingDepartment(item) {
   ) return 'Obst & Gemüse';
   if (
     ['pasta', 'gnocchi', 'rice', 'potato', 'fries', 'lentils', 'peas', 'wraps'].includes(category)
-    || /\b(?:couscous|paniermehl|basmatireis|langkornreis|reisnudeln|bandnudeln|tagliatelle|orzo|bulgur|weizentortillas?|wraps?)\b/i.test(name)
+    || /\b(?:couscous|paniermehl|basmatireis|langkornreis|reisnudeln|bandnudeln|tagliatelle|makkaroni|orzo|bulgur|weizentortillas?|wraps?)\b/i.test(name)
   ) return 'Nudeln, Reis & Beilagen';
   if (/\b(?:salsiccia|speckwürfel)\b/i.test(name)) return 'Fleisch & Frischetheke';
   if (category === 'coconut') return 'Soßen, Gewürze & Vorrat';

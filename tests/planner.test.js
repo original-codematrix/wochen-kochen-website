@@ -1194,7 +1194,7 @@ test('generateOfferPlan still prices a real paprika powder offer as pantry seaso
 });
 
 test('generateOfferPlan catalog audit leaves no required ingredient in Weitere Zutaten', () => {
-  assert.equal(catalogRecipes.length, 111);
+  assert.equal(catalogRecipes.length, 129);
   const audit = {
     unplannedRecipes: [],
     incompleteRecipes: [],
